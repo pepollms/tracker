@@ -1,7 +1,12 @@
+# Dynamic directories and files
+
 _site
+.sass-cache
+
+# Static directories and files
+
 vendor/**
 .bundle
-.sass-cache
 .jekyll-metadata
 Gemfile
 Gemfile.lock
