@@ -1,0 +1,212 @@
+$label_shorter_length: 90px;
+$label_short_length: 120px;
+$label_long_length: 250px;
+
+$spacer_length: 10px;
+
+$summary_progress_bar_length: ($label_shorter_length * 2) + ($label_short_length * 6) + ($spacer_length * 2);
+
+
+div.spacer-w {
+    width: $spacer_length;
+}
+
+div.spacer-h {
+    height: $spacer_length;
+}
+
+div.spacer-h50 {
+    height: 50px;
+}
+
+div.spacer-wh {
+    width: $spacer_length;
+    height: $spacer_length  ;
+}
+
+
+
+// -----------------------------------------------------------------------------
+
+div.height-40 {
+    padding-top: 7px;
+    height: 40px;
+}
+
+div.left-bar {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top: 1px solid $color_violet_4;
+    border-bottom: 1px solid $color_violet_4;
+    border-left: 1px solid $color_violet_4;
+}
+
+div.middle-bar {
+    border-top: 1px solid $color_violet;
+    border-bottom: 1px solid $color_violet;
+    //border-left: 2px solid $color_violet_4;
+    //border-right: 2px solid $color_violet_4;
+}
+
+div.right-bar {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top: 1px solid $color_violet;
+    border-bottom: 1px solid $color_violet;
+    border-right: 1px solid $color_violet;
+}
+
+div.divider-bar-left {
+    border-left: 2px solid $color_violet_4;
+}
+
+div.divider-bar-right {
+    border-right: 2px solid $color_violet_4
+}
+
+
+.info-label,
+.info-label-long,
+.info-label-proxy,
+.info-label-long-proxy {
+    width: $label_short_length;
+    min-width: $label_short_length;   // prevent from resizing
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    background: $color_violet_4;
+    @if $debug_mode == 1 {
+        margin: $debug_margin;
+        padding: $debug_padding;
+        border: $debug_border_width solid $color_border;
+    }
+}
+
+.info-label-long,
+.info-label-long-proxy {
+    width: $label_long_length;
+    min-width: $label_long_length;   // prevent from resizing
+}
+
+
+.info-value-percent,
+.info-value-number {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    background: $color_violet;
+    @if $debug_mode == 1 {
+        margin: $debug_margin;
+        padding: $debug_padding;
+        border: $debug_border_width solid $color_border;
+    }
+}
+
+.info-value-percent {
+    width: $label_shorter_length;
+    max-width: $label_shorter_length;
+}
+
+.info-value-number {
+    width: $label_short_length;
+    max-width: $label_short_length;
+}
+
+div.info-container {
+    width: auto;
+    //border: 1px solid $color_violet;
+    padding: $spacer_length;
+    @if $debug_mode == 1 {
+        margin: $debug_margin;
+        padding: $debug_padding;
+        border: $debug_border_width solid $color_block;
+    }
+}
+
+div.info-summary {
+    width: 100%;
+    @if $debug_mode == 1 {
+        margin: $debug_margin;
+        padding: $debug_padding;
+        border: $debug_border_width solid $color_block;
+    }
+    .info-label,
+    .info-value-percent,
+    .info-value-number {
+        padding: 3px;
+    }
+    // If labels have small letters, this kind of centers the text vertically.
+    .info-label,
+    .info-label-long {
+        padding-top: 3px;
+    }
+    div.progress-bar-container {
+        @if $debug_mode == 1 {
+            margin: $debug_margin;
+            padding: $debug_padding;
+            border: $debug_border_width solid $color_progress_bar_container;
+        }
+    }
+}
+
+div.info-detail {
+    //border: 1px solid $color_violet;
+    @if $debug_mode == 1 {
+        margin: $debug_margin;
+        padding: $debug_padding;
+        border: $debug_border_width solid $color_block;
+    }
+    div.info-block {
+        .info-label,
+        .info-value-percent,
+        .info-value-number {
+            padding: 3px;
+        }
+        // If labels have small letters, this kind of centers the text vertically.
+        .info-label,
+        .info-label-long {
+            padding-top: 3px;
+        }
+    }
+}
+
+
+
+// -----------------------------------------------------------------------------
+
+
+
+
+
+div.progress-bar-inner, div.horizontal  {
+    position: relative;
+    width: $summary_progress_bar_length;
+    height: 50px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background: $color_violet_4;
+    background: #e1e1e1;
+
+    div.progress-bar-fill {
+        position: relative;
+        height: 50px;
+        width: 50%;
+        background: $color_violet;
+
+        /* Percentage text display */
+        spanx {
+            color: #fff;
+            font-family: "Lato","Verdana",sans-serif;
+            font-size: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 40px;
+            text-align: center;
+            padding-top: 20px;
+        }
+    }
+}
+
+
+
