@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% if page.title == "Home" %}
+        <title>{{ site.title }}</title>
+    {% else %}
+        <title>{{ page.title }} - {{ site.title }}</title>
+    {% endif %}
+    {% feed_meta %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <!-- Enable responsiveness on mobile devices-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">-->
+    <meta name="description" content="Programming." />
+    <meta name="author" content="">
+    <meta name="keywords" content="cpp dlang programming" />
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ site.favicon }}">
+    <!-- Bootstrap core CSS -->
+    <link href="{{ site.baseurl }}/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{{ site.baseurl }}/css/starter-template.css" rel="stylesheet">
+    <link href="{{ site.baseurl }}/css/progress_bar.css" rel="stylesheet">
+    <link href="{{ site.baseurl }}/css/theme.css" rel="stylesheet">
+</head>
+
+
+
+<body>
+
+    {% include header.html %}
+
+    <main>
+
+    {{ content }}
+
+    </main>
+
+    {% include footer.html %}
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- Disabled for now
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    -->
+    <!--
+    <script src="./assets/js/vendor/jquery-3.3.1.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    -->
+    <script>window.jQuery || document.write('<script src="{{ site.baseurl }}/javascripts/jquery-3.3.1.min.js"><\/script>')</script>
+    <script src="{{ site.baseurl }}/javascripts/popper.js"></script>
+    <script src="{{ site.baseurl }}/javascripts/progress_bar.js"></script>
+    <script src="{{ site.baseurl }}/javascripts/bootstrap.min.js"></script>
+</body>
+</html>
