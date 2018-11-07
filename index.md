@@ -6,98 +6,157 @@ layout: home
 ---
 
 
-<div class="d-flex justify-content-center">
-    <div class="info-container">
-        <div class="info-summary d-flex flex-wrap">
-            <div class="info-label-long left-bar">COTABATO</div>
-            <div class="progress-bar-container flex-grow-1">
-                <div class="progress-bar-inner horizontal">
-                    <div class="progress-bar-track">
-                        <div class="progress-bar-fill">
-                            <span>{{ site.data.all.all }}%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="d-flex flex-wrap justify-content-center">
 
-        <div class="spacer-h"></div>
-
-        <div class="info-detail d-flex align-items-start">
-            <div class="info-label-long-proxy"></div>
-            <div class="d-md-flex flex-md-row">
-                <div class="info-block d-flex flex-row">
-                    <div class="info-label left-bar">Current</div>
-                    <div class="info-value-number middle-bar divider-bar-right">{{ site.data.all.total.count }}</div>
-                    <div class="info-value-percent right-bar">{{ site.data.all.total.percent }}%</div>
-                </div>
-
-                <div class="spacer-w"></div>
-
-                <div class="info-block d-flex flex-row">
-                    <div class="info-label left-bar">Target</div>
-                    <div class="info-value-number middle-bar divider-bar-right">150,000</div>
-                    <div class="info-value-percent right-bar">67%</div>
-                </div>
-
-                <div class="spacer-w"></div>
-
-                <div class="info-block d-flex flex-row">
-                    <div class="info-label left-bar">Total</div>
-                    <div class="info-value-number right-bar">225,000</div>
-                </div>
-            </div>
+<div class="block flex-column">
+    <div class="spacer-h"></div>
+    <div class="info-label-full height-50 rounded-top container">
+        <div class="font-size-28 font-weight-bold text-uppercase text-align-left text-align-middle">COTABATO</div>
+    </div>
+    <div class="spacer-h"></div>
+    <div class="progress height-50">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
+            <span class="font-size-20 font-weight-bold">{{ site.data.all.total.percent }}%</span>
         </div>
     </div>
+    <div class="fix-spacer-h"></div>
 </div>
 
-<div class="spacer-h50"></div>
+<div class="spacer-w"></div>
+
+<div class="block">
+    <div class="spacer-h"></div>
+    <div class="info-label-pv height-50 rounded-top">
+        <div class="font-size-28 font-weight-bold text-align-center text-align-middle">Current</div>
+    </div>
+    <div class="spacer-h"></div>
+    <div class="block height-50 d-flex">
+        <div class="info-value-number rounded-bottom-left">
+            <div class="font-size-28 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.count }}</div>
+        </div>
+        <div class="spacer-w2"></div>
+        <div class="info-value-percent rounded-bottom-right">
+            <div class="font-size-28 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.percent }}%</div>
+        </div>
+    </div>
+    <div class="fix-spacer-h"></div>
+</div>
+
+<div class="spacer-w"></div>
+
+<div class="block">
+    <div class="spacer-h"></div>
+    <div class="info-label-pv height-50 rounded-top">
+        <div class="font-size-28 font-weight-bold text-align-center text-align-middle">Target</div>
+    </div>
+    <div class="spacer-h"></div>
+    <div class="block height-50 d-flex">
+        <div class="info-value-number rounded-bottom-left">
+            <div class="font-size-28 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.count }}</div>
+        </div>
+        <div class="spacer-w2"></div>
+        <div class="info-value-percent rounded-bottom-right">
+            <div class="font-size-28 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.percent }}%</div>
+        </div>
+    </div>
+    <div class="fix-spacer-h"></div>
+</div>
+
+<div class="spacer-w"></div>
+
+<div class="block">
+    <div class="spacer-h"></div>
+    <div class="info-label-value height-50 rounded-top">
+        <div class="font-size-28 font-weight-bold text-align-center text-align-middle">Total</div>
+    </div>
+    <div class="spacer-h"></div>
+    <div class="info-value-number height-50 rounded-bottom">
+        <div class="font-size-28 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.count }}</div>
+    </div>
+    <div class="fix-spacer-h"></div>
+</div>
+
+</div>
+
+
+
+<div class="fix-spacer-h"></div>
+<div class="fix-spacer-h"></div>
+
+
 
 {% for district in site.data.districts %}
-<div class="d-flex justify-content-center">
-    <div class="info-container">
-        <div class="info-summary d-flex flex-wrap">
-            <div class="info-label-long left-bar">{{ district.name }}</div>
-            <div class="progress-bar-container flex-grow-1">
-                <div class="progress-bar-inner horizontal">
-                    <div class="progress-bar-track">
-                        <div class="progress-bar-fill">
-                            <span>{{ site.data.all.all }}%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="spacer-h"></div>
+<div class="d-flex flex-wrap justify-content-center">
 
-        <div class="info-detail d-flex align-items-start">
-            <div class="info-label-long-proxy"></div>
-            <div class="d-md-flex flex-md-row">
-                <div class="info-block d-flex flex-row">
-                    <div class="info-label left-bar">Current</div>
-                    <div class="info-value-number middle-bar divider-bar-right">{{ site.data.all.total.count }}</div>
-                    <div class="info-value-percent right-bar">{{ site.data.all.total.percent }}%</div>
-                </div>
-
-                <div class="spacer-w"></div>
-
-                <div class="info-block d-flex flex-row">
-                    <div class="info-label left-bar">Target</div>
-                    <div class="info-value-number middle-bar divider-bar-right">150,000</div>
-                    <div class="info-value-percent right-bar">67%</div>
-                </div>
-
-                <div class="spacer-w"></div>
-
-                <div class="info-block d-flex flex-row">
-                    <div class="info-label left-bar">Total</div>
-                    <div class="info-value-number right-bar">225,000</div>
-                </div>
-            </div>
+<div class="block flex-column">
+    <div class="spacer-h"></div>
+    <div class="info-label-full height-40 rounded-top container">
+        <div class="font-size-24 font-weight-bold text-uppercase text-align-left text-align-middle">{{ district.name }}</div>
+    </div>
+    <div class="spacer-h"></div>
+    <div class="progress height-40">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
+            <span class="font-size-24 font-weight-bold">{{ site.data.all.total.percent }}%</span>
         </div>
     </div>
+    <div class="fix-spacer-h"></div>
 </div>
 
-<div class="spacer-h50"></div>
+<div class="spacer-w"></div>
+
+<div class="block">
+    <div class="spacer-h"></div>
+    <div class="info-label-pv height-40 rounded-top">
+        <div class="font-size-24 font-weight-bold text-align-center text-align-middle">Current</div>
+    </div>
+    <div class="spacer-h"></div>
+    <div class="block height-40 d-flex">
+        <div class="info-value-number rounded-bottom-left">
+            <div class="font-size-24 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.count }}</div>
+        </div>
+        <div class="spacer-w2"></div>
+        <div class="info-value-percent rounded-bottom-right">
+            <div class="font-size-24 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.percent }}%</div>
+        </div>
+    </div>
+    <div class="fix-spacer-h"></div>
+</div>
+
+<div class="spacer-w"></div>
+
+<div class="block">
+    <div class="spacer-h"></div>
+    <div class="info-label-pv height-40 rounded-top">
+        <div class="font-size-24 font-weight-bold text-align-center text-align-middle">Target</div>
+    </div>
+    <div class="spacer-h"></div>
+    <div class="block height-40 d-flex">
+        <div class="info-value-number rounded-bottom-left">
+            <div class="font-size-24 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.count }}</div>
+        </div>
+        <div class="spacer-w2"></div>
+        <div class="info-value-percent rounded-bottom-right">
+            <div class="font-size-24 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.percent }}%</div>
+        </div>
+    </div>
+    <div class="fix-spacer-h"></div>
+</div>
+
+<div class="spacer-w"></div>
+
+<div class="block">
+    <div class="spacer-h"></div>
+    <div class="info-label-value height-40 rounded-top">
+        <div class="font-size-24 font-weight-bold text-align-center text-align-middle">Total</div>
+    </div>
+    <div class="spacer-h"></div>
+    <div class="info-value-number height-40 rounded-bottom">
+        <div class="font-size-24 font-weight-bold text-align-center text-align-middle">{{ site.data.all.total.count }}</div>
+    </div>
+    <div class="fix-spacer-h"></div>
+</div>
+
+</div>
+
 {% endfor %}
