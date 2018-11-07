@@ -6,6 +6,7 @@ _site
 # Static directories and files
 
 vendor/**
+images/**
 .bundle
 .jekyll-metadata
 Gemfile
