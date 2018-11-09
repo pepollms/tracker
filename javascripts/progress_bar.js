@@ -1,4 +1,4 @@
-$('.progress-bar progress-bar-track progress-bar-fill span').each(function(){
+$('.progress-bar span').each(function(){
   var percent = $(this).html();
   $(this).parent().css('width', percent);
 });
