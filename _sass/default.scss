@@ -20,10 +20,10 @@
 
 $spacer_pv: 2px;
 
-$label_percent_length: 90px;
-$label_number_length: 120px;
+$label_percent_length: 110px;
+$label_number_length: 150px;
 $label_pv_length: ($label_percent_length + $label_number_length + $spacer_pv);
-$label_long_length: 250px;
+$label_long_length: $label_pv_length;
 
 $spacer_length: 10px;
 $spacer_sm_length: 2px;
@@ -31,26 +31,55 @@ $spacer_md_length: 6px;
 $spacer_lg_length: 8px;
 $spacer_xl_length: 10px;
 
-$summary_progress_bar_length: 500px;
-$summary_progress_bar_length: ($label_pv_length + $spacer_sm_length + $label_pv_length + $spacer_sm_length + $label_number_length);
-@media (min-width: 576px) {
-    $summary_progress_bar_length: ($label_pv_length + $spacer_sm_length + $label_pv_length + $spacer_sm_length + $label_number_length);
-}
-@media (min-width: 768px) {
-    $summary_progress_bar_length: ($label_pv_length + $spacer_md_length + $label_pv_length + $spacer_md_length + $label_number_length);
-}
-@media (min-width: 992px) {
-    $summary_progress_bar_length: ($label_pv_length + $spacer_lg_length + $label_pv_length + $spacer_lg_length + $label_number_length);
-}
+
+
+/*
+ * Arbitrarily chosen value at what width to break the summary contents
+ * and wrap the right side content.
+ */
+$width_break: 500px;
+
+$progress_bar_long_min_width: $width_break;
+/*
+ * The summary left side content width shrinks and grows.
+ * On bigger screens, the width is always at 100% so it expands indefinitely.
+ * On smaller screens, the width is computed to be equal to the right hand side
+ * content so they appear vertically aligned.
+ */
+$progress_bar_long_max_width: ($label_pv_length + $spacer_pv + $label_pv_length + $spacer_pv + $label_number_length);
 @media (min-width: 1200px) {
-    $summary_progress_bar_length: ($label_pv_length + $spacer_xl_length + $label_pv_length + $spacer_xl_length + $label_number_length);
+    $progress_bar_long_max_width: 100%;
 }
+
+/*
+ * Arbitrarily chosen value when to break the detail contents
+ * and wrap the right side content.
+ *
+ * Because the left side content contains a fixed width element and a dynamic
+ * width element, we compute the minimum value based on some width, in
+ * this case that's the width of the entire left side summary content.
+ */
+$progress_bar_short_min_width: ($width_break - $label_long_length - $spacer_pv);
+//$progress_bar_short_min_width: ($width_break - $label_long_length);
+
+$progress_bar_short_max_width: ($width_break - $label_long_length - $spacer_pv);
+//$progress_bar_short_max_width: ($width_break - $label_long_length);
+@media (min-width: 1200px) {
+    $progress_bar_short_min_width: 0;
+    $progress_bar_short_max_width: 100%;
+}
+
+
 
 .width-full {
     width: 100% !important;
 }
 
-.height-50 {
+.height-summary {
+    height: 60px;
+}
+
+.height-detail {
     height: 50px;
 }
 
@@ -58,9 +87,7 @@ $summary_progress_bar_length: ($label_pv_length + $spacer_sm_length + $label_pv_
     height: 40px;
 }
 
-div.spacer-w2 {
-    width: $spacer_pv;
-}
+
 
 div.spacer-w {
     width: $spacer_sm_length;
@@ -76,6 +103,11 @@ div.spacer-w {
     @media (min-width: 1200px) {
         width: $spacer_xl_length;
     }
+}
+
+div.spacer-w2 {
+    width: $spacer_pv;
+    min-width: $spacer_pv;
 }
 
 div.spacer-h {
@@ -96,15 +128,44 @@ div.spacer-h {
 
 div.fix-spacer-h {
     height: $spacer_length;
+    min-height: $spacer_length;
+}
+
+div.fix-spacer-h2 {
+    height: $spacer_pv + 0px;
+    min-height: $spacer_pv + 0px;
 }
 
 div.spacer-h50 {
     height: 50px;
 }
 
-div.spacer-wh {
+div.collapsible-vertical-divider {
+    //width: $spacer_pv;
+    width: $progress_bar_long_max_width;
+    max-width: $progress_bar_long_max_width;
+    min-width: $progress_bar_long_min_width;
+    height: $spacer_pv;
+    background-color: green;
+}
+@media (min-width: 1200px) {
+    div.collapsible-vertical-divider {
+        width: 0px;
+        height: 0px;
+    }
+    background-color: green;
+}
+
+/*
+ * Spacer between the detail contents
+ */
+div.collapsible-vertical-spacer {
     width: $spacer_length;
-    height: $spacer_length  ;
+    height: $spacer_length;
+    @media (min-width: 1200px) {
+        width: $spacer_pv;
+        height: $spacer_pv;
+    }
 }
 
 .font-size-20 {
@@ -119,27 +180,25 @@ div.spacer-wh {
     font-size: 24px;
 }
 
-.font-size-28 {
-    font-size: 28px;
+.font-size-detail {
+    font-size: 30px;
 }
 
-.font-weight-bold {
-    font-weight: bold;
+.font-size-summary {
+    font-size: 34px;
 }
 
-.text-align-left {
-    text-align: left;
+
+
+.bg-transparent {
+    background: transparent;
 }
 
-.text-align-right {
-    text-align: right;
+.bg-label {
+    background: $label_background !important;
 }
 
-.text-align-center {
-    text-align: center;
-}
 
-.text-uppercase { }
 
 //div.height-40 {
 //    div.font-size-20.font-weight-bold.text-align-middle {
@@ -148,56 +207,66 @@ div.spacer-wh {
 //        padding-top: 10px;
 //    }
 //}
+//
+//div.height-40 {
+//    div.font-size-24.font-weight-bold.text-align-middle {
+//        margin: 0;
+//        padding: 0;
+//        padding-top: 2px;
+//    }
+//    div.font-size-24.font-weight-bold.text-align-middle.text-uppercase {
+//        margin: 0;
+//        padding: 0;
+//        padding-top: 2px;
+//    }
+//}
+//
+//div.height-50 {
+//    div.font-size-20.font-weight-bold.text-align-middle {
+//        margin: 0;
+//        padding: 0;
+//        padding-top: 10px;
+//    }
+//}
+//
+//div.height-50 {
+//    div.font-size-24.font-weight-bold.text-align-middle {
+//        margin: 0;
+//        padding: 0;
+//        padding-top: 6px;
+//    }
+//    div.font-size-24.font-weight-bold.text-align-middle.text-uppercase {
+//        margin: 0;
+//        padding: 0;
+//        padding-top: 8px;
+//    }
+//}
 
-div.height-40 {
-    div.font-size-24.font-weight-bold.text-align-middle {
+div.height-detail {
+    div.font-size-detail.font-weight-bold.text-align-middle {
         margin: 0;
         padding: 0;
-        padding-top: 1px;
+        padding-top: 2px;
     }
-    div.font-size-24.font-weight-bold.text-align-middle.text-uppercase {
+    div.font-size-detail.font-weight-bold.text-align-middle.text-uppercase {
         margin: 0;
         padding: 0;
         padding-top: 2px;
     }
 }
 
-//div.height-40 {
-//    div.font-size-28.font-weight-bold.text-align-middle {
-//        margin: 0;
-//        padding: 0;
-//        padding-top: 4px;
-//    }
-//    div.font-size-28.font-weight-bold.text-align-middle.text-uppercase {
-//        margin: 0;
-//        padding: 0;
-//        padding-top: 5px;
-//    }
-//}
-
-div.height-50 {
-    div.font-size-20.font-weight-bold.text-align-middle {
-        margin: 0;
-        padding: 0;
-        padding-top: 10px;
-    }
-}
-
-div.height-50 {
-    div.font-size-24.font-weight-bold.text-align-middle {
-        margin: 0;
-        padding: 0;
-        padding-top: 6px;
-    }
-}
-
-div.height-50 {
-    div.font-size-28.font-weight-bold.text-align-middle {
+div.height-summary {
+    div.font-size-summary.font-weight-normal.text-align-middle {
         margin: 0;
         padding: 0;
         padding-top: 4px;
     }
-    div.font-size-28.font-weight-bold.text-align-middle.text-uppercase {
+    div.font-size-summary.font-weight-bold.text-align-middle {
+        margin: 0;
+        padding: 0;
+        padding-top: 2px;
+    }
+    div.font-size-summary.font-weight-bold.text-align-middle.text-uppercase {
         margin: 0;
         padding: 0;
         padding-top: 5px;
@@ -216,10 +285,9 @@ div.height-50 {
 .info-label-pv-proxy,
 .info-label-long-proxy,
 .info-label-full-proxy {
-    //text-align: center;
-    //font-size: 28px;
-    //font-weight: bold;
-    background: $color_violet_4;
+    font-family: $font_sans;
+    color: $label_color;
+    background: $label_background;
     @if $debug_mode == 1 {
         margin: $debug_margin;
         padding: $debug_padding;
@@ -259,11 +327,9 @@ div.height-50 {
 
 .info-value-percent,
 .info-value-number {
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    color: #fff;
-    background: $color_violet;
+    font-family: $font_sans;
+    color: $value_color;
+    background: $value_background;
     @if $debug_mode == 1 {
         margin: $debug_margin;
         padding: $debug_padding;
@@ -283,71 +349,7 @@ div.height-50 {
 
 div.block {
     //border: 1px solid red;
-}
-
-div.info-container {
-    width: auto;
-    //border: 1px solid $color_violet;
-    padding: $spacer_length;
-    @if $debug_mode == 1 {
-        margin: $debug_margin;
-        padding: $debug_padding;
-        border: $debug_border_width solid $color_block;
-    }
-}
-
-div.info-summary {
-    display: inline-block;
-    //margin-top: 50px;
-    width: 100%;
-    width: auto;
-    //border: 1px solid $color_violet;
-    @if $debug_mode == 1 {
-        margin: $debug_margin;
-        padding: $debug_padding;
-        border: $debug_border_width solid $color_block;
-    }
-    .info-label,
-    .info-value-percent,
-    .info-value-number {
-        padding: 3px;
-    }
-    // If labels have small letters, this kind of centers the text vertically.
-    .info-label,
-    .info-label-long {
-        padding-top: 3px;
-    }
-    div.progress-bar-container {
-        //width: 500px;
-        //max-width: 500px;
-        @if $debug_mode == 1 {
-            margin: $debug_margin;
-            padding: $debug_padding;
-            border: $debug_border_width solid $color_progress_bar_container;
-        }
-    }
-}
-
-div.info-detail {
-    display: inline-block;
-    //border: 1px solid $color_violet;
-    @if $debug_mode == 1 {
-        margin: $debug_margin;
-        padding: $debug_padding;
-        border: $debug_border_width solid $color_block;
-    }
-    div.info-block {
-        .info-label,
-        .info-value-percent,
-        .info-value-number {
-            padding: 3px;
-        }
-        // If labels have small letters, this kind of centers the text vertically.
-        .info-label,
-        .info-label-long {
-            padding-top: 3px;
-        }
-    }
+    margin: 0;
 }
 
 
@@ -357,21 +359,27 @@ div.info-detail {
 
 
 div.progress {
-    position: relative;
-    width: $summary_progress_bar_length;
-    max-width: $summary_progress_bar_length;
-    min-width: auto;
-    //border-top-right-radius: 5px;
-    //border-bottom-right-radius: 5px;
-
+    background-color: $progress_bar_background;
     div.progress-bar {
-        background: $color_violet;
+        background: $progress_bar_fill;
         span {
-            //font-size: 20px;
-            //font-weight: bold;
+            color: $progress_bar_text_color;
         }
     }
 }
 
+#summary_title {
+    margin: 0;
+    min-width: $progress_bar_long_min_width;
+    max-width: $progress_bar_long_max_width;
+}
 
+#summary_progress_bar {
+    min-width: $progress_bar_long_min_width;
+    max-width: $progress_bar_long_max_width;
+}
 
+#detail_left_content {
+    min-width: $progress_bar_long_min_width;
+    max-width: $progress_bar_long_max_width;
+}
