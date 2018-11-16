@@ -1,3 +1,5 @@
+$body_margin: 10px;
+
 // Bootstrap extensions
 
 .rounded-top-left {
@@ -69,6 +71,12 @@ $progress_bar_short_max_width: ($width_break - $label_long_length - $spacer_pv);
     $progress_bar_short_max_width: 100%;
 }
 
+//$detail_small_content: $progress_bar_long_max_width;
+$detail_small_content: 100%;
+@media (min-width: 1200px) {
+    $detail_small_content: calc((100% - (#{$spacer_pv} * 3) - (#{$spacer_length} * 2)) / 3);
+}
+
 
 
 .width-full {
@@ -126,6 +134,13 @@ div.spacer-h {
     }
 }
 
+div.fix-spacer-w {
+    width: $spacer_length;
+    min-width: $spacer_length;
+    height: $spacer_length;
+    min-height: $spacer_length;
+}
+
 div.fix-spacer-h {
     height: $spacer_length;
     min-height: $spacer_length;
@@ -154,6 +169,13 @@ div.collapsible-vertical-divider {
         height: 0px;
     }
     background-color: green;
+}
+
+div.municipality_horizontal_divider {
+    width: 100%;
+    min-width: 100%;
+    height: $spacer_length;
+    min-height: $spacer_length;
 }
 
 /*
@@ -382,4 +404,9 @@ div.progress {
 #detail_left_content {
     min-width: $progress_bar_long_min_width;
     max-width: $progress_bar_long_max_width;
+}
+
+#detail_small_content {
+    //min-width: $detail_small_content;
+    //max-width: $detail_small_content;
 }

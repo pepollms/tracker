@@ -147,5 +147,30 @@ layout: home
 </div>
 
 <div class="collapsible-vertical-spacer"></div>
-
 {% endfor %}
+
+
+
+<div class="fix-spacer-h"></div>
+<div class="fix-spacer-h"></div>
+
+
+
+<div class="d-flex flex-wrap justify-content-start">
+{% assign rows = 0 %}
+{% for municipality in site.data.municipalities %}
+    {% assign rows = rows | plus:1 %}
+    <div id="detail_small_content" class="block d-flex flex-row flex-grow-1">
+        <div class="info-label-long height-detail bg-label container rounded-left">
+            <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle">{{ municipality.name }}</div>
+        </div>
+        <div class="spacer-w2"></div>
+        <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
+            <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
+                <span class="font-size-detail font-weight-bold">{{ site.data.all.total.percent }}%</span>
+            </div>
+        </div>
+    </div>
+    <div class="municipality_horizontal_divider"></div>
+{% endfor %}
+</div>
