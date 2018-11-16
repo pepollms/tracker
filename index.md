@@ -14,7 +14,7 @@ layout: home
         <div class="font-size-summary font-weight-bold text-uppercase text-left text-align-middle">COTABATO</div>
     </div>
     <div class="fix-spacer-h2"></div>
-    <div id="summary_progress_bar" class="progress height-summary rounded-bottom">
+    <div id="summary_progress_bar" class="progress height-summary rounded-bottom-left rounded-bottom-right rounded-0">
         <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
             <span class="font-size-summary font-weight-bold">{{ site.data.all.total.percent }}%</span>
         </div>
@@ -93,16 +93,15 @@ layout: home
 
 
 
-
 {% for district in site.data.districts %}
 <div class="d-flex flex-wrap justify-content-left">
 <div id="detail_left_content" class="block d-flex flex-grow-1">
-    <div class="info-label-long height-detail bg-label container rounded-top">
+    <div class="info-label-long height-detail bg-label container rounded-left">
         <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle">{{ district.name }}</div>
     </div>
     <div class="spacer-w2"></div>
-    <div class="progress progress-short height-detail flex-grow-1">
-        <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
+    <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
+        <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
             <span class="font-size-detail font-weight-bold">{{ site.data.all.total.percent }}%</span>
         </div>
     </div>
@@ -113,11 +112,11 @@ layout: home
 <div class="block d-flex">
     <div class="block flex-column">
         <div class="block height-detail d-flex flex-row">
-            <div class="info-value-number rounded-bottom-left">
+            <div class="info-value-number rounded-top-left rounded-bottom-left">
                 <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
             </div>
             <div class="spacer-w2"></div>
-            <div class="info-value-percent rounded-bottom-right">
+            <div class="info-value-percent rounded-top-right rounded-bottom-right">
                 <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.percent }}%</div>
             </div>
         </div>
@@ -127,11 +126,11 @@ layout: home
 
     <div class="block flex-column">
         <div class="block height-detail d-flex flex-row">
-            <div class="info-value-number rounded-bottom-left">
+            <div class="info-value-number rounded-top-left rounded-bottom-left">
                 <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
             </div>
             <div class="spacer-w2"></div>
-            <div class="info-value-percent rounded-bottom-right">
+            <div class="info-value-percent rounded-top-right rounded-bottom-right">
                 <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.percent }}%</div>
             </div>
         </div>
@@ -140,7 +139,7 @@ layout: home
     <div class="spacer-w2"></div>
 
     <div class="block flex-column">
-        <div class="info-value-number height-detail rounded-bottom">
+        <div class="info-value-number height-detail rounded">
             <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
         </div>
     </div>
