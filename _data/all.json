@@ -1,6 +1,7 @@
 {
-    total: {
-        count: "24,105",
-        percent: 12
-    },
+    "total":{
+        "current_count":"333,419",
+        "total_voters":"669,019",
+        "percent":50
+    }
 }

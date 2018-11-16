@@ -1,9 +1,5 @@
-- number: 1
-  name: District 1
-  url: /district_1.html
-- number: 2
-  name: District 2
-  url: /district_2.html
-- number: 3
-  name: District 3
-  url: /district_3.html
+[
+    {"id":1,"name":"District 1"},
+    {"id":2,"name":"District 2"},
+    {"id":3,"name":"District 3"}
+]

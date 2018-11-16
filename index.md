@@ -34,16 +34,16 @@ layout: home
         <div class="block height-summary d-flex">
             <div class="info-value-number rounded-bottom-left">
                 {% comment %}
-                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
+                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_count }}</div>
                 {% endcomment %}
-                <div class="font-size-summary font-weight-bold text-center text-align-middle">233,888</div>
+                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_count }}</div>
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-bottom-right">
                 {% comment %}
                 <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.percent }}%</div>
                 {% endcomment %}
-                <div class="font-size-summary font-weight-bold text-center text-align-middle">100%</div>
+                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.percent }}%</div>
             </div>
         </div>
         <div class="fix-spacer-h"></div>
@@ -59,7 +59,7 @@ layout: home
         <div class="fix-spacer-h2"></div>
         <div class="block height-summary d-flex">
             <div class="info-value-number rounded-bottom-left">
-                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
+                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.total_voters }}</div>
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-bottom-right">
@@ -78,7 +78,7 @@ layout: home
         </div>
         <div class="fix-spacer-h2"></div>
         <div class="info-value-number height-summary rounded-bottom">
-            <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
+            <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.total_voters }}</div>
         </div>
         <div class="fix-spacer-h"></div>
     </div>
@@ -113,7 +113,7 @@ layout: home
     <div class="block flex-column">
         <div class="block height-detail d-flex flex-row">
             <div class="info-value-number rounded-top-left rounded-bottom-left">
-                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_count }}</div>
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
@@ -127,7 +127,7 @@ layout: home
     <div class="block flex-column">
         <div class="block height-detail d-flex flex-row">
             <div class="info-value-number rounded-top-left rounded-bottom-left">
-                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_count }}</div>
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
@@ -140,11 +140,10 @@ layout: home
 
     <div class="block flex-column">
         <div class="info-value-number height-detail rounded">
-            <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.count }}</div>
+            <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_count }}</div>
         </div>
     </div>
 </div>
-
 </div>
 
 <div class="collapsible-vertical-spacer"></div>
