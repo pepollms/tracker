@@ -92,9 +92,9 @@ $progress_bar_short_max_width: ($width_break - $label_long_length - $spacer_pv);
 //$detail_small_content: -webkit-calc((100% - (#{$spacer_pv} * 3) - (#{$spacer_length} * 2)) / 3);
 $detail_small_content: calc((100% - (#{$spacer_pv} * 3) - (#{$spacer_length} * 2)) / 3);
 $detail_small_content: calc((100% - (#{$spacer_length} * 2)) / 3);
-@media (max-width: 1200px) {
-    $detail_small_content: 100%;
-}
+//@media (min-width: 1200px) {
+//    $detail_small_content: 100%;
+//}
 
 
 
@@ -193,12 +193,14 @@ div.collapsible-vertical-divider {
 div.municipality_horizontal_divider {
     width: 0px;
     min-width: 0px;
+    height: $spacer_length;
+    min-height: $spacer_length;
     @media (min-width: 1200px) {
         width: 100%;
         min-width: 100%;
+        height: 0px;
+        min-height: 0px;
     }
-    height: $spacer_length;
-    min-height: $spacer_length;
 }
 
 /*
@@ -435,6 +437,5 @@ div.progress {
     @media (max-width: 1200px) {
         width: 100%;
         max-width: 100%;
-
     }
 }

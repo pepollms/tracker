@@ -154,7 +154,10 @@ layout: home
 {% assign rows = 0 %}
 {% for municipality in site.data.municipalities %}
     {% assign rows = rows | plus:1 %}
+    {% comment %}
     <div id="detail_small_content" class="block d-flex flex-wrap flex-row justify-content-start">
+    {% endcomment %}
+    <div id="detail_small_content" class="block d-flex flex-grow-1">
         <div class="info-label-long height-detail bg-label container rounded-left">
             <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle">{{ municipality.name }}</div>
         </div>
@@ -164,8 +167,8 @@ layout: home
                 <span class="font-size-detail font-weight-bold">{{ municipality.current_percent }}%</span>
             </div>
         </div>
-        <div class="fix-spacer-w"></div>
     </div>
+    <div class="fix-spacer-w"></div>
     {% assign modv = rows | modulo:3 %}
     {% if modv == 0 %}
     <div class="municipality_horizontal_divider"></div>
