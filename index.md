@@ -83,7 +83,6 @@ layout: home
 
 
 <div class="fix-spacer-h"></div>
-<div class="fix-spacer-h"></div>
 
 
 
@@ -158,13 +157,13 @@ layout: home
     <div id="detail_small_content" class="block d-flex flex-wrap flex-row justify-content-start">
     {% endcomment %}
     <div id="detail_small_content" class="block d-flex flex-grow-1">
-        <div class="info-label-long height-detail bg-label container rounded-left">
-            <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle">{{ municipality.name }}</div>
+        <div class="info-label-long height-small bg-label container rounded-left">
+            <div class="font-size-small font-weight-bold text-uppercase text-left text-align-middle">{{ municipality.name }}</div>
         </div>
         <div class="spacer-w2"></div>
-        <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
+        <div class="progress height-small flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
             <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
-                <span class="font-size-detail font-weight-bold">{{ municipality.current_percent }}%</span>
+                <span class="font-size-small font-weight-bold">{{ municipality.current_percent }}%</span>
             </div>
         </div>
     </div>

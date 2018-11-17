@@ -110,7 +110,7 @@ $detail_small_content: calc((100% - (#{$spacer_length} * 2)) / 3);
     height: 50px;
 }
 
-.height-40 {
+.height-small {
     height: 40px;
 }
 
@@ -227,6 +227,10 @@ div.collapsible-vertical-spacer {
     font-size: 24px;
 }
 
+.font-size-small {
+    font-size: 24px;
+}
+
 .font-size-detail {
     font-size: 30px;
 }
@@ -247,47 +251,20 @@ div.collapsible-vertical-spacer {
 
 
 
-//div.height-40 {
-//    div.font-size-20.font-weight-bold.text-align-middle {
-//        margin: 0;
-//        padding: 0;
-//        padding-top: 10px;
-//    }
-//}
-//
-//div.height-40 {
-//    div.font-size-24.font-weight-bold.text-align-middle {
-//        margin: 0;
-//        padding: 0;
-//        padding-top: 2px;
-//    }
-//    div.font-size-24.font-weight-bold.text-align-middle.text-uppercase {
-//        margin: 0;
-//        padding: 0;
-//        padding-top: 2px;
-//    }
-//}
-//
-//div.height-50 {
-//    div.font-size-20.font-weight-bold.text-align-middle {
-//        margin: 0;
-//        padding: 0;
-//        padding-top: 10px;
-//    }
-//}
-//
-//div.height-50 {
-//    div.font-size-24.font-weight-bold.text-align-middle {
-//        margin: 0;
-//        padding: 0;
-//        padding-top: 6px;
-//    }
-//    div.font-size-24.font-weight-bold.text-align-middle.text-uppercase {
-//        margin: 0;
-//        padding: 0;
-//        padding-top: 8px;
-//    }
-//}
+
+
+div.height-small {
+    div.font-size-small.font-weight-bold.text-align-middle {
+        margin: 0;
+        padding: 0;
+        padding-top: 2px;
+    }
+    div.font-size-small.font-weight-bold.text-align-middle.text-uppercase {
+        margin: 0;
+        padding: 0;
+        padding-top: 2px;
+    }
+}
 
 div.height-detail {
     div.font-size-detail.font-weight-bold.text-align-middle {
