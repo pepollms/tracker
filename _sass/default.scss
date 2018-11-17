@@ -1,3 +1,21 @@
+$debug_margin:          2px;
+$debug_padding:         2px;
+$debug_border_width:    3px;
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:700);
+@import url(https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700);
+
+$font_sans: "IBM Plex Sans", "Roboto", sans;
+
+body {
+    background: $page_background;
+}
+
+main {
+    margin: 10px;
+}
+
+
 $body_margin: 10px;
 
 // Bootstrap extensions
@@ -315,11 +333,11 @@ div.height-summary {
     font-family: $font_sans;
     color: $label_color;
     background: $label_background;
-    @if $debug_mode == 1 {
-        margin: $debug_margin;
-        padding: $debug_padding;
-        border: $debug_border_width solid $color_border;
-    }
+//    @if $debug_mode == 1 {
+//        margin: $debug_margin;
+//        padding: $debug_padding;
+//        border: $debug_border_width solid $color_border;
+//    }
 }
 
 .info-label-percent,
@@ -357,11 +375,11 @@ div.height-summary {
     font-family: $font_sans;
     color: $value_color;
     background: $value_background;
-    @if $debug_mode == 1 {
-        margin: $debug_margin;
-        padding: $debug_padding;
-        border: $debug_border_width solid $color_border;
-    }
+//    @if $debug_mode == 1 {
+//        margin: $debug_margin;
+//        padding: $debug_padding;
+//        border: $debug_border_width solid $color_border;
+//    }
 }
 
 .info-value-percent {

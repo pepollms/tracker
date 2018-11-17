@@ -2,12 +2,4 @@
 # Front matter comment to ensure Jekyll properly reads file.
 ---
 
-$debug_mode: {{ site.debug_mode }};
-
-$debug_margin:          2px;
-$debug_padding:         2px;
-$debug_border_width:    3px;
-
-@import "color";
 @import "main";
-@import "default";
