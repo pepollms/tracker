@@ -1,5 +1,1 @@
-[
-    {"id":1,"name":"District 1"},
-    {"id":2,"name":"District 2"},
-    {"id":3,"name":"District 3"}
-]
+[{"id":1,"name":"District 1","current_count":"77,493","target_count":"158,491","total_voters":"251,107","current_percent":49,"target_percent":63},{"id":2,"name":"District 2","current_count":"68,562","target_count":"137,257","total_voters":"219,022","current_percent":50,"target_percent":63},{"id":3,"name":"District 3","current_count":"63,377","target_count":"124,102","total_voters":"198,890","current_percent":51,"target_percent":62}]

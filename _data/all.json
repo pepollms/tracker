@@ -1,7 +1,1 @@
-{
-    "total":{
-        "current_count":"333,419",
-        "total_voters":"669,019",
-        "percent":50
-    }
-}
+{"total":{"current_count":"209,432","target_count":"419,850","total_voters":"669,019","current_percent":50,"target_percent":63}}
