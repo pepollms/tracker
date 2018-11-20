@@ -4,8 +4,144 @@ layout: common
 
 <section class="page_column_main">
 
-    <h1>{{ page.district_name }} ({{ page.district_no }})</h1>
+<div class="d-flex flex-wrap justify-content-left">
 
-    {{ content }}
+{% assign district = site.data.districts | where: "id", page.district_id %}
+
+<div class="block flex-column flex-grow-1">
+    <div class="spacer-h"></div>
+    <div id="summary_title" class="info-label-full height-summary bg-label container rounded-top flex-grow-1">
+        <div class="font-size-summary font-weight-bold text-uppercase text-left text-align-middle">{{ district[0].name }}</div>
+    </div>
+    <div class="fix-spacer-h2"></div>
+    <div id="summary_progress_bar" class="progress height-summary rounded-bottom-left rounded-bottom-right rounded-0">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ district[0].current_percent }}%">
+            <span class="font-size-summary font-weight-bold">{{ district[0].current_percent }}%</span>
+        </div>
+    </div>
+    <div class="fix-spacer-h"></div>
+</div>
+
+<div class="spacer-w2"></div>
+
+<div class="block d-flex">
+    <div class="block">
+        <div class="spacer-h"></div>
+        <div class="info-label-pv height-summary bg-label rounded-top">
+            <div class="font-size-summary font-weight-normal text-center text-align-middle">Current</div>
+        </div>
+        <div class="fix-spacer-h2"></div>
+        <div class="block height-summary d-flex">
+            <div class="info-value-number rounded-bottom-left">
+                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ district[0].current_count }}</div>
+            </div>
+            <div class="spacer-w2"></div>
+            <div class="info-value-percent rounded-bottom-right">
+                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ district[0].current_percent }}%</div>
+            </div>
+        </div>
+        <div class="fix-spacer-h"></div>
+    </div>
+
+    <div class="spacer-w2"></div>
+
+    <div class="block">
+        <div class="spacer-h"></div>
+        <div class="info-label-pv height-summary bg-label rounded-top">
+            <div class="font-size-summary font-weight-normal text-center text-align-middle">Target</div>
+        </div>
+        <div class="fix-spacer-h2"></div>
+        <div class="block height-summary d-flex">
+            <div class="info-value-number rounded-bottom-left">
+                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ district[0].target_count }}</div>
+            </div>
+            <div class="spacer-w2"></div>
+            <div class="info-value-percent rounded-bottom-right">
+                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ district[0].target_percent }}%</div>
+            </div>
+        </div>
+        <div class="fix-spacer-h"></div>
+    </div>
+
+    <div class="spacer-w2"></div>
+
+    <div class="block">
+        <div class="spacer-h"></div>
+        <div class="info-label-value height-summary bg-label rounded-top">
+            <div class="font-size-summary font-weight-normal text-center text-align-middle">Total</div>
+        </div>
+        <div class="fix-spacer-h2"></div>
+        <div class="info-value-number height-summary rounded-bottom">
+            <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ district[0].total_voters }}</div>
+        </div>
+        <div class="fix-spacer-h"></div>
+    </div>
+</div>
+
+</div>
+
+
+
+<div class="fix-spacer-h"></div>
+
+
+
+{% assign items = site.data.municipalities | where: "district_id", page.district_id %}
+{% assign rows = 0 %}
+{% for item in items %}
+<div class="d-flex flex-wrap justify-content-left">
+<div id="detail_left_content" class="block d-flex flex-grow-1">
+    <div class="info-label-long height-detail bg-label container rounded-left">
+        <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle"><a href="{{ site.baseurl }}/municipalities/municipality_{{ item.id }}.html" class="geo_link">{{ item.name }}</a></div>
+    </div>
+    <div class="spacer-w2"></div>
+    <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
+        <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ item.current_percent }}%">
+            <span class="font-size-detail font-weight-bold">{{ item.current_percent }}%</span>
+        </div>
+    </div>
+</div>
+
+<div class="spacer-w2"></div>
+
+<div class="block d-flex">
+    <div class="block flex-column">
+        <div class="block height-detail d-flex flex-row">
+            <div class="info-value-number rounded-top-left rounded-bottom-left">
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.current_count }}</div>
+            </div>
+            <div class="spacer-w2"></div>
+            <div class="info-value-percent rounded-top-right rounded-bottom-right">
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.current_percent }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="spacer-w2"></div>
+
+    <div class="block flex-column">
+        <div class="block height-detail d-flex flex-row">
+            <div class="info-value-number rounded-top-left rounded-bottom-left">
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.target_count }}</div>
+            </div>
+            <div class="spacer-w2"></div>
+            <div class="info-value-percent rounded-top-right rounded-bottom-right">
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.target_percent }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="spacer-w2"></div>
+
+    <div class="block flex-column">
+        <div class="info-value-number height-detail rounded">
+            <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.total_voters }}</div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="collapsible-vertical-spacer"></div>
+{% endfor %}
 
 </section>
