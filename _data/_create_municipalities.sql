@@ -1,6 +1,7 @@
 select array_to_json(array_agg(row_to_json(t)))
 from (
     select
+        vt_municipality.district_id,
         vt_municipality.id,
         vt_municipality.name,
         to_char(sum(vt_current.current), 'FM999,999') as current_count,
