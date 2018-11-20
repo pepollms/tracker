@@ -312,11 +312,9 @@ div.height-summary {
     font-family: $font_sans;
     color: $label_color;
     background: $label_background;
-//    @if $debug_mode == 1 {
-//        margin: $debug_margin;
-//        padding: $debug_padding;
-//        border: $debug_border_width solid $color_border;
-//    }
+    a {
+        color: $label_color;
+    }
 }
 
 .info-label-percent,
@@ -415,4 +413,13 @@ div.progress {
         width: 100%;
         max-width: 100%;
     }
+}
+
+
+a.geo_link {
+   text-decoration: none;
+}
+
+a.geo_link:hover {
+    color: $label_link_color;
 }

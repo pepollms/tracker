@@ -11,7 +11,7 @@ layout: home
 <div class="block flex-column flex-grow-1">
     <div class="spacer-h"></div>
     <div id="summary_title" class="info-label-full height-summary bg-label container rounded-top flex-grow-1">
-        <div class="font-size-summary font-weight-bold text-uppercase text-left text-align-middle">{{ site.data.province.name }}</div>
+        <div class="font-size-summary font-weight-bold text-uppercase text-left text-align-middle">COTABATO</div>
     </div>
     <div class="fix-spacer-h2"></div>
     <div id="summary_progress_bar" class="progress height-summary rounded-bottom-left rounded-bottom-right rounded-0">
@@ -90,7 +90,7 @@ layout: home
 <div class="d-flex flex-wrap justify-content-left">
 <div id="detail_left_content" class="block d-flex flex-grow-1">
     <div class="info-label-long height-detail bg-label container rounded-left">
-        <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle"><a href="{{ site.baseurl }}/districts/district_{{ district.id }}.html" class="geo_link">{{ district.name }}</a></div>
+        <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle">{{ district.name }}</div>
     </div>
     <div class="spacer-w2"></div>
     <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
@@ -143,7 +143,7 @@ layout: home
 {% endfor %}
 
 
-{% comment %}
+
 <div class="fix-spacer-h"></div>
 <div class="fix-spacer-h"></div>
 
@@ -174,4 +174,3 @@ layout: home
     {% endif %}
 {% endfor %}
 </div>
-{% endcomment %}
