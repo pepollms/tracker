@@ -86,27 +86,66 @@ layout: common
 
 
 
-<div class="d-flex flex-wrap justify-content-left">
 {% assign items = site.data.precincts | where: "barangay_id", page.barangay_id %}
 {% for item in items %}
-<div id="detail_small_content" class="block d-flex flex-row">
-    <div class="info-label-long height-detail bg-label container rounded-left flex-grow-1">
+<div class="d-flex flex-wrap justify-content-left">
+<div id="detail_left_content" class="block d-flex flex-grow-1">
+    <div class="info-label-long height-detail bg-label container rounded-left">
         <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle">
             {% comment %}
-            <a href="{{ site.baseurl }}/precincts/precinct_{{ item.id }}" class="geo_link">{{ item.name }}</a>
+            <a href="{{ site.baseurl }}/municipalities/municipality_{{ item.id }}.html" class="geo_link">{{ item.name }}</a>
             {% endcomment %}
             {{ item.name }}
         </div>
     </div>
     <div class="spacer-w2"></div>
-    <div class="info-value-percent rounded-top-right rounded-bottom-right">
-        <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.current_percent }}%</div>
+    <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
+        <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ item.current_percent }}%">
+            <span class="font-size-detail font-weight-bold">{{ item.current_percent }}%</span>
+        </div>
     </div>
 </div>
+
 <div class="spacer-w2"></div>
+
+<div class="block d-flex">
+    <div class="block flex-column">
+        <div class="block height-detail d-flex flex-row">
+            <div class="info-value-number rounded-top-left rounded-bottom-left">
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.current_count }}</div>
+            </div>
+            <div class="spacer-w2"></div>
+            <div class="info-value-percent rounded-top-right rounded-bottom-right">
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.current_percent }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="spacer-w2"></div>
+
+    <div class="block flex-column">
+        <div class="block height-detail d-flex flex-row">
+            <div class="info-value-number rounded-top-left rounded-bottom-left">
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.target_count }}</div>
+            </div>
+            <div class="spacer-w2"></div>
+            <div class="info-value-percent rounded-top-right rounded-bottom-right">
+                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.target_percent }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="spacer-w2"></div>
+
+    <div class="block flex-column">
+        <div class="info-value-number height-detail rounded">
+            <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.total_voters }}</div>
+        </div>
+    </div>
+</div>
+</div>
+
 <div class="collapsible-vertical-spacer"></div>
 {% endfor %}
-<div class="collapsible-vertical-spacer"></div>
-</div>
 
 </section>
