@@ -91,7 +91,12 @@ layout: common
 {% for item in items %}
 <div id="detail_small_content" class="block d-flex flex-row">
     <div class="info-label-long height-detail bg-label container rounded-left flex-grow-1">
-        <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle"><a href="{{ site.baseurl }}/barangays/barangay_{{ item.id }}" class="geo_link">{{ item.name }}</a></div>
+        <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle">
+            {% comment %}
+            <a href="{{ site.baseurl }}/precincts/precinct_{{ item.id }}" class="geo_link">{{ item.name }}</a>
+            {% endcomment %}
+            {{ item.name }}
+        </div>
     </div>
     <div class="spacer-w2"></div>
     <div class="info-value-percent rounded-top-right rounded-bottom-right">
