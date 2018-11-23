@@ -239,6 +239,18 @@ div.collapsible-vertical-spacer {
     font-size: 34px;
 }
 
+.font-size-small-percent {
+    font-size: 22px;
+}
+
+.font-size-detail-percent {
+    font-size: 26px;
+}
+
+.font-size-summary-percent {
+    font-size: 30px;
+}
+
 
 
 .bg-transparent {
@@ -272,10 +284,20 @@ div.height-detail {
         padding: 0;
         padding-top: 2px;
     }
+    div.font-size-detail-percent.font-weight-bold.text-align-middle {
+        margin: 0;
+        padding: 0;
+        padding-top: 5px;
+    }
     div.font-size-detail.font-weight-bold.text-align-middle.text-uppercase {
         margin: 0;
         padding: 0;
         padding-top: 2px;
+    }
+    div {
+        span.font-size-detail-percent {
+            padding-top: 4px;
+        }
     }
 }
 
@@ -289,6 +311,11 @@ div.height-summary {
         margin: 0;
         padding: 0;
         padding-top: 2px;
+    }
+    div.font-size-summary-percent.font-weight-bold.text-align-middle {
+        margin: 0;
+        padding: 0;
+        padding-top: 6px;
     }
     div.font-size-summary.font-weight-bold.text-align-middle.text-uppercase {
         margin: 0;

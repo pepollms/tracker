@@ -16,7 +16,7 @@ layout: home
     <div class="fix-spacer-h2"></div>
     <div id="summary_progress_bar" class="progress height-summary rounded-bottom-left rounded-bottom-right rounded-0">
         <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
-            <span class="font-size-summary font-weight-bold">{{ site.data.all.total.current_percent }}%</span>
+            <span class="font-size-summary-percent font-weight-bold">{{ site.data.all.total.current_percent }}%</span>
         </div>
     </div>
     <div class="fix-spacer-h"></div>
@@ -37,7 +37,7 @@ layout: home
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-bottom-right">
-                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_percent }}%</div>
+                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_percent }}%</div>
             </div>
         </div>
         <div class="fix-spacer-h"></div>
@@ -57,7 +57,7 @@ layout: home
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-bottom-right">
-                <div class="font-size-summary font-weight-bold text-center text-align-middle">{{ site.data.all.total.target_percent }}%</div>
+                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ site.data.all.total.target_percent }}%</div>
             </div>
         </div>
         <div class="fix-spacer-h"></div>
@@ -95,7 +95,7 @@ layout: home
     <div class="spacer-w2"></div>
     <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
         <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
-            <span class="font-size-detail font-weight-bold">{{ district.current_percent }}%</span>
+            <span class="font-size-detail-percent font-weight-bold">{{ district.current_percent }}%</span>
         </div>
     </div>
 </div>
@@ -110,7 +110,7 @@ layout: home
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
-                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ district.current_percent }}%</div>
+                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ district.current_percent }}%</div>
             </div>
         </div>
     </div>
@@ -124,7 +124,7 @@ layout: home
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
-                <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ district.target_percent }}%</div>
+                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ district.target_percent }}%</div>
             </div>
         </div>
     </div>
