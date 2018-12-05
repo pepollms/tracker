@@ -90,20 +90,22 @@ layout: common
 {% for item in items %}
 <div class="d-flex flex-wrap justify-content-left">
 <div id="detail_left_content" class="block d-flex flex-grow-1">
-    <div class="info-label-long height-detail bg-label container rounded-left">
+    <div class="info-label-long height-detail bg-label container rounded-left flex-grow-1">
         <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle">
             {% comment %}
             <a href="{{ site.baseurl }}/municipalities/municipality_{{ item.id }}.html" class="geo_link">{{ item.name }}</a>
             {% endcomment %}
-            {{ item.precinct }}
+            {{ item.precinct }}&nbsp;-&nbsp;{{ item.leader }}
         </div>
     </div>
+    {% comment %}
     <div class="spacer-w2"></div>
     <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
         <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ item.current_percentage }}" valuemin="0" valuemax="100" style="width:{{ item.current_percentage }}%">
             <span class="font-size-detail-percent font-weight-bold">{{ item.current_percentage }}%</span>
         </div>
     </div>
+    {% endcomment %}
 </div>
 
 <div class="spacer-w2"></div>
@@ -115,8 +117,15 @@ layout: common
                 <div class="font-size-detail font-weight-bold text-center text-align-middle">{{ item.current_count }}</div>
             </div>
             <div class="spacer-w2"></div>
+            {% comment %}
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
                 <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ item.current_percentage }}%</div>
+            </div>
+            {% endcomment %}
+            <div class="progress height-detail info-value-percent rounded-0 rounded-top-right rounded-bottom-right">
+                <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ item.current_percentage }}" valuemin="0" valuemax="100" style="width:{{ item.current_percentage }}%">
+                    <span class="font-size-detail-percent font-weight-bold">{{ item.current_percentage }}%</span>
+                </div>
             </div>
         </div>
     </div>
