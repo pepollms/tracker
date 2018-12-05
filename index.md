@@ -15,8 +15,8 @@ layout: home
     </div>
     <div class="fix-spacer-h2"></div>
     <div id="summary_progress_bar" class="progress height-summary rounded-bottom-left rounded-bottom-right rounded-0">
-        <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
-            <span class="font-size-summary-percent font-weight-bold">{{ site.data.all.total.current_percent }}%</span>
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.current_percentage }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.current_percentage }}%">
+            <span class="font-size-summary-percent font-weight-bold">{{ site.data.all.total.current_percentage }}%</span>
         </div>
     </div>
     <div class="fix-spacer-h"></div>
@@ -37,7 +37,7 @@ layout: home
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-bottom-right">
-                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_percent }}%</div>
+                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ site.data.all.total.current_percentage }}%</div>
             </div>
         </div>
         <div class="fix-spacer-h"></div>
@@ -57,7 +57,7 @@ layout: home
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-bottom-right">
-                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ site.data.all.total.target_percent }}%</div>
+                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ site.data.all.total.target_percentage }}%</div>
             </div>
         </div>
         <div class="fix-spacer-h"></div>
@@ -90,12 +90,12 @@ layout: home
 <div class="d-flex flex-wrap justify-content-left">
 <div id="detail_left_content" class="block d-flex flex-grow-1">
     <div class="info-label-long height-detail bg-label container rounded-left">
-        <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle"><a href="{{ site.baseurl }}/districts/district_{{ district.id }}.html" class="geo_link">{{ district.name }}</a></div>
+        <div class="font-size-detail font-weight-bold text-uppercase text-left text-align-middle"><a href="{{ site.baseurl }}/districts/district_{{ district.district_id }}.html" class="geo_link">{{ district.district }}</a></div>
     </div>
     <div class="spacer-w2"></div>
     <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
-        <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
-            <span class="font-size-detail-percent font-weight-bold">{{ district.current_percent }}%</span>
+        <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ district.current_percentage }}" valuemin="0" valuemax="100" style="width:{{ district.current_percentage }}%">
+            <span class="font-size-detail-percent font-weight-bold">{{ district.current_percentage }}%</span>
         </div>
     </div>
 </div>
@@ -110,7 +110,7 @@ layout: home
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
-                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ district.current_percent }}%</div>
+                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ district.current_percentage }}%</div>
             </div>
         </div>
     </div>
@@ -124,7 +124,7 @@ layout: home
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
-                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ district.target_percent }}%</div>
+                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ district.target_percentage }}%</div>
             </div>
         </div>
     </div>
@@ -141,37 +141,3 @@ layout: home
 
 <div class="collapsible-vertical-spacer"></div>
 {% endfor %}
-
-
-{% comment %}
-<div class="fix-spacer-h"></div>
-<div class="fix-spacer-h"></div>
-
-
-
-<div class="d-flex flex-wrap justify-content-start">
-{% assign rows = 0 %}
-{% for municipality in site.data.municipalities %}
-    {% assign rows = rows | plus:1 %}
-    {% comment %}
-    <div id="detail_small_content" class="block d-flex flex-wrap flex-row justify-content-start">
-    {% endcomment %}
-    <div id="detail_small_content" class="block d-flex flex-grow-1">
-        <div class="info-label-long height-small bg-label container rounded-left">
-            <div class="font-size-small font-weight-bold text-uppercase text-left text-align-middle">{{ municipality.name }}</div>
-        </div>
-        <div class="spacer-w2"></div>
-        <div class="progress height-small flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
-            <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ site.data.all.total.percent }}%">
-                <span class="font-size-small font-weight-bold">{{ municipality.current_percent }}%</span>
-            </div>
-        </div>
-    </div>
-    <div class="fix-spacer-w"></div>
-    {% assign modv = rows | modulo:3 %}
-    {% if modv == 0 %}
-    <div class="municipality_horizontal_divider"></div>
-    {% endif %}
-{% endfor %}
-</div>
-{% endcomment %}

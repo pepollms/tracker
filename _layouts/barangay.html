@@ -6,17 +6,17 @@ layout: common
 
 <div class="d-flex flex-wrap justify-content-left">
 
-{% assign barangay = site.data.barangays | where: "id", page.barangay_id %}
+{% assign barangay = site.data.barangays | where: "barangay_id", page.barangay_id %}
 
 <div class="block flex-column flex-grow-1">
     <div class="spacer-h"></div>
     <div id="summary_title" class="info-label-full height-summary bg-label container rounded-top flex-grow-1">
-        <div class="font-size-summary font-weight-bold text-uppercase text-left text-align-middle">{{ barangay[0].name }}</div>
+        <div class="font-size-summary font-weight-bold text-uppercase text-left text-align-middle">{{ barangay[0].barangay }}</div>
     </div>
     <div class="fix-spacer-h2"></div>
     <div id="summary_progress_bar" class="progress height-summary rounded-bottom-left rounded-bottom-right rounded-0">
-        <div class="progress-bar" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ barangay[0].current_percent }}%">
-            <span class="font-size-summary-percent font-weight-bold">{{ barangay[0].current_percent }}%</span>
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{ barangay[0].current_percentage }}" valuemin="0" valuemax="100" style="width:{{ barangay[0].current_percentage }}%">
+            <span class="font-size-summary-percent font-weight-bold">{{ barangay[0].current_percentage }}%</span>
         </div>
     </div>
     <div class="fix-spacer-h"></div>
@@ -37,7 +37,7 @@ layout: common
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-bottom-right">
-                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ barangay[0].current_percent }}%</div>
+                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ barangay[0].current_percentage }}%</div>
             </div>
         </div>
         <div class="fix-spacer-h"></div>
@@ -57,7 +57,7 @@ layout: common
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-bottom-right">
-                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ barangay[0].target_percent }}%</div>
+                <div class="font-size-summary-percent font-weight-bold text-center text-align-middle">{{ barangay[0].target_percentage }}%</div>
             </div>
         </div>
         <div class="fix-spacer-h"></div>
@@ -95,13 +95,13 @@ layout: common
             {% comment %}
             <a href="{{ site.baseurl }}/municipalities/municipality_{{ item.id }}.html" class="geo_link">{{ item.name }}</a>
             {% endcomment %}
-            {{ item.name }}
+            {{ item.precinct }}
         </div>
     </div>
     <div class="spacer-w2"></div>
     <div class="progress height-detail flex-grow-1 rounded-0 rounded-top-right rounded-bottom-right">
-        <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ site.data.all.total.percent }}" valuemin="0" valuemax="100" style="width:{{ item.current_percent }}%">
-            <span class="font-size-detail-percent font-weight-bold">{{ item.current_percent }}%</span>
+        <div class="progress-bar rounded-0 rounded-top-right rounded-bottom-right" role="progressbar" aria-valuenow="{{ item.current_percentage }}" valuemin="0" valuemax="100" style="width:{{ item.current_percentage }}%">
+            <span class="font-size-detail-percent font-weight-bold">{{ item.current_percentage }}%</span>
         </div>
     </div>
 </div>
@@ -116,7 +116,7 @@ layout: common
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
-                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ item.current_percent }}%</div>
+                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ item.current_percentage }}%</div>
             </div>
         </div>
     </div>
@@ -130,7 +130,7 @@ layout: common
             </div>
             <div class="spacer-w2"></div>
             <div class="info-value-percent rounded-top-right rounded-bottom-right">
-                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ item.target_percent }}%</div>
+                <div class="font-size-detail-percent font-weight-bold text-center text-align-middle">{{ item.target_percentage }}%</div>
             </div>
         </div>
     </div>
