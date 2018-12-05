@@ -40,7 +40,7 @@ CREATE OR REPLACE FUNCTION public.random_between(p_start integer, p_end integer)
     LANGUAGE plpgsql
     AS $function$
 BEGIN
-    RETURN floor(random()* (p_end - p_start + 1) + p_start);
+    RETURN floor(random() * (p_end - p_start + 1) + p_start);
 END;
 $function$;
 
