@@ -574,12 +574,13 @@ insert into vt_precinct(barangay_id, name, voters, target)
 select
     (select vt_barangay.id
         from
-            vt_barangay,
-            vt_municipality
+            vt_barangay
+            inner join vt_municipality on (vt_barangay.municipality_id = vt_municipality.id)
+            inner join vt_district on (vt_municipality.district_id = vt_district.id)
         where
-            vt_barangay.municipality_id = vt_municipality.id
-            and vtracker.barangay = vt_barangay.name
-            and vtracker.municipality = vt_municipality.name) as bid,
+            vtracker.barangay = vt_barangay.name
+            and vtracker.municipality = vt_municipality.name
+            and vt_district.name like vtracker.district || '%') as bid,
     vtracker.precinct,
     vtracker.voters,
     vtracker.target
@@ -605,13 +606,16 @@ select
         from
             vt_precinct,
             vt_barangay,
-            vt_municipality
+            vt_municipality,
+            vt_district
         where
             vt_precinct.barangay_id = vt_barangay.id
             and vt_barangay.municipality_id = vt_municipality.id
+            and vt_municipality.district_id = vt_district.id
             and vtracker.precinct = vt_precinct.name
             and vtracker.barangay = vt_barangay.name
-            and vtracker.municipality = vt_municipality.name) as precinct_id,
+            and vtracker.municipality = vt_municipality.name
+            and vt_district.name like vtracker.district || '%') as precinct_id,
     (select vt_leader.id
         from
             vt_leader
