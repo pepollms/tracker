@@ -417,6 +417,13 @@ div.progress {
     }
 }
 
+#special_progress_bar {
+    span {
+        width: $label_percent_length;
+        max-width: $label_percent_length;
+    }
+}
+
 #summary_title {
     margin: 0;
     min-width: $progress_bar_long_min_width;
