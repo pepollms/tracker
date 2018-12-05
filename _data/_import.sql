@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_percentage_value(p_percent numeric, p_n nu
     LANGUAGE plpgsql
     AS $function$
 BEGIN
-    RETURN (p_percent * p_percent) / 100;
+    RETURN (p_percent * p_n) / 100;
 end;
 $function$;
 
