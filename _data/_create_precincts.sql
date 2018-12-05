@@ -17,6 +17,6 @@ from (
     from
         view_precinct
     order by
-        current_percentage,
+        current_count,
         precinct
 ) t;

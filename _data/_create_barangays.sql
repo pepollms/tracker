@@ -15,4 +15,8 @@ from (
         target_percentage
     from
         view_barangay
+    order by
+        current_count,
+        barangay,
+        municipality
 ) t;

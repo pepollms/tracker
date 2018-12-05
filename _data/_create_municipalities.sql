@@ -15,4 +15,7 @@ from (
         target_percentage
     from
         view_municipality
+    order by
+        current_count,
+        municipality
 ) t;
