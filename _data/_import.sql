@@ -294,10 +294,10 @@ as
 -- Province view
 drop view if exists view_province;
 create or replace view view_province
-    (current_count,
-        target_count,
+    (current_count_sum,
+        target_count_sum,
         current_percentage,
-        total_voters,
+        total_voters_sum,
         target_percentage)
 as
     select
@@ -318,10 +318,10 @@ drop view if exists view_district;
 create or replace view view_district
     (district_id,
         district,
-        current_count,
-        target_count,
+        current_count_sum,
+        target_count_sum,
         current_percentage,
-        total_voters,
+        total_voters_sum,
         target_percentage)
 as
     select
@@ -351,10 +351,10 @@ create or replace view view_municipality
         district,
         municipality_id,
         municipality,
-        current_count,
-        target_count,
+        current_count_sum,
+        target_count_sum,
         current_percentage,
-        total_voters,
+        total_voters_sum,
         target_percentage)
 as
     select
@@ -391,10 +391,10 @@ create or replace view view_barangay
         municipality,
         barangay_id,
         barangay,
-        current_count,
-        target_count,
+        current_count_sum,
+        target_count_sum,
         current_percentage,
-        total_voters,
+        total_voters_sum,
         target_percentage)
 as
     select
@@ -440,10 +440,10 @@ create or replace view view_precinct
         precinct,
         leader,
         contact,
-        current_count,
-        target_count,
+        current_count_sum,
+        target_count_sum,
         current_percentage,
-        total_voters,
+        total_voters_sum,
         target_percentage)
 as
     select
