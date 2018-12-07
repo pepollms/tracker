@@ -7,7 +7,7 @@ from (
         barangay_id,
         precinct_id,
         precinct,
-        convert_to(leader, 'UTF8'),
+        leader,
         contact,
         to_char(current_count_sum, 'FM999,999') as current_count,
         to_char(target_count_sum, 'FM999,999') as target_count,
