@@ -508,9 +508,9 @@ as
 
 
 
-\COPY vtracker(province, district, municipality, municipality_code, barangay, precinct, voters, leader, contact, target) FROM '../../../database/to_import/district_1.csv' DELIMITER ',' CSV HEADER;
-\COPY vtracker(province, district, municipality, municipality_code, barangay, precinct, voters, leader, contact, target) FROM '../../../database/to_import/district_2.csv' DELIMITER ',' CSV HEADER;
-\COPY vtracker(province, district, municipality, municipality_code, barangay, precinct, voters, leader, contact, target) FROM '../../../database/to_import/district_3.csv' DELIMITER ',' CSV HEADER;
+\COPY vtracker(province, district, municipality, municipality_code, barangay, precinct, voters, leader, contact, target) FROM '../../../database/to_import/district_1.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8';
+\COPY vtracker(province, district, municipality, municipality_code, barangay, precinct, voters, leader, contact, target) FROM '../../../database/to_import/district_2.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8';
+\COPY vtracker(province, district, municipality, municipality_code, barangay, precinct, voters, leader, contact, target) FROM '../../../database/to_import/district_3.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8';
 
 
 

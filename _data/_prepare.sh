@@ -98,17 +98,28 @@ echo_debug "CSV files file mode changed."
 #sed -i 's/3RD/3/g' ../../../database/to_import/district_3.csv
 #echo_debug "Replace district names"
 
+
+
 #j Copy files to destination directory
 destination_dir="../../../database/to_import"
-cp -f ../../../database/to_import/${arg_directory}/district_1.csv ${destination_dir}/district_1.csv
-cp -f ../../../database/to_import/${arg_directory}/district_2.csv ${destination_dir}/district_2.csv
-cp -f ../../../database/to_import/${arg_directory}/district_3.csv ${destination_dir}/district_3.csv
+rm -f ${destination_dir}/district_1.csv
+rm -f ${destination_dir}/district_2.csv
+rm -f ${destination_dir}/district_3.csv
+iconv -f UTF-8 -t UTF-8 ../../../database/${arg_directory}/district_1.csv -o ${destination_dir}/district_1.csv
+iconv -f UTF-8 -t UTF-8 ../../../database/${arg_directory}/district_2.csv -o ${destination_dir}/district_2.csv
+iconv -f UTF-8 -t UTF-8 ../../../database/${arg_directory}/district_3.csv -o ${destination_dir}/district_3.csv
+
+# cp -b -p --remove-destination ../../../database/to_import/${arg_directory}/district_1.csv ${destination_dir}/district_1.csv
+# cp -b -p --remove-destination ../../../database/to_import/${arg_directory}/district_2.csv ${destination_dir}/district_2.csv
+# cp -b -p --remove-destination ../../../database/to_import/${arg_directory}/district_3.csv ${destination_dir}/district_3.csv
 echo_debug "Files copied to ${destination_dir}."
 
 # Remove the percent sign after the number at the end of each line
-sed -i 's/%$//' ../../../database/to_import/district_1.csv
-sed -i 's/%$//' ../../../database/to_import/district_2.csv
-sed -i 's/%$//' ../../../database/to_import/district_3.csv
-echo_debug "Remove the percentage symbol in the target percentage column."
+# sed -i 's/%$//' ../../../database/to_import/district_1.csv
+# sed -i 's/%$//' ../../../database/to_import/district_2.csv
+# sed -i 's/%$//' ../../../database/to_import/district_3.csv
+# echo_debug "Remove the percentage symbol in the target percentage column."
+
+
 
 echo "Done."
