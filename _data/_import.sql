@@ -135,7 +135,7 @@ CREATE TABLE vt_district
     id serial NOT NULL,
     code character varying(10),
     province_id numeric(10, 0) NOT NULL,
-    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(50) NOT NULL,
     CONSTRAINT vt_district_pkey PRIMARY KEY (id)
 );
 
@@ -146,7 +146,7 @@ CREATE TABLE vt_municipality
     id serial NOT NULL,
     code character varying(10),
     district_id numeric(10,0) NOT NULL,
-    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(50) NOT NULL,
     CONSTRAINT vt_municipality_pkey PRIMARY KEY (id)
 );
 
@@ -157,7 +157,7 @@ CREATE TABLE vt_barangay
     id serial NOT NULL,
     code character varying(10),
     municipality_id numeric(10,0) NOT NULL,
-    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(50) NOT NULL,
     CONSTRAINT vt_barangay_pkey PRIMARY KEY (id)
 );
 
@@ -178,7 +178,7 @@ CREATE TABLE vt_precinct
     id serial NOT NULL,
     barangay_id numeric(10,0),
     code character varying(10),
-    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(50) NOT NULL,
     voters numeric(10,0) NOT NULL DEFAULT 0,
     target numeric(10,0) NOT NULL DEFAULT 0,
     CONSTRAINT vt_precinct_pkey PRIMARY KEY (id)
