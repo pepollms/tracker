@@ -3,6 +3,8 @@
 --
 -- Execute this file using _import.sh
 
+
+
 -- Function that returns the percentage of two numbers
 -- Example: 70 is 35% of 200
 --   select get_percentage(70, 200) returns 35
@@ -47,7 +49,7 @@ $function$;
 
 
 --------------------------------------------------------------------------------
-
+-- Delete views
 
 
 -- Delete dependencies first
@@ -60,12 +62,11 @@ drop view if exists view_district;
 drop view if exists view_municipality;
 drop view if exists view_barangay;
 drop view if exists view_precinct;
--- drop view if exists view_leader_assignment;
 
 
 
 --------------------------------------------------------------------------------
-
+-- Create tables
 
 
 -- Create import table
@@ -210,7 +211,7 @@ CREATE TABLE vt_current
 
 
 --------------------------------------------------------------------------------
-
+-- Create views for data display
 
 
 -- Number of municipality per district
@@ -288,6 +289,7 @@ as
 
 
 --------------------------------------------------------------------------------
+-- Create views for generating JSON data files
 
 
 
