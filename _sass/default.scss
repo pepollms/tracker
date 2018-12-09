@@ -284,10 +284,12 @@ div.height-detail {
         padding: 0;
         padding-top: 2px;
     }
-    div.font-size-detail-percent.font-weight-bold.text-align-middle {
-        margin: 0;
-        padding: 0;
-        padding-top: 5px;
+    div {
+        div.font-size-detail-percent.font-weight-bold.text-align-middle {
+            margin: 0;
+            padding: 0;
+            padding-top: 5px;
+        }
     }
     div.font-size-detail.font-weight-bold.text-align-middle.text-uppercase {
         margin: 0;
@@ -295,8 +297,16 @@ div.height-detail {
         padding-top: 2px;
     }
     div {
-        span.font-size-detail-percent {
+        span.font-size-detail-percent.font-weight-bold.text-center.text-align-middle {
             padding-top: 4px;
+        }
+    }
+    // Special case for barangay details percentage
+    div.progress-bar {
+        span.font-size-detail-percent.font-weight-bold {
+            margin: 0;
+            padding: 0;
+            padding-top: 0px;
         }
     }
 }
@@ -417,7 +427,9 @@ div.progress {
     }
 }
 
-#special_progress_bar {
+// This progress bar is rendered in the barangay details page.
+// It is the width of the percentage "div"
+#special_progress_bar_percentage {
     span {
         width: $label_percent_length;
         max-width: $label_percent_length;
