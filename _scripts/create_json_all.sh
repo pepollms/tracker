@@ -50,15 +50,19 @@
 #       Note that this option will remain set for the entire session, and so it affects
 #       uses of the meta-command \connect as well as the initial connection attempt.
 
-psql -d postgres -w -t -f create_json_totals.sql -o all.json
+declare -r DESTINATION_DIR="../_data"
+
+psql -d postgres -w -t -c "select row_to_json(t) from (select 'NORTH COTABATO' as name) t;" -o ${DESTINATION_DIR}/province.json
+
+psql -d postgres -w -t -f create_json_totals.sql -o ${DESTINATION_DIR}/all.json
 
 # Results are sorted by name
-psql -d postgres -w -t -f create_json_districts.sql -o ../_data/districts.json
-psql -d postgres -w -t -f create_json_municipalities.sql -o ../_data/municipalities.json
-psql -d postgres -w -t -f create_json_barangays.sql -o ../_data/barangays.json
-psql -d postgres -w -t -f create_json_precincts.sql -o ../_data/precincts.json
+psql -d postgres -w -t -f create_json_districts.sql -o ${DESTINATION_DIR}/districts.json
+psql -d postgres -w -t -f create_json_municipalities.sql -o ${DESTINATION_DIR}/municipalities.json
+psql -d postgres -w -t -f create_json_barangays.sql -o ${DESTINATION_DIR}/barangays.json
+psql -d postgres -w -t -f create_json_precincts.sql -o ${DESTINATION_DIR}/precincts.json
 
-# Results are sorted by current percentage
-psql -d postgres -w -t -f create_json_municipalities_details.sql -o ../_data/municipalities_details.json
-psql -d postgres -w -t -f create_json_barangays_details.sql -o ../_data/barangays_details.json
-psql -d postgres -w -t -f create_json_precincts_details.sql -o ../_data/precincts_details.json
+# Results are sorted by current / target
+psql -d postgres -w -t -f create_json_municipalities_details.sql -o ${DESTINATION_DIR}/municipalities_details.json
+psql -d postgres -w -t -f create_json_barangays_details.sql -o ${DESTINATION_DIR}/barangays_details.json
+psql -d postgres -w -t -f create_json_precincts_details.sql -o ${DESTINATION_DIR}/precincts_details.json
