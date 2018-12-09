@@ -18,6 +18,6 @@ from (
         view_precinct
     order by
         current_percentage,
-        current_count_sum - target_count_sum,
+        current_count_sum / target_count_sum,
         precinct
 ) t;

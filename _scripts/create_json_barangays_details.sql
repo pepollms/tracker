@@ -17,7 +17,7 @@ from (
         view_barangay
     order by
         current_percentage,
-        current_count_sum - target_count_sum,
+        current_count_sum / target_count_sum,
         barangay,
         municipality
 ) t;

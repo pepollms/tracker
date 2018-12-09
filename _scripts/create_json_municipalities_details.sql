@@ -17,6 +17,6 @@ from (
         view_municipality
     order by
         current_percentage,
-        current_count_sum - target_count_sum,
+        current_count_sum / target_count_sum,
         municipality
 ) t;
