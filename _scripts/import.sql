@@ -1,6 +1,7 @@
 -- Import data into database
 
-
+\COPY vt_region(code, name, aka, abbreviation) FROM '../../../database/to_import/region.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8';
+\COPY vt_province(region_id, code, name, aka) FROM '../../../database/to_import/province.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8';
 
 \COPY vtracker(province, district, municipality, municipality_code, barangay, precinct, voters, leader, contact, target) FROM '../../../database/to_import/district_1.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8';
 \COPY vtracker(province, district, municipality, municipality_code, barangay, precinct, voters, leader, contact, target) FROM '../../../database/to_import/district_2.csv' DELIMITER ',' CSV HEADER ENCODING 'UTF8';
@@ -22,11 +23,22 @@ from vtracker
 order by district_name asc;
 
 -- Insert Municipalities from the import table
-insert into vt_municipality(district_id, id, name)
+insert into vt_municipality(id, district_id, name)
+select distinct
+    municipality_code,
+    to_number(district, '9') as district_number,
+    municipality
+from vtracker
+order by district_number, municipality asc;
+
+-- Insert Municipalities from the import table
+insert into vtx_municipality(district_id, code, name, voters, target)
 select distinct
     to_number(district, '9') as district_number,
     municipality_code,
-    municipality
+    municipality,
+    random_between(100000, 200000),
+    random_between(70, 90)
 from vtracker
 order by district_number, municipality asc;
 
@@ -134,3 +146,7 @@ set target = get_percentage_value(target, voters);
 insert into vt_current(precinct_id, current)
 select vt_precinct.id, 0
 from vt_precinct;
+
+insert into vtx_current(municipality_id, current)
+select id, 0
+from vt_municipality;

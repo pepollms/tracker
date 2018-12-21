@@ -56,6 +56,8 @@ psql -d postgres -w -t -c "select row_to_json(t) from (select 'NORTH COTABATO' a
 
 psql -d postgres -w -t -f create_json_totals.sql -o ${DESTINATION_DIR}/all.json
 
+psql -d postgres -w -t -f create_json_regions.sql -o ${DESTINATION_DIR}/regions.json
+
 # Results are sorted by name
 psql -d postgres -w -t -f create_json_districts.sql -o ${DESTINATION_DIR}/districts.json
 psql -d postgres -w -t -f create_json_municipalities.sql -o ${DESTINATION_DIR}/municipalities.json

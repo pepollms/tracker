@@ -45,3 +45,8 @@ where
 --     and vt_precinct.barangay_id = vt_barangay.id
 --     and vt_barangay.municipality_id = vt_municipality.id
 --     and vt_district.id = 1
+
+update vtx_current
+set current = random_between(1, get_percentage_value(80, vtx_municipality.target))
+from
+    vtx_municipality;

@@ -53,7 +53,8 @@ $function$;
 
 
 -- Delete dependencies first
-drop view if exists view_municipality_per_district;
+drop view if exists view_districts_per_province;
+drop view if exists view_municipalities_per_district;
 drop view if exists view_barangays_per_municipality;
 drop view if exists view_precincts_per_barangay;
 
@@ -129,6 +130,28 @@ CREATE TABLE vtracker
 --     FOR EACH ROW
 --     EXECUTE PROCEDURE ps_to_int();
 
+DROP TABLE IF EXISTS vt_region;
+CREATE TABLE vt_region
+(
+    id serial NOT NULL,
+    code character varying(10),
+    name character varying(50) NOT NULL,
+    aka character varying(50),
+    abbreviation character varying(20),
+    CONSTRAINT vt_region_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS vt_province;
+CREATE TABLE vt_province
+(
+    id serial NOT NULL,
+    region_id numeric(10, 0) NOT NULL,
+    code character varying(10),
+    name character varying(50) NOT NULL,
+    aka character varying(50),
+    CONSTRAINT vt_province_pkey PRIMARY KEY (id)
+);
+
 -- Districts
 DROP TABLE IF EXISTS vt_district;
 CREATE TABLE vt_district
@@ -141,12 +164,25 @@ CREATE TABLE vt_district
 );
 
 -- Municipalities
+DROP TABLE IF EXISTS vtx_municipality;
+CREATE TABLE vtx_municipality
+(
+    id serial NOT NULL,
+    district_id numeric(10,0) NOT NULL,
+    code character varying(10),
+    name character varying(50) NOT NULL,
+    voters numeric(10,0) NOT NULL DEFAULT 0,
+    target numeric(10,0) NOT NULL DEFAULT 0,
+    CONSTRAINT vtx_municipality_pkey PRIMARY KEY (id)
+);
+
+-- Municipalities
 DROP TABLE IF EXISTS vt_municipality;
 CREATE TABLE vt_municipality
 (
     id serial NOT NULL,
-    code character varying(10),
     district_id numeric(10,0) NOT NULL,
+    code character varying(10),
     name character varying(50) NOT NULL,
     CONSTRAINT vt_municipality_pkey PRIMARY KEY (id)
 );
@@ -156,8 +192,8 @@ DROP TABLE IF EXISTS vt_barangay;
 CREATE TABLE vt_barangay
 (
     id serial NOT NULL,
-    code character varying(10),
     municipality_id numeric(10,0) NOT NULL,
+    code character varying(10),
     name character varying(50) NOT NULL,
     CONSTRAINT vt_barangay_pkey PRIMARY KEY (id)
 );
@@ -208,15 +244,44 @@ CREATE TABLE vt_current
     CONSTRAINT vt_current_pkey PRIMARY KEY (id)
 );
 
+-- "Current count" table
+-- This table is linked with the vtx_municipality table.
+DROP TABLE IF EXISTS vtx_current;
+CREATE TABLE vtx_current
+(
+    id serial NOT NULL,
+    municipality_id numeric(10,0) NOT NULL,
+    current numeric(10,0) NOT NULL DEFAULT 0,
+    CONSTRAINT vtx_current_pkey PRIMARY KEY (id)
+);
+
 
 
 --------------------------------------------------------------------------------
 -- Create views for data display
 
 
--- Number of municipality per district
-drop view if exists view_municipality_per_district;
-create or replace view view_municipality_per_district
+-- Number of districts per province
+drop view if exists view_districts_per_province;
+create or replace view view_districts_per_province
+    (province_id, province, district_count)
+as
+    select
+        vt_province.id,
+        vt_province.name,
+        count(vt_district.id)
+    from
+        vt_province
+        inner join vt_district on (vt_province.id = vt_district.province_id)
+    group by
+        vt_province.id,
+        vt_province.name
+    order by
+        vt_province.name;
+
+-- Number of municipalities per district
+drop view if exists view_municipalities_per_district;
+create or replace view view_municipalities_per_district
     (district_id, district, municipality_count)
 as
     select
@@ -383,6 +448,37 @@ as
     order by
         vt_district.name,
         vt_municipality.name;
+
+-- Municipality view
+drop view if exists view_municipalityx;
+create or replace view view_municipalityx
+    (district_id,
+        district,
+        municipality_id,
+        municipality,
+        current_count_sum,
+        target_count_sum,
+        current_percentage,
+        total_voters_sum,
+        target_percentage)
+as
+    select
+        vt_district.id,
+        vt_district.name,
+        vtx_municipality.id,
+        vtx_municipality.name,
+        vtx_current.current,
+        vtx_municipality.target,
+        get_percentage(vtx_current.current, vtx_municipality.target),
+        vtx_municipality.voters,
+        get_percentage(vtx_municipality.target, vtx_municipality.voters)
+    from
+        vtx_current
+        inner join vtx_municipality on (vtx_current.municipality_id = vtx_municipality.id)
+        inner join vt_district on (vtx_municipality.district_id = vt_district.id)
+    order by
+        vt_district.name,
+        vtx_municipality.name;
 
 -- Barangay view
 drop view if exists view_barangay;
