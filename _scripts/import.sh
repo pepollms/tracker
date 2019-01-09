@@ -259,18 +259,33 @@ if [ ${op_prepare} -eq 1 ]; then
 fi
 
 if [ ${op_create_db} -eq 1 ]; then
+    if ! /usr/bin/pg_isready &>/dev/null; then
+        echo "PostgreSQL service is not running."
+        echo "Aborting operation."
+        exit 1
+    fi
     echo "Create database objects."
     psql -d postgres -w -f create_database.sql
     echo "Done."
 fi
 
 if [ ${op_import_data} -eq 1 ]; then
+    if ! /usr/bin/pg_isready &>/dev/null; then
+        echo "PostgreSQL service is not running."
+        echo "Aborting operation."
+        exit 1
+    fi
     echo "Import data."
     psql -d postgres -w -f import.sql
     echo "Done."
 fi
 
 if [ ${op_generate_dummy_data} -eq 1 ]; then
+    if ! /usr/bin/pg_isready &>/dev/null; then
+        echo "PostgreSQL service is not running."
+        echo "Aborting operation."
+        exit 1
+    fi
     echo "Generate dummy data."
     psql -d postgres -w -f ${arg_dummy_data_file}
     echo "Done."
