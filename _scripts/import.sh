@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 declare -r PROGRAM_NAME="${0##*/}"
-declare -r DISTRICT_MARKDOWN_FILE_DIR="../districts"
-declare -r MUNICIPAL_MARKDOWN_FILE_DIR="../municipalities"
-declare -r BARANGAY_MARKDOWN_FILE_DIR="../barangays"
-declare -r LEADER_MARKDOWN_FILE_DIR="../leaders"
+declare -r PROJECT_ROOT=".."
+declare -r IMPORT_DIR="${PROJECT_ROOT}/_data/to_import"
+declare -r DISTRICT_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/districts"
+declare -r MUNICIPAL_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/municipalities"
+declare -r BARANGAY_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/barangays"
 
 declare debug=0
 
@@ -21,21 +22,19 @@ function show_usage {
     echo "PostgreSQL database. The CSV files will be read from the following"
     echo "directory:"
     echo ""
-    echo "  <project>/database/to_import/"
+    echo "  <project>/_data/to_import"
     echo ""
-    echo "Directory structure:"
-    echo "  <project>/database"
-    echo "  <project>/database/to_import"
-    echo "  <project>/database/to_import/<date>"
-    echo "  <project>/source"
-    echo "  <project>/source/<site>"
-    echo "  <project>/source/<site>/_data"
+    echo "Generated files will be created in the following directories:"
+    echo ""
+    echo "  <project>/districts"
+    echo "  <project>/municipalities"
+    echo "  <project>/barangays"
     echo ""
     echo "Usage: $PROGRAM_NAME [options]"
     echo ""
     echo "Options in sequential order:"
     echo "  --help                  Show usage help text"
-    echo "  --prepare <directory>   Prepare CSV files and copy to import directory"
+    echo "  --prepare               Prepare CSV files and copy to import directory"
     echo "  --create-db             Recreate database objects"
     echo "  --import                Import data from CSV files"
     echo "  --dummy <file>          Run <file> to generate dummy data"
@@ -184,14 +183,8 @@ fi
 
 arg_directory=""
 if [ "$1" == "--prepare" ]; then
-    arg_directory="$2"
-    shift 2
-    if [ -z "${arg_directory}" ]; then
-        echo_err "Directory name is unrecognizable: '${arg_directory}'."
-        exit 1
-    fi
-    if [ ! -d "../../../database/to_import/${arg_directory}" ]; then
-        echo_err "Directory ../../../database/to_import/${arg_directory} does not exist."
+    if [ ! -d "${IMPORT_DIR}" ]; then
+        echo_err "Import directory does not exist: ${IMPORT_DIR}"
         exit 1
     fi
     op_prepare=1
@@ -234,21 +227,25 @@ fi
 
 if [ ${op_prepare} -eq 1 ]; then
     # Make sure CSV files are readable
-    chmod 777 ../../../database/to_import/${arg_directory}/district_1.csv
-    chmod 777 ../../../database/to_import/${arg_directory}/district_2.csv
-    chmod 777 ../../../database/to_import/${arg_directory}/district_3.csv
+    chmod 777 ${IMPORT_DIR}/district_1.csv
+    chmod 777 ${IMPORT_DIR}/district_2.csv
+    chmod 777 ${IMPORT_DIR}/district_3.csv
     echo_debug "CSV files file mode changed."
 
-    # Delete files to destination directory
-    destination_dir="../../../database/to_import"
-    rm -f ${destination_dir}/district_1.csv
-    rm -f ${destination_dir}/district_2.csv
-    rm -f ${destination_dir}/district_3.csv
-    # Convert to UTF-8 files and copy to import directory
+    # Delete files from destination directory
+    destination_dir="${IMPORT_DIR}/converted"
+    if [ ! -d ${destination_dir} ]; then
+        mkdir ${destination_dir}
+    else
+        rm -f ${destination_dir}/district_1.csv
+        rm -f ${destination_dir}/district_2.csv
+        rm -f ${destination_dir}/district_3.csv
+    fi
 
-    iconv -f UTF-8 -t UTF-8 ../../../database/${arg_directory}/district_1.csv -o ${destination_dir}/district_1.csv
-    iconv -f UTF-8 -t UTF-8 ../../../database/${arg_directory}/district_2.csv -o ${destination_dir}/district_2.csv
-    iconv -f UTF-8 -t UTF-8 ../../../database/${arg_directory}/district_3.csv -o ${destination_dir}/district_3.csv
+    # Convert to UTF-8 files and copy to import directory
+    iconv -f UTF-8 -t UTF-8 ${IMPORT_DIR}/district_1.csv -o ${destination_dir}/district_1.csv
+    iconv -f UTF-8 -t UTF-8 ${IMPORT_DIR}/district_2.csv -o ${destination_dir}/district_2.csv
+    iconv -f UTF-8 -t UTF-8 ${IMPORT_DIR}/district_3.csv -o ${destination_dir}/district_3.csv
 
     echo_debug "Files copied to ${destination_dir}."
 
