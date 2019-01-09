@@ -76,7 +76,7 @@ CREATE TABLE vtracker
 (
     id serial NOT NULL,
     province character varying(50) NOT NULL,
-    district character varying(10) NOT NULL,
+    district character varying(50) NOT NULL,
     municipality character varying(50) NOT NULL,
     municipality_code numeric(10) NOT NULL,
     barangay character varying(50) NOT NULL,
