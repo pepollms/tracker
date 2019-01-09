@@ -565,11 +565,17 @@ as
     from
         vt_leader_assignment
         inner join vt_leader on (vt_leader_assignment.leader_id = vt_leader.id)
-        inner join vt_current on (vt_leader_assignment.precinct_id = vt_current.id)
-        inner join vt_precinct on (vt_leader_assignment.precinct_id = vt_precinct.id)
+        inner join vt_current on (vt_leader_assignment.precinct_id = vt_current.precinct_id)
+        inner join vt_precinct on (vt_current.precinct_id = vt_precinct.id)
         inner join vt_barangay on (vt_precinct.barangay_id = vt_barangay.id)
         inner join vt_municipality on (vt_barangay.municipality_id = vt_municipality.id)
-        inner join vt_district on (vt_municipality.district_id = vt_district.id);
+        inner join vt_district on (vt_municipality.district_id = vt_district.id)
+    order by
+        vt_district.name,
+        vt_municipality.name,
+        vt_barangay.name,
+        vt_precinct.name,
+        vt_leader.name;
 
 -- Leader-Precinct assignment view
 -- drop view if exists view_leader_assignment;
