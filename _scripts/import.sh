@@ -171,6 +171,11 @@ function create_leader_markdown_files {
 
 
 
+if [ $# -eq 0 ]; then
+    show_usage
+    exit
+fi
+
 if [ "$1" == "--help" ]; then
     show_usage
     exit
