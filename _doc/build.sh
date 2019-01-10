@@ -75,12 +75,15 @@ fi
 #     FILE. All messages above DEBUG level will be written,
 #     regardless of verbosity settings (--verbose, --quiet).
 
+# Use --pdf-engine=xelatex when markdown file contains Ñ character.
+
 pandoc  ${input_file}                   \
         --template=${template_file}     \
         -f markdown+raw_tex+fenced_code_blocks+footnotes   \
         -t latex                        \
         -o ${output_file}               \
-        --pdf-engine=pdflatex           \
+        `#--pdf-engine=pdflatex`        \
+        --pdf-engine=xelatex            \
         --toc                           \
         --top-level-division=chapter    \
         --listing
