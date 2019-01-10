@@ -2,60 +2,60 @@
 
 declare -r PROGRAM_NAME="${0##*/}"
 
+declare -r CMD_LIST_MUNICIPALITY="list-municipality"
+declare -r CMD_GET_PRECINCT_INFO="get-precinct-info"
+declare -r CMD_GET_LEADER_INFO="get-leader-info"
+declare -r CMD_GET_LEADER_ASSIGNMENT="get-leader-assignment"
+
 declare -r CMD_ADD_LEADER="add-leader"
-declare -r CMD_GET_LEADER_ID="get-leader-id"
-declare -r CMD_GET_LEADER_NAME="get-leader-name"
-declare -r CMD_GET_LEADER_CONTACT="get-leader-contact"
 declare -r CMD_SET_LEADER_NAME="set-leader-name"
 declare -r CMD_SET_LEADER_CONTACT="set-leader-contact"
-declare -r CMD_GET_LEADER_ASSIGNMENT="get-leader-assignment"
 declare -r CMD_SET_LEADER_ASSIGNMENT="set-leader-assignment"
-declare -r CMD_GET_PRECINCT_ID="get-precinct-id"
-declare -r CMD_GET_PRECINCT_NAME="get-precinct-name"
+
 declare -r CMD_ADD_PRECINCT_CURRENT="add-precinct-current"
 declare -r CMD_SET_PRECINCT_CURRENT="set-precinct-current"
 declare -r CMD_SET_PRECINCT_TARGET="set-precinct-target"
-
-function display_commands {
-    echo "  $CMD_ADD_LEADER                 Add new leader information"
-    echo "  $CMD_GET_LEADER_ID              Get leader information using identifier"
-    echo "  $CMD_GET_LEADER_NAME            Get leader information using name"
-    echo "  $CMD_GET_LEADER_CONTACT         Get leader information using contact"
-    echo "  $CMD_SET_LEADER_NAME            Set leader name"
-    echo "  $CMD_SET_LEADER_CONTACT         Set leader contact"
-    echo "  $CMD_GET_LEADER_ASSIGNMENT      Get leader-precinct assignment"
-    echo "  $CMD_SET_LEADER_ASSIGNMENT      Set leader-precinct assignment"
-    echo "  $CMD_GET_PRECINCT_ID            Get precinct information using identifier"
-    echo "  $CMD_GET_PRECINCT_NAME          Get precinct information using name"
-    echo "  $CMD_ADD_PRECINCT_CURRENT       Add to precinct current count"
-    echo "  $CMD_SET_PRECINCT_CURRENT       Set precinct current count"
-    echo "  $CMD_SET_PRECINCT_TARGET        Set precinct target"
-}
 
 function show_usage {
     echo "$PROGRAM_NAME - Data manipulation script."
     echo ""
     echo "Usage: $PROGRAM_NAME [--help] <command> <arguments>"
     echo ""
-    echo "Commands:"
-
-    display_commands
-
+    echo "Query Commands:"
     echo ""
-    echo "Command arguments: Parameters enclosed in quotes may contain spaces."
+    echo "  $CMD_LIST_MUNICIPALITY          List all municipalities"
+    echo "  $CMD_GET_PRECINCT_INFO          Get precinct information"
+    echo "  $CMD_GET_LEADER_INFO            Get leader information"
+    echo "  $CMD_GET_LEADER_ASSIGNMENT      Get leader-precinct assignment"
+    echo ""
+    echo "Update Commands:"
+    echo ""
+    echo "  $CMD_ADD_LEADER                 Add new leader information"
+    echo "  $CMD_SET_LEADER_NAME            Set leader name"
+    echo "  $CMD_SET_LEADER_CONTACT         Set leader contact"
+    echo "  $CMD_SET_LEADER_ASSIGNMENT      Set leader-precinct assignment"
+    echo "  $CMD_ADD_PRECINCT_CURRENT       Add to precinct current count"
+    echo "  $CMD_SET_PRECINCT_CURRENT       Set precinct current count"
+    echo "  $CMD_SET_PRECINCT_TARGET        Set precinct target"
+    echo ""
+    echo "Command arguments: "
+    echo ""
+    echo "  $CMD_LIST_MUNICIPALITY"
+    echo "  $CMD_GET_PRECINCT_INFO          [id <\"id\">] [name <\"name\">]"
+    echo "  $CMD_GET_LEADER_INFO            [id <\"id\">] [name <\"name\">] [contact <\"contact\">]"
+    echo "  $CMD_GET_LEADER_ASSIGNMENT      [id <\"id\">] [name <\"name\">]"
+    echo ""
     echo "  $CMD_ADD_LEADER                 <\"name\"> <\"contact\">"
-    echo "  $CMD_GET_LEADER_ID              <\"id\">"
-    echo "  $CMD_GET_LEADER_NAME            <\"name\">"
-    echo "  $CMD_GET_LEADER_CONTACT         <\"contact\">"
     echo "  $CMD_SET_LEADER_NAME            <id> <\"name\">"
     echo "  $CMD_SET_LEADER_CONTACT         <id> <\"contact\">"
-    echo "  $CMD_GET_LEADER_ASSIGNMENT      <leader id>"
-    echo "  $CMD_SET_LEADER_ASSIGNMENT      <leader id> <precinct id>"
-    echo "  $CMD_GET_PRECINCT_ID            <\"id\">"
-    echo "  $CMD_GET_PRECINCT_NAME          <\"name\">"
-    echo "  $CMD_ADD_PRECINCT_CURRENT       <precinct id> <number>"
-    echo "  $CMD_SET_PRECINCT_CURRENT       <precinct id> <number>"
-    echo "  $CMD_SET_PRECINCT_TARGET        <precinct id> <number>"
+    echo "  $CMD_SET_LEADER_ASSIGNMENT      <leader-id> <precinct-id>"
+    echo "  $CMD_ADD_PRECINCT_CURRENT       <precinct-id> <number>"
+    echo "  $CMD_SET_PRECINCT_CURRENT       <precinct-id> <number>"
+    echo "  $CMD_SET_PRECINCT_TARGET        <precinct-id> <number>"
+    echo ""
+    echo "Parameters enclosed in quotes may contain spaces and wildcard characters."
+    echo "Wildcard character '%' means any number of characters."
+    echo "  '%abc' - any text ending with 'abc'; abc, 123abc, xyzabc"
     echo ""
 } # show_usage
 
@@ -68,48 +68,216 @@ function echo_err {
 
 
 
+
+
+function list_municipality {
+    echo "Municipality list"
+    psql -d postgres -w -q -c '\pset pager off' -c "select municipality_id as id, municipality from view_municipality order by municipality;"
+}
+
+function get_precinct_info {
+    if [ $# -eq 0 ]; then
+        echo "Missing arguments to $CMD_GET_PRECINCT_INFO operation."
+        echo "Syntax: $CMD_GET_PRECINCT_INFO [id <\"id\">] [name <\"name\">]"
+        return -1
+    fi
+
+    local column="$1"
+    shift 1
+    if [ $# -eq 0 ]; then
+        echo "Missing $column argument for operation $CMD_GET_PRECINCT_INFO."
+        echo "Syntax: $CMD_GET_PRECINCT_INFO [id <\"id\">] [name <\"name\">]"
+        return -1
+    fi
+
+    local parameter="$1"
+    if [[ "$parameter" = *"%"* || "$parameter" = *"_"* ]]; then
+        echo "Get precinct information with '$column' like '${parameter}'."
+    else
+        echo "Get precinct information with '$column' equal to '${parameter}'."
+    fi
+
+    if [ $column == "id" ]; then
+        if [[ "$parameter" = *"%"* || "$parameter" = *"_"* ]]; then
+            psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select * from view_precinct where trim(to_char(precinct_id, '999999')) like '${parameter}';"
+        else
+            psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select * from view_precinct where precinct_id = ${parameter};"
+        fi
+    elif [ $column == "name" ]; then
+        if [[ "$parameter" = *"%"* || "$parameter" = *"_"* ]]; then
+            psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select * from view_precinct where precinct like '${parameter}';"
+        else
+            psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select * from view_precinct where precinct = '${parameter}';"
+        fi
+    else
+        echo "Unknown column '$column' argument."
+        echo "Syntax: $CMD_GET_PRECINCT_INFO [id <\"id\">] [name <\"name\">]"
+    fi
+}
+
+function get_leader_info {
+    if [ $# -eq 0 ]; then
+        echo "Missing arguments to $CMD_GET_LEADER_INFO operation."
+        echo "Syntax: $CMD_GET_LEADER_INFO [id <\"id\">] [name <\"name\">] [contact <\"contact\">]"
+        return -1
+    fi
+
+    local column="$1"
+    shift 1
+    if [ $# -eq 0 ]; then
+        echo "Missing $column argument for operation $CMD_GET_LEADER_INFO."
+        echo "Syntax: $CMD_GET_LEADER_INFO [id <\"id\">] [name <\"name\">] [contact <\"contact\">]"
+        return -1
+    fi
+
+    local parameter="$1"
+    if [[ "$parameter" = *"%"* || "$parameter" = *"_"* ]]; then
+        echo "Get leader information with '$column' like '${parameter}'."
+    else
+        echo "Get leader information with '$column' equal to '${parameter}'."
+    fi
+
+    if [ $column == "id" ]; then
+        if [[ "$parameter" = *"%"* || "$parameter" = *"_"* ]]; then
+            psql -d postgres -w -q -c '\pset pager off' -c "select * from vt_leader where trim(to_char(id, '999999')) like '${parameter}';"
+        else
+            psql -d postgres -w -q -c '\pset pager off' -c "select * from vt_leader where id = ${parameter};"
+        fi
+    elif [ $column == "name" ]; then
+        if [[ "$parameter" = *"%"* || "$parameter" = *"_"* ]]; then
+            psql -d postgres -w -q -c '\pset pager off' -c "select * from vt_leader where name like '${parameter}';"
+        else
+            psql -d postgres -w -q -c '\pset pager off' -c "select * from vt_leader where name = '${parameter}';"
+        fi
+    elif [ $column == "contact" ]; then
+        if [[ "$parameter" = *"%"* || "$parameter" = *"_"* ]]; then
+            psql -d postgres -w -q -c '\pset pager off' -c "select * from vt_leader where contact like '${parameter}';"
+        else
+            psql -d postgres -w -q -c '\pset pager off' -c "select * from vt_leader where contact = '${parameter}';"
+        fi
+    else
+        echo "Unknown column '$column' argument."
+        echo "Syntax: $CMD_GET_LEADER_INFO [id <\"id\">] [name <\"name\">] [contact <\"contact\">]"
+    fi
+}
+
+function get_leader_assignment {
+    if [ $# -eq 0 ]; then
+        echo "Missing arguments to $CMD_GET_LEADER_ASSIGNMENT operation."
+        echo "Syntax: $CMD_GET_LEADER_ASSIGNMENT [id <\"id\">] [name <\"name\">]"
+        return -1
+    fi
+
+    local column="$1"
+    shift 1
+    if [ $# -eq 0 ]; then
+        echo "Missing $column argument for operation $CMD_GET_LEADER_ASSIGNMENT."
+        echo "Syntax: $CMD_GET_LEADER_ASSIGNMENT [id <\"id\">] [name <\"name\">]"
+        return -1
+    fi
+
+    local parameter="$1"
+    if [[ "$parameter" = *"%"* || "$parameter" = *"_"* ]]; then
+        if [ $column == "id" ]; then
+            local result=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader where trim(to_char(id, '999999')) like '${parameter}';"`
+            if [[ "$result" == "0" ]]; then
+                echo "Leader not found."
+                return -1
+            fi
+            if [[ ! "$result" == "1" ]]; then
+                echo "Multiple leaders found: $result"
+                psql -d postgres -w -q -c '\pset pager off' -c "select * from vt_leader where trim(to_char(id, '999999')) like '${parameter}';"
+                return -1
+            fi
+        elif [ $column == "name" ]; then
+            local result=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader where name like '${parameter}';"`
+            if [[ "$result" == "0" ]]; then
+                echo "Leader not found."
+                return -1
+            fi
+            if [[ ! "$result" == "1" ]]; then
+                echo "Multiple leaders found: $result"
+                psql -d postgres -w -q -c '\pset pager off' -c "select * from vt_leader where name like '${parameter}';"
+                return -1
+            fi
+        else
+            echo "Unknown column '$column' argument."
+            echo "Syntax: $CMD_GET_LEADER_ASSIGNMENT [id <\"id\">] [name <\"name\">]"
+        fi
+    else
+        echo "Get leader assignment with leader '$column' equal to '${parameter}'."
+    fi
+
+    if [ $column == "id" ]; then
+        local result=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader where id = ${parameter};"`
+        if [[ "$result" == "0" ]]; then
+            echo "Leader not found."
+            return -1
+        fi
+        psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select id, name, contact from vt_leader where id = ${parameter};"
+        psql -d postgres -w -q -c '\pset pager off' -c "select district, municipality_id, municipality, barangay, precinct_id, precinct from view_precinct where leader_id = ${parameter} order by district, municipality, barangay, precinct;"
+    elif [ $column == "name" ]; then
+        local result=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader where name = '${parameter}';"`
+        if [[ "$result" == "0" ]]; then
+            echo "Leader not found."
+            return -1
+        fi
+        psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select id, name, contact from vt_leader where name = '${parameter}';"
+        psql -d postgres -w -q -c '\pset pager off' -c "select district, municipality_id, municipality, barangay, precinct_id, precinct from view_precinct where leader = '${parameter}' order by district, municipality, barangay, precinct;"
+    else
+        echo "Unknown column '$column' argument."
+        echo "Syntax: $CMD_GET_LEADER_ASSIGNMENT [id <\"id\">] [name <\"name\">]"
+    fi
+}
+
 function add_leader {
+    if [ $# -eq 0 ]; then
+        echo "Missing arguments to $CMD_ADD_LEADER operation."
+        echo "Syntax: $CMD_ADD_LEADER <\"name\"> <\"contact\">"
+        return -1
+    fi
+
     local name="$1"
-    local contact="$2"
+    shift 1
+
+    if [ $# -eq 0 ]; then
+        echo "Missing 'contact' argument to $CMD_ADD_LEADER operation."
+        echo "Syntax: $CMD_ADD_LEADER <\"name\"> <\"contact\">"
+        return -1
+    fi
+
+    local contact="$1"
+    shift 1
+
+    local result=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader where name = '${name}';"`
+    if [[ ! "$result" == "0" ]]; then
+        echo "Leader '${name}' already exists."
+        psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select id, name, contact from vt_leader where name = '${name}';"
+        return -1
+    fi
+
+    result=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader where contact = '${contact}';"`
+    if [[ $result -eq 1 ]]; then
+        echo "Leader contact '${contact}' already exists."
+        psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select id, name, contact from vt_leader where contact = '${contact}';"
+        return -1
+    elif [[ $result -gt 1 ]]; then
+        echo "Multiple leaders with contact '${contact}' found: $result"
+        return -1
+    fi
+
     local result=`psql -d postgres -w --tuples-only --no-align -c "select add_leader('${name}', '${contact}');"`
     if [ "$result" = "-1" ]; then
         echo "Error: Leader with name '${name}' already exists."
         return -1
-    fi
-    echo "Leader '${name}' with contact '${contact} added."
-}
-
-function get_leader_id {
-    local parameter="$1"
-    if [[ $parameter == *"%"* ]]; then
-        echo "Get leader with ID like '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c "select * from vt_leader where to_char(id, '999999') like '${parameter}';"
+    elif [ "$result" = "-2" ]; then
+        echo "Error: Leader with contact '${contact}' already exists."
+        return -1
     else
-        echo "Get leader with ID equal to '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c "select * from vt_leader where id = ${parameter};"
+        # Display newly added leader
+        psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select id, name, contact from vt_leader where name = '${name}';"
     fi
-}
-
-function get_leader_name {
-    local parameter="$1"
-    if [[ $parameter == *"%"* ]]; then
-        echo "Get leader with name like '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c "select * from vt_leader where name like '${parameter}';"
-    else
-        echo "Get leader with name equal to '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c "select * from vt_leader where name = '${parameter}';"
-    fi
-}
-
-function get_leader_contact {
-    local parameter="$1"
-    if [[ $parameter == *"%"* ]]; then
-        echo "Get leader with contact like '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c "select * from vt_leader where contact like '${parameter}';"
-    else
-        echo "Get leader with contact equal to '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c "select * from vt_leader where contact = '${parameter}';"
-    fi
+    echo "Leader '${name}' with contact '${contact}'' added."
 }
 
 function set_leader_name {
@@ -152,14 +320,6 @@ function set_leader_contact {
         return -1
     fi
     echo "Leader ${leader_id} contact set from \"${old_value}\" to \"${new_value}\"."
-}
-
-function get_leader_assignment {
-    local leader_id=$1
-    echo "Get leader ${leader_id} information."
-    get_leader_id ${leader_id}
-    #local result=`psql -d postgres -w --tuples-only -c '\x' -c "select * from view_precinct where leader_id=${leader_id};"`
-    psql -d postgres -w -c '\pset pager off' -c "select district, municipality_id, municipality, barangay, precinct_id, precinct from view_precinct where leader_id = ${leader_id} order by district, municipality, barangay, precinct;"
 }
 
 function set_leader_assignment {
@@ -217,28 +377,6 @@ function set_precinct_current {
     return $count
 }
 
-function get_precinct_id {
-    local parameter=$1
-    if [[ $parameter == *"%"* ]]; then
-        echo "Get precinct with id like '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c '\x' -c "select * from view_precinct where to_char(precinct_id, '999999') like '${parameter}';"
-    else
-        echo "Get precinct with id equal to '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c '\x' -c "select * from view_precinct where precinct_id = ${parameter};"
-    fi
-}
-
-function get_precinct_name {
-    local precinct_id=$1
-    if [[ $parameter == *"%"* ]]; then
-        echo "Get precinct with id like '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c '\x' -c "select * from view_precinct where name like '${parameter}';"
-    else
-        echo "Get precinct with id equal to '${parameter}'"
-        psql -d postgres -w -c '\pset pager off' -c '\x' -c "select * from view_precinct where name = '${parameter}';"
-    fi
-}
-
 function set_precinct_target {
     local precinct_id=$1
     local target=$2
@@ -266,7 +404,7 @@ if [ "$1" == "--help" ]; then
     exit
 fi
 
-if [[ ! "${1}" == @($CMD_ADD_LEADER|$CMD_GET_LEADER_ID|$CMD_GET_LEADER_NAME|$CMD_GET_LEADER_CONTACT|$CMD_SET_LEADER_NAME|$CMD_SET_LEADER_CONTACT|$CMD_GET_LEADER_ASSIGNMENT|$CMD_SET_LEADER_ASSIGNMENT|$CMD_GET_PRECINCT_ID|$CMD_GET_PRECINCT_NAME|$CMD_ADD_PRECINCT_CURRENT|$CMD_SET_PRECINCT_CURRENT|$CMD_SET_PRECINCT_TARGET) ]]; then
+if [[ ! "${1}" == @($CMD_LIST_MUNICIPALITY|$CMD_GET_PRECINCT_INFO|$CMD_GET_LEADER_INFO|$CMD_GET_LEADER_ASSIGNMENT|$CMD_ADD_LEADER|$CMD_SET_LEADER_NAME|$CMD_SET_LEADER_CONTACT|$CMD_SET_LEADER_ASSIGNMENT|$CMD_ADD_PRECINCT_CURRENT|$CMD_SET_PRECINCT_CURRENT|$CMD_SET_PRECINCT_TARGET) ]]; then
     echo_err "Unknown command ${1}."
     echo ""
     echo "Available commands:"
@@ -282,16 +420,16 @@ arg_command="${1}"
 shift 1
 
 case "${arg_command}" in
+    $CMD_LIST_MUNICIPALITY)      list_municipality ;;
+    $CMD_GET_PRECINCT_INFO)      get_precinct_info $@ ;;
+    $CMD_GET_LEADER_INFO)        get_leader_info "$@" ;;
+    $CMD_GET_LEADER_ASSIGNMENT)  get_leader_assignment $@ ;;
+
     $CMD_ADD_LEADER)             add_leader "$@" ;;
-    $CMD_GET_LEADER_ID)          get_leader_id "$@" ;;
-    $CMD_GET_LEADER_NAME)        get_leader_name "$@" ;;
-    $CMD_GET_LEADER_CONTACT)     get_leader_contact "$@" ;;
     $CMD_SET_LEADER_NAME)        set_leader_name "$@" ;;
     $CMD_SET_LEADER_CONTACT)     set_leader_contact "$@" ;;
-    $CMD_GET_LEADER_ASSIGNMENT)  get_leader_assignment $@ ;;
+
     $CMD_SET_LEADER_ASSIGNMENT)  set_leader_assignment $@ ;;
-    $CMD_GET_PRECINCT_ID)        get_precinct_id $@ ;;
-    $CMD_GET_PRECINCT_NAME)      get_precinct_name $@ ;;
     $CMD_ADD_PRECINCT_CURRENT)   add_precinct_current $@ ;;
     $CMD_SET_PRECINCT_CURRENT)   set_precinct_current $@ ;;
     $CMD_SET_PRECINCT_TARGET)    set_precinct_target $@ ;;
