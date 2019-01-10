@@ -17,7 +17,7 @@ echo "Output: $output_file"
 
 ./build.sh                              \
     -i $input_file                      \
-    -t template_doc_a4_20180324.tex     \
+    -t template_doc_a4_20190110.tex     \
     -o $output_file                     \
     $*
 
