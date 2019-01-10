@@ -84,19 +84,19 @@ The following hierarchy shows the project directory structure:
 
 # Database
 
-Pre-Election Poll Monitoring System imports pre-election data files like geographical subdivisions, voting jurisdictions, number of registered voters and campaign leaders.
+Pre-Election Poll Monitoring System imports source data files like geographical subdivisions, voting jurisdictions, number of registered voters and campaign leaders.
 
 
 
-## Pre-Election Data
+## Source Data
 
-The database is created and initially populated with the pre-election data supplied during system setup and performed once at the start of the system operation.
+The database is created and initially populated with the source data supplied during system setup and performed once at the start of the system operation.
 
 
 
 ### Structure
 
-The pre-election data files are comma-separated value (CSV) files with a header line.
+The source data files are comma-separated value (CSV) files with a header line.
 The following table shows the structure of the CSV file as expected by the system.
 
 | Column No. | Column Name       | Data Type | Length |
@@ -119,18 +119,317 @@ Municipal code is assumed as numbers. Voters and Target column data cannot conta
 
 ### Importing Data
 
-The pre-election data files is expected to be read from the `<project>/_data/to_import/` directory and imported into PostgreSQL database using the `import.sh` driver script. It is assumed that there will be three (3) files in the import directory; each file corresponds to a district. The filenames of the files are assumed to be in the format `district_x.csv`, where x is a number between 1 and 3 inclusive. The files are expected to be in UTF-8 encoding to accomodate special characters like the Spanish "enye", Ñ (lower case ñ).
+The source data files is expected to be read from the `<project>/_data/to_import/` directory and imported into PostgreSQL database using the `import.sh` driver script. It is assumed that there will be three (3) files in the import directory; each file corresponds to a district. The filenames of the files are assumed to be in the format `district_x.csv`, where x is a number between 1 and 3 inclusive. The files are expected to be in UTF-8 encoding to accomodate special characters like the Spanish "enye", Ñ (lower case ñ).
 
-To import the pre-election data files into the database, a shell script is executed in the scripts directory, `<project>/_scripts`.
+To import the source data files into the database, a shell script is executed in the scripts directory, `<project>/_scripts`.
 
 ~~~
 $ ./import.sh --prepare
 ~~~
 
-* The `import.sh` bash shell script driver file is used to prepare the CSV files, create the database objects, import the CSV files, create the source markdown files and other operations.
+The `import.sh` bash shell script driver file is used to prepare the CSV files, create the database objects, import the CSV files, create the source markdown files and other operations. The file `import.sh` uses the SQL script file `create_databse.sql` which creates the database objects.
 
-* The `create_databse.sql` SQL script file is used by `import.sh` to create the actual database objects.
 
+
+## Data Management
+
+The bash shell script, `dm.sh` in the scripts directory, `<project>/_scripts`, handles database query, insert and update operations.
+
+Query operations:
+
+1. List all municipalities
+2. Get precinct information
+3. Get leader information
+4. Get leader-precinct assignment
+
+Insert and update operations:
+
+1. Add new leader information
+2. Set leader name
+3. Set leader contact
+4. Set leader-precinct assignment
+5. Add to precinct current count
+6. Set precinct current count
+7. Set precinct target
+
+
+
+### Parameter Wildcard
+
+Certain query operations could display multiple rows of data depending on the value of the supplied parameters.
+Parameters containing the wildcard character, percent (`%`), means any number of characters.
+The wildcard could be a used as a prefix or a suffix or both.
+
+Used as a prefix, `%abc` means any text ending with `abc`.
+The following table shows which texts satisfies the criteria `%abc`.
+
+| Text     | Found? |
+|----------|:------:|
+| abc      | Yes    |
+| abcde    | No     |
+| 123abc   | Yes    |
+| 123abcde | No     |
+
+Used as a suffix, `abc%` means any text starting with `abc`.
+The following table shows which texts satisfies the criteria `abc%`:
+
+| Text     | Found? |
+|----------|:------:|
+| abc      | Yes    |
+| abcde    | Yes    |
+| 123abc   | No     |
+| 123abcde | No     |
+
+Used as a prefix and a suffix, `%abc%` means any text containing the text `abc`.
+The following table shows which texts satisfies the criteria `%abc%`:
+
+| Text     | Found? |
+|----------|:------:|
+| abc      | Yes    |
+| abcde    | Yes    |
+| 123abc   | Yes    |
+| 123abcde | Yes    |
+
+Parameters containing the wildcard character, underscore (`_`), means any one character.
+The wildcard could be a used as a prefix or a suffix or both.
+
+Used as a prefix, `abc_` means any text starting with `abc` with at least one character after it.
+The following table shows which texts satisfies the criteria `abc_`:
+
+| Text     | Found? |
+|----------|:------:|
+| abc      | No     |
+| abcde    | No     |
+| 123abc   | No     |
+| 123abcde | No     |
+
+The following table shows which texts satisfies the criteria `abc__`:
+
+| Text     | Found? |
+|----------|:------:|
+| abc      | No     |
+| abcde    | Yes    |
+| 123abc   | No     |
+| 123abcde | No     |
+
+Note that the result above is the same if the criteria `abc_%` is used.
+
+The following table shows which texts satisfies the criteria `___abc`:
+
+| Text     | Found? |
+|----------|:------:|
+| abc      | No     |
+| abcde    | No     |
+| 123abc   | Yes    |
+| 123abcde | No     |
+
+Note that the result above is the same if the criteria `%_abc` is used.
+
+
+
+### List all municipalities
+
+List all municipalities in alphabetical order.
+
+~~~
+$ ./dm.sh list-municipality
+Municipality list
+ id | municipality
+----+--------------
+  1 | ALAMADA
+  2 | ALEOSAN
+  7 | ANTIPAS
+  8 | ARAKAN
+ 13 | BANISILAN
+ 14 | CARMEN
+ 15 | KABACAN
+  9 | KIDAPAWAN
+  3 | LIBUNGAN
+ 10 | MAGPET
+ 11 | MAKILALA
+ 16 | MATALAM
+  4 | MIDSAYAP
+ 17 | MLANG
+  5 | PIGKAWAYAN
+  6 | PIKIT
+ 12 | PRES. ROXAS
+ 18 | TULUNAN
+(18 rows)
+~~~
+
+
+
+### Get Precinct Information
+
+Display precinct information.
+The operation accepts either a precinct identifier or a precinct name.
+
+Display precinct information whose precinct identifier is 100.
+
+~~~
+$ ./dm.sh get-precinct-info id 100
+-[ RECORD 1 ]------+--------------------
+district_id        | 1
+district           | 1ST DISTRICT
+municipality_id    | 1
+municipality       | ALAMADA
+barangay_id        | 231
+barangay           | KITACUBONG
+precinct_id        | 100
+precinct           | 0010A
+leader_id          | 12
+leader             | ABRIQUE,NOEL   IBOT
+contact            | 9166006445
+current_count_sum  | 41
+target_count_sum   | 138
+current_percentage | 30
+total_voters_sum   | 197
+target_percentage  | 70
+~~~
+
+Display precinct information whose precinct name is 0010A.
+
+~~~
+$ ./dm.sh get-precinct-info name 0010A
+-[ RECORD 1 ]------+------------------------------
+district_id        | 1
+district           | 1ST DISTRICT
+municipality_id    | 1
+municipality       | ALAMADA
+barangay_id        | 231
+barangay           | KITACUBONG
+precinct_id        | 100
+precinct           | 0010A
+leader_id          | 12
+leader             | ABRIQUE,NOEL   IBOT
+contact            | 9166006445
+current_count_sum  | 41
+target_count_sum   | 138
+current_percentage | 30
+total_voters_sum   | 197
+target_percentage  | 70
+-[ RECORD 2 ]------+------------------------------
+district_id        | 1
+district           | 1ST DISTRICT
+municipality_id    | 2
+municipality       | ALEOSAN
+barangay_id        | 473
+barangay           | SAN MATEO
+precinct_id        | 297
+precinct           | 0010A
+leader_id          | 209
+leader             | BELANDA,ROSE   GUMAY
+contact            | 9166006445
+current_count_sum  | 55
+target_count_sum   | 107
+current_percentage | 51
+total_voters_sum   | 153
+target_percentage  | 70
+...
+~~~
+
+
+
+### Get Leader Information
+
+Display leader information.
+
+Display leader information whose leader identifier is 100.
+
+~~~
+$ ./dm.sh get-leader-info id 100
+Get leader information with 'id' equal to '100'.
+ id  |          name          |  contact
+-----+------------------------+------------
+ 100 | ANTONIO,ROWENA   DIOMA | 9166006445
+(1 row)
+~~~
+
+Display leader information whose leader identifier ends with `10`.
+
+~~~
+$ ./dm.sh get-leader-info id '%10'
+Get leader information with 'id' like '%10'.
+ id  |             name             |  contact
+-----+------------------------------+------------
+  10 | ABOLO,DELIO   OBEJERO        | 9166006445
+ 110 | ARELLANO,JUDITH   MANALASTAS | 9166006445
+ 210 | BELMONTE                     | 9166006445
+ 310 | CLAVERIA,DEMETRIO  PACLIBAR  | 9166006445
+ 410 | FAJARDO,SALCHIL   ENCABO     | 9166006445
+ 510 | GUMAY,DIONY   BENATO         | 9166006445
+ 610 | LUMAGA,SHEILA   MAE  CASTOR  | 9166006445
+(7 rows)
+~~~
+
+Display leader information whose leader identifier starts with `11`.
+
+~~~
+$ ./dm.sh get-leader-info id '11%'
+Get leader information with 'id' like '11%'.
+ id  |             name             |  contact
+-----+------------------------------+------------
+  11 | ABOLO,MARITES   MONTAÑO      | 9166006445
+ 110 | ARELLANO,JUDITH   MANALASTAS | 9166006445
+ 111 | ARILLA,DANILO   SELLE        | 9166006445
+ 112 | ARNAIZ,MARIBEL   ANGAL       | 9166006445
+ 113 | ARNAIZ,MELBOY   MERMAL       | 9166006445
+ 114 | ARVADO,RENE   LANGOTE        | 9166006445
+ 115 | ARVADO,RODY   LANGOTE        | 9166006445
+ 116 | ARVADO,ROMY   LANGOTE        | 9166006445
+ 117 | ATILLO,DIVINA   PILASOR      | 9166006445
+ 118 | AVENIO,TERESITA   ESCODO     | 9166006445
+ 119 | AVENUE,JOVIE   VITUDIO       | 9166006445
+(11 rows)
+~~~
+
+Display leader information whose leader identifier starts with `11` and have at least one succeeding character.
+
+~~~
+$ ./dm.sh get-leader-info id '11%'
+Get leader information with 'id' like '11_'.
+ id  |             name             |  contact
+-----+------------------------------+------------
+ 110 | ARELLANO,JUDITH   MANALASTAS | 9166006445
+ 111 | ARILLA,DANILO   SELLE        | 9166006445
+ 112 | ARNAIZ,MARIBEL   ANGAL       | 9166006445
+ 113 | ARNAIZ,MELBOY   MERMAL       | 9166006445
+ 114 | ARVADO,RENE   LANGOTE        | 9166006445
+ 115 | ARVADO,RODY   LANGOTE        | 9166006445
+ 116 | ARVADO,ROMY   LANGOTE        | 9166006445
+ 117 | ATILLO,DIVINA   PILASOR      | 9166006445
+ 118 | AVENIO,TERESITA   ESCODO     | 9166006445
+ 119 | AVENUE,JOVIE   VITUDIO       | 9166006445
+(10 rows)
+~~~
+
+
+
+### Get Leader-Precinct Assignment
+
+Display the precincts assigned to the specified leader.
+
+~~~
+$ ./dm.sh get-leader-assignment id 100
+Get leader assignment with leader 'id' equal to '100'.
+-[ RECORD 1 ]-------------------
+id      | 100
+name    | ANTONIO,ROWENA   DIOMA
+contact | 9166006445
+
+   district   | municipality_id | municipality |  barangay  | precinct_id | precinct
+--------------+-----------------+--------------+------------+-------------+----------
+ 1ST DISTRICT |               1 | ALAMADA      | GUILING    |          80 | 0066A
+ 1ST DISTRICT |               4 | MIDSAYAP     | MACASENDEG |         791 | 0185A
+ 1ST DISTRICT |               6 | PIKIT        | PANICUPAN  |        1511 | 0172A
+ 2ND DISTRICT |               7 | ANTIPAS      | MALATAB    |        1667 | 0051B
+ 2ND DISTRICT |               9 | KIDAPAWAN    | SINGAO     |        2402 | 0287A
+ 2ND DISTRICT |              12 | PRES. ROXAS  | MABUHAY    |        3076 | 0078A
+ 3RD DISTRICT |              13 | BANISILAN    | PANTAR     |        3247 | 0059B
+ 3RD DISTRICT |              16 | MATALAM      | KILADA     |        3940 | 0071C
+ 3RD DISTRICT |              18 | TULUNAN      | NEW CULASI |        4641 | 0106A
+(9 rows)
+~~~
 
 
 ## Exporting Data as JSON Files
@@ -156,58 +455,8 @@ The following SQL script files are used by `create_json_all.sh` to generate the 
 * create_json_totals.sql
 
 
+## Updating HTML Pages
 
-## Data Management
-
-There is a bash shell script for data management, `dm.sh` which handles the following operations:
-
-1. Add leader
-2. Set leader name
-3. Set leader contact
-4. Get leader assignment
-5. Set leader assignment
-6. Get precinct information
-7. Set precinct target value
-8. Add precinct current value
-9. Set precinct current value
-
-The script file is under the scripts directory, `<project>/_scripts`.
-
-### Add Leader
-
-Add new leader information.
-
-### Set Leader Name
-
-Update an existing leader's name.
-
-### Set Leader Contact
-
-Update and existing leader's contact number.
-
-### Get Leader Assignment
-
-Show leader precinct assignments.
-
-### Set Leader Assignment
-
-Update leader precinct assignments.
-
-### Get Precinct Information
-
-Show precinct information.
-
-### Set Precinct Target Value
-
-Update precinct target value.
-
-### Add Precinct Current Value
-
-Add to precinct current value.
-
-### Set Precinct Current Value
-
-Update precinct current value.
 
 
 
