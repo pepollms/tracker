@@ -70,12 +70,22 @@ function echo_err {
 
 
 
+function check_if_server_is_ready {
+    if ! /usr/bin/pg_isready &>/dev/null; then
+        echo "PostgreSQL service is not running."
+        echo "Aborting operation."
+        exit 1
+    fi
+}
+
 function list_municipality {
+    check_if_server_is_ready
     echo "Municipality list"
     psql -d postgres -w -q -c '\pset pager off' -c "select municipality_id as id, municipality from view_municipality order by municipality;"
 }
 
 function get_precinct_info {
+    check_if_server_is_ready
     if [ $# -eq 0 ]; then
         echo "Missing arguments to $CMD_GET_PRECINCT_INFO operation."
         echo "Syntax: $CMD_GET_PRECINCT_INFO [id <\"id\">] [name <\"name\">]"
@@ -116,6 +126,7 @@ function get_precinct_info {
 }
 
 function get_leader_info {
+    check_if_server_is_ready
     if [ $# -eq 0 ]; then
         echo "Missing arguments to $CMD_GET_LEADER_INFO operation."
         echo "Syntax: $CMD_GET_LEADER_INFO [id <\"id\">] [name <\"name\">] [contact <\"contact\">]"
@@ -162,6 +173,7 @@ function get_leader_info {
 }
 
 function get_leader_assignment {
+    check_if_server_is_ready
     if [ $# -eq 0 ]; then
         echo "Missing arguments to $CMD_GET_LEADER_ASSIGNMENT operation."
         echo "Syntax: $CMD_GET_LEADER_ASSIGNMENT [id <\"id\">] [name <\"name\">]"
@@ -231,6 +243,7 @@ function get_leader_assignment {
 }
 
 function add_leader {
+    check_if_server_is_ready
     if [ $# -eq 0 ]; then
         echo "Missing arguments to $CMD_ADD_LEADER operation."
         echo "Syntax: $CMD_ADD_LEADER <\"name\"> <\"contact\">"
@@ -281,6 +294,7 @@ function add_leader {
 }
 
 function set_leader_name {
+    check_if_server_is_ready
     local leader_id=$1
     local name="$2"
     local old_value=`psql -d postgres -w --tuples-only --no-align -c "select get_leader_name(${leader_id});"`
@@ -302,6 +316,7 @@ function set_leader_name {
 }
 
 function set_leader_contact {
+    check_if_server_is_ready
     local leader_id=$1
     local contact="$2"
     local old_value=`psql -d postgres -w --tuples-only --no-align -c "select get_leader_contact(${leader_id});"`
@@ -323,6 +338,7 @@ function set_leader_contact {
 }
 
 function set_leader_assignment {
+    check_if_server_is_ready
     local leader_id=$1
     local precinct_id=$2
     local result=`psql -d postgres -w --tuples-only --no-align -c "select set_leader_assignment(${leader_id}, ${precinct_id});"`
@@ -342,7 +358,7 @@ function set_leader_assignment {
 }
 
 function add_precinct_current {
-    #echo_err "Function add_precinct_count not implemented yet."
+    check_if_server_is_ready
     local precinct_id=$1
     local count=$2
     if [ $count -eq 0 ]; then
@@ -363,6 +379,7 @@ function add_precinct_current {
 }
 
 function set_precinct_current {
+    check_if_server_is_ready
     local precinct_id=$1
     local count=$2
     local old_value=`psql -d postgres -w --tuples-only --no-align -c "select get_precinct_current(${precinct_id});"`
@@ -378,6 +395,7 @@ function set_precinct_current {
 }
 
 function set_precinct_target {
+    check_if_server_is_ready
     local precinct_id=$1
     local target=$2
     local old_value=`psql -d postgres -w --tuples-only --no-align -c "select get_precinct_target(${precinct_id});"`
