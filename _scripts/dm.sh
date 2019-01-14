@@ -215,7 +215,7 @@ function get_leader_assignment {
             return -1
         fi
         psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select id, name, contact from vt_leader where id = ${parameter};"
-        psql -d postgres -w -q -c '\pset pager off' -c "select district, municipality_id, municipality, barangay, precinct_id, precinct from view_precinct where leader_id = ${parameter} order by district, municipality, barangay, precinct;"
+        psql -d postgres -w -q -c '\pset pager off' -c "select district, municipality_id as mun_id, municipality, barangay, precinct_id as prec_id, precinct from view_precinct where leader_id = ${parameter} order by district, municipality, barangay, precinct;"
     elif [ $column == "name" ]; then
         local result=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader where name = '${parameter}';"`
         if [[ "$result" == "0" ]]; then
@@ -223,7 +223,7 @@ function get_leader_assignment {
             return -1
         fi
         psql -d postgres -w -q -c '\pset pager off' -c '\x' -c "select id, name, contact from vt_leader where name = '${parameter}';"
-        psql -d postgres -w -q -c '\pset pager off' -c "select district, municipality_id, municipality, barangay, precinct_id, precinct from view_precinct where leader = '${parameter}' order by district, municipality, barangay, precinct;"
+        psql -d postgres -w -q -c '\pset pager off' -c "select district, municipality_id as mun_id, municipality, barangay, precinct_id as prec_id, precinct from view_precinct where leader = '${parameter}' order by district, municipality, barangay, precinct;"
     else
         echo "Unknown column '$column' argument."
         echo "Syntax: $CMD_GET_LEADER_ASSIGNMENT [id <\"id\">] [name <\"name\">]"
