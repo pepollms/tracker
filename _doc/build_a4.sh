@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ $# -eq 0 ]; then
-    echo "Pass the input document."
+    echo "Input file argument missing."
     exit
 fi
 
@@ -9,15 +9,11 @@ input_file=$(basename "$1")
 shift 1
 input_extension="${input_file##*.}"
 input_filename="${input_file%.*}"
-output_file=${input_filename}.pdf
+output_file=${input_filename}-a4.pdf
 
-echo "Running document build script..."
-echo "Input: $input_file"
-echo "Output: $output_file"
-
-./build_doc_a4_as_pdf.sh                              \
+./build_main.sh                         \
     -i $input_file                      \
-    -t template_doc_a4_20190110.tex     \
+    -t template_doc_a4.tex              \
     -o $output_file                     \
     $*
 

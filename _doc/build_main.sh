@@ -79,7 +79,7 @@ fi
 
 pandoc  ${input_file}                   \
         --template=${template_file}     \
-        -f markdown+raw_tex+fenced_code_blocks+footnotes   \
+        -f markdown+raw_tex+fenced_code_blocks+footnotes+implicit_figures   \
         -t latex                        \
         -o ${output_file}               \
         `#--pdf-engine=pdflatex`        \
