@@ -43,9 +43,9 @@ The Pre-Election Poll Monitoring System keeps track of the number of voters who 
 The target software system shall use a GNU/Linux platform.
 All supporting software tools shall use open source software only.
 
-The system shall use the following:
+The system uses the following:
 
-* GitHub - for static web page hosting for testing and possibly for production.
+* GitHub - web site for hosting the static web pages for testing and possibly for production.
 * PostgreSQL - relational database to hold all system data.
 * Jekyll - static site generator for creating HTML pages.
 
@@ -80,6 +80,9 @@ The following hierarchy shows the project directory structure:
     +-- index.md
 ~~~
 
+The project files are kept in a Git version control repository.
+The Git repository is hosted on GitHub ([https://github.com/](https://github.com/)).
+
 
 
 # Database
@@ -97,20 +100,20 @@ The database is created and initially populated with the source data supplied du
 ### Structure
 
 The source data files are comma-separated value (CSV) files with a header line.
-The following table shows the structure of the CSV file as expected by the system.
+The following table shows the structure of the CSV file that is read by the system.
 
 | Column No. | Column Name       | Data Type | Length |
 |:----------:+-------------------+-----------+--------|
 |      1     | province          | text      |   50   |
-|      1     | district          | text      |   50   |
-|      1     | municipality      | text      |   50   |
-|      1     | municipality code | text      |   10   |
-|      1     | barangay          | text      |   50   |
-|      1     | precinct          | text      |   10   |
-|      1     | voters            | numeric   |        |
-|      1     | leader            | text      |  100   |
-|      1     | contact           | text      |   50   |
-|      1     | target            | numeric   |        |
+|      2     | district          | text      |   50   |
+|      3     | municipality      | text      |   50   |
+|      4     | municipality code | text      |   10   |
+|      5     | barangay          | text      |   50   |
+|      6     | precinct          | text      |   10   |
+|      7     | voters            | numeric   |        |
+|      8     | leader            | text      |  100   |
+|      9     | contact           | text      |   50   |
+|     10     | target            | numeric   |        |
 
 The data in the district column is assumed to be formatted as abbreviations of ordinal numbers.
 Municipal code is assumed as numbers. Voters and Target column data cannot contain negative values.
@@ -128,6 +131,26 @@ $ ./import.sh --prepare
 ~~~
 
 The `import.sh` bash shell script driver file is used to prepare the CSV files, create the database objects, import the CSV files, create the source markdown files and other operations. The file `import.sh` uses the SQL script file `create_databse.sql` which creates the database objects.
+
+
+
+## Database Design
+
+The following diagrams show the database conceptual design.
+The conceptual design is primarily influenced by the structure of the source data.
+
+The following diagram shows the structure and relationships of the geographical subdivisions and voting jurisdictions.
+Note that the PSGC is not used here.
+
+![Geographical subdivisions][image_geo]
+
+\clearpage
+The following diagram shows how the poll monitoring information has been structured.
+
+![Operations][image_operations]
+
+[image_geo]: ./geo.svg
+[image_operations]: ./operations.svg
 
 
 
@@ -417,17 +440,18 @@ id      | 100
 name    | ANTONIO,ROWENA   DIOMA
 contact | 9166006445
 
-   district   | municipality_id | municipality |  barangay  | precinct_id | precinct
---------------+-----------------+--------------+------------+-------------+----------
- 1ST DISTRICT |               1 | ALAMADA      | GUILING    |          80 | 0066A
- 1ST DISTRICT |               4 | MIDSAYAP     | MACASENDEG |         791 | 0185A
- 1ST DISTRICT |               6 | PIKIT        | PANICUPAN  |        1511 | 0172A
- 2ND DISTRICT |               7 | ANTIPAS      | MALATAB    |        1667 | 0051B
- 2ND DISTRICT |               9 | KIDAPAWAN    | SINGAO     |        2402 | 0287A
- 2ND DISTRICT |              12 | PRES. ROXAS  | MABUHAY    |        3076 | 0078A
- 3RD DISTRICT |              13 | BANISILAN    | PANTAR     |        3247 | 0059B
- 3RD DISTRICT |              16 | MATALAM      | KILADA     |        3940 | 0071C
- 3RD DISTRICT |              18 | TULUNAN      | NEW CULASI |        4641 | 0106A
+   district   | mun_id | municipality |  barangay  | prec_id | precinct
+--------------+--------+--------------+------------+---------+----------
+ 1ST DISTRICT |      1 | ALAMADA      | GUILING    |      80 | 0066A
+ 1ST DISTRICT |      4 | MIDSAYAP     | MACASENDEG |     791 | 0185A
+ 1ST DISTRICT |      6 | PIKIT        | PANICUPAN  |    1511 | 0172A
+ 2ND DISTRICT |      7 | ANTIPAS      | MALATAB    |    1667 | 0051B
+ 2ND DISTRICT |      9 | KIDAPAWAN    | SINGAO     |    2402 | 0287A
+ 2ND DISTRICT |     12 | PRES. ROXAS  | MABUHAY    |    3076 | 0078A
+ 3RD DISTRICT |     13 | BANISILAN    | PANTAR     |    3247 | 0059B
+ 3RD DISTRICT |     16 | MATALAM      | KILADA     |    3940 | 0071C
+ 3RD DISTRICT |     18 | TULUNAN      | NEW CULASI |    4641 | 0106A
+
 (9 rows)
 ~~~
 
@@ -466,12 +490,42 @@ The following sections describe how how to setup and configure the softwares use
 
 
 
-## GitHub Account
+## Project Repository
 
-The system shall use a GitHub account to host the static web pages.
-Currently, we are using `https://github.com/rmaicle/vtracker` to host the static web pages.
+The system uses the Git version control[^git_version_control].
+The system uses a GitHub account to host the project repository and to host the static web pages.
+Currently, the link `https://github.com/rmaicle/vtracker` is used to host the static web pages.
 
 For production, a new account must be used.
+
+For reference, there is an online documentation available at [https://git-scm.com/docs](https://git-scm.com/docs) and a downloadable electronic book in `pdf`, `epub` and `mobi` formats at [https://git-scm.com/book/en/v2](https://git-scm.com/book/en/v2).
+
+[^git_version_control]: https://en.wikipedia.org/wiki/Git
+
+### Install `git`
+
+Note that the machine must be online to access the operating system remote repositories.
+
+~~~
+$ sudo pacman -S git
+~~~
+
+### Clone the Git repository
+
+A copy of the project repository is needed in the local filesystem.
+Get a copy of of the project files from the GitHub site.
+The following command will create a subdirectory named `vtracker` from the current directory.
+
+~~~
+$ git clone https://github.com/rmaicle/vtracker
+~~~
+
+If a different subdirectory name is preferred or necessary, then issue the command and adding a name for the preferred output subdirectory.
+The following command will create a subdirectory named `preferred_dir`.
+
+~~~
+$ git clone https://github.com/rmaicle/vtracker preferred_dir
+~~~
 
 
 
@@ -491,7 +545,7 @@ $ sudo pacman -S postgresql
 
 
 
-### Switch to User &nbsp;`postgres`
+#### Switch to User &nbsp;`postgres`
 
 Become `root` then as `postgres`[^archlinux162075].
 
@@ -504,7 +558,9 @@ The last command will change the current working directory to `/var/lib/postgres
 
 [^archlinux162075]: [https://bbs.archlinux.org/viewtopic.php?id=162075](https://bbs.archlinux.org/viewtopic.php?id=162075)
 
-### Database Initialization
+
+
+#### Database Initialization
 
 The following command initializes the database storage area on disk; also called _database cluster_ in PostgreSQL and _catalog cluster_ in the SQL standard[^postgres_945_17_2].
 
@@ -517,24 +573,26 @@ The command must be executed while logged as PostgrSQL user account.
 
 [^postgres_945_17_2]: PostgreSQL 9.4.5 §17.2 [http://www.postgresql.org/docs/9.4/interactive/creating-cluster.html](http://www.postgresql.org/docs/9.4/interactive/creating-cluster.html)
 
-### Starting the Database Server
 
-The database server may be started using `systemctl`.
-It runs the database server in the background so there is no need to keep an open console as when using the `postgres` command.
+
+### Starting and Stopping the Database Server
+
+The database server may be started using the GNU/Linux `systemctl`.
+The program `systemctl` controls the systemd system and service manager.
+
+The following command runs (starts) the PostgreSQL database server in the background:
 
 ~~~
 $ systemctl start postgresql
 ~~~
 
-
-
-### Stopping the Database Server
-
-The corresponding command to stop a running database server is:
+And the corresponding command stops a running database server:
 
 ~~~
 $ systemctl stop postgresql
 ~~~
+
+Note that the command requires a privilege to execute and will prompt for the password of the current user.
 
 
 
@@ -560,40 +618,28 @@ $ pg_isready
 
 ### PostgreSQL Version
 
-There are a number of ways to check the PostgreSQL version information; through the commandline and inside the PostgreSQL client application.
+There are a number of ways to check the PostgreSQL version.
 
+1. Using the PostgreSQL interactive terminal program.
 
+    ~~~
+    $ psql --version
+    psql (PostgreSQL) 11.1
+    ~~~
 
-#### Server version
+2. Using the PostgreSQL configuration utility program.
 
-~~~
-$ pg_config --version
-PostgreSQL 9.5.1
-$ postgres -V
-postgres (PostgreSQL) 9.5.1
-~~~
+    ~~~
+    $ pg_config --version
+    PostgreSQL 11.1
+    ~~~
 
+3. Using the PostgreSQL server application.
 
-
-#### Client version
-
-~~~
-$ psql --version
-psql (PostgreSQL) 9.5.1
-~~~
-
-
-
-#### `psql` Interface
-
-One can also query the database version from the PostgreSQL commandline client application.
-The database server must be running and one must be connected to it.
-
-~~~
-$ psql -d postgres -U postgres -h localhost
-psql (9.5.1)
-Type "help" for help.
-~~~
+    ~~~
+    $ postgres -V
+    postgres (PostgreSQL) 11.1
+    ~~~
 
 
 
