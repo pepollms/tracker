@@ -172,17 +172,32 @@ $if(listings)$
         fancyvrb=true,
         aboveskip=-0.5em,
         belowskip=1em,
-        frame=none,
         %basicstyle=\small,
         basicstyle=\normalsize\ttfamily,
         fontadjust=true,
         %columns=fixed,              % compress character spaces
-        basewidth={0.5em, 0.5em},    %   by this much
+        %basewidth={0.5em, 0.5em},   %   by this much
         breakatwhitespace=true,
         columns=fullflexible,
         keepspaces=true,
         keywordstyle=\color{NavyBlue},
-        linewidth=\textwidth,
+        linewidth=\textwidth
+    }
+    % Frame and background
+    \lstset{
+        xleftmargin=7pt,            % move listing display to the right
+        frame=single,
+        frameround=tttt,
+        framesep=2.5pt,
+        framerule=0.1pt,
+        framextopmargin=3pt,
+        framexbottommargin=2pt,
+        framexleftmargin=5pt,
+        framexrightmargin=5pt,
+        rulecolor=\color{LightGray},
+        rulesepcolor=\color{GhostWhite},
+        %fillcolor=\color{GhostWhite},
+        backgroundcolor=\color{GhostWhite},
     }
     \newcommand{\passthrough}[1]{#1}
 $else$
