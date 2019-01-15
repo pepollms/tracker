@@ -169,14 +169,15 @@ $if(listings)$
         fancyvrb=true,
         aboveskip=-0.5em,
         belowskip=1em,
-        %basicstyle=\small,
-        basicstyle=\normalsize\ttfamily,
+        basicstyle=\small\ttfamily,
+        %basicstyle=\normalsize\ttfamily,
         fontadjust=true,
         %columns=fixed,              % compress character spaces
         %basewidth={0.5em, 0.5em},   %   by this much
         breakatwhitespace=true,
         columns=fullflexible,
         keepspaces=true,
+        showstringspaces=false,
         keywordstyle=\color{NavyBlue},
         linewidth=\textwidth
     }
@@ -219,7 +220,9 @@ $else$
         xrightmargin=0mm,
         numbersep=8pt,
         fontsize=\small,
-        baselinestretch=1.0}
+        baselinestretch=1.0,
+        showstringspaces=false,
+    }
         % Disable: not for production use
         %frame=single,
         %rulecolor=\color{LightGray},
