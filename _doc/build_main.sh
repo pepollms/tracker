@@ -53,6 +53,12 @@ while getopts :hi:t:o: OPTION; do
 done
 shift $(($OPTIND - 1))
 
+input_file=$(basename "$input_file")
+shift 1
+input_extension="${input_file##*.}"
+input_filename="${input_file%.*}"
+#output_file=${input_filename}-a4.pdf
+
 echo "Build arguments:"
 echo "  Input:    $input_file"
 echo "  Template: $template_file"
@@ -77,7 +83,9 @@ fi
 
 # Use --pdf-engine=xelatex when markdown file contains Ñ character.
 
-pandoc  ${input_file}                   \
+pp ${input_file} > "${input_filename}_pp.md"
+pandoc                                  \
+        ${input_filename}_pp.md         \
         --template=${template_file}     \
         -f markdown+raw_tex+fenced_code_blocks+footnotes+implicit_figures   \
         -t latex                        \
