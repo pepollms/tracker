@@ -270,7 +270,11 @@ if [ ${op_create_db} -eq 1 ]; then
         exit 1
     fi
     echo "Create database objects."
-    psql -d postgres -w -f create_database.sql
+    psql -d postgres -w -f drop_views.sql
+    psql -d postgres -w -f create_utility_functions.sql
+    psql -d postgres -w -f create_tables.sql
+    psql -d postgres -w -f create_views.sql
+    psql -d postgres -w -f create_dm_functions.sql
     echo "Done."
 fi
 
