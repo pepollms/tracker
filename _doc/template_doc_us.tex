@@ -33,7 +33,9 @@
 % To be able to use other TeX fonts, make sure T1 encoding is used.
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-%\usepackage{textcomp} % provides euro and other symbols
+% Provides euro and other symbols
+% https://en.wikibooks.org/wiki/LaTeX/Special_Characters
+\usepackage{textcomp}
 
 % Serif fonts
 % -----------
@@ -169,8 +171,8 @@ $if(listings)$
         fancyvrb=true,
         aboveskip=-0.5em,
         belowskip=1em,
-        basicstyle=\small\ttfamily,
-        %basicstyle=\normalsize\ttfamily,
+        %basicstyle=\small\ttfamily,
+        basicstyle=\normalsize\ttfamily,
         fontadjust=true,
         %columns=fixed,              % compress character spaces
         %basewidth={0.5em, 0.5em},   %   by this much
@@ -210,7 +212,8 @@ $else$
     %
     % Change verbatim environment font
     % 15.3 Verbatim (memoir class documentation)
-    \setverbatimfont{\ttfamily\small}
+    %\setverbatimfont{\ttfamily\small}
+    \setverbatimfont{\ttfamily\normalsize}
     % Because fancyvrb package was loaded automatically and the following environment was
     % defined when there is no --listing argument to pandoc, we "re-define" the environment
     % to change the font size.
@@ -219,7 +222,8 @@ $else$
         xleftmargin=6.7mm,
         xrightmargin=0mm,
         numbersep=8pt,
-        fontsize=\small,
+        %fontsize=\small,
+        fontsize=\normalsize,
         baselinestretch=1.0,
         showstringspaces=false,
     }
@@ -574,7 +578,7 @@ $if(title)$
     %\setlength{\centeroffset}{-0.5\oddsidemargin}
     %\setlength{\centeroffset}{0.60\evensidemargin}
     \thispagestyle{empty}
-    \vspace*{2.25in}
+    \vspace*{2.0in}
     \begin{flushleft}
         {
             {\fontsize{20.28pt}{22pt}\usefont{T1}{ptm}{b}{n}$title$}
@@ -583,34 +587,36 @@ $if(title)$
             $endif$
         }
         \noindent\rule[-1ex]{\textwidth}{1pt}\\[2.8ex]
+
+        {\fontsize{12pt}{22pt}\usefont{T1}{ptm}{m}{n}$version$}\\[0.05in]
+        {\fontsize{12pt}{22pt}\usefont{T1}{ptm}{m}{n}$date$}
+
         $if(client)$
-            {\fontsize{12pt}{14pt}\usefont{T1}{ptm}{m}{n}$version$\\$date$\\}
+            \\[0.05in]
             {\fontsize{14pt}{22pt}\usefont{T1}{ptm}{b}{n}$client$}
-        $else$
-            {\fontsize{12pt}{14pt}\usefont{T1}{ptm}{m}{n}$version$\\$date$}
         $endif$
 
+        % Add a vertical fill so the author(s) is/are pushed down.
+        % https://latex.org/forum/viewtopic.php?t=13428
+        % Push the text down by inserting \vfill or \vspace*{\fill}:
         \vspace*{\fill}
 
         $for(author)$
             $if(author.name)$
-                {\fontsize{14pt}{14pt}\usefont{T1}{ptm}{b}{it}$author.name$\\}
+                {\fontsize{13pt}{15pt}\usefont{T1}{ptm}{b}{n}$author.name$}
                 $if(author.email)$
-                    {\fontsize{12pt}{14pt}\usefont{T1}{ptm}{m}{n}$author.email$\\}
+                    {\\[0.05in]\fontsize{12pt}{14pt}\usefont{T1}{ptm}{m}{n}$author.email$}
                 $endif$
             $endif$
-            \vspace*{1em}
+            \\[0.2in]
         $endfor$
 
+        % Vertical space so the authors do not move to the bottom of the page
+        % when there is no distribution text below.
+        \vspace*{0.5in}
+
         $if(distribution)$
-            % Add a vertical fill so the distribution text is pushed down the
-            % bottom of the page.
-            %
-            % https://latex.org/forum/viewtopic.php?t=13428
-            %
-            % Push the text down by inserting \vfill or \vspace*{\fill}:
-            \vspace*{0.5in}
-            {\fontsize{12pt}{14pt}\usefont{T1}{ptm}{m}{it}Distribution: $distribution$}
+            {\fontsize{12pt}{14pt}\usefont{T1}{ptm}{m}{n}Distribution: $distribution$}
         $endif$
     \end{flushleft}
 $endif$
@@ -652,11 +658,18 @@ $endif$
     $if(copyright)$
         \normalsize $copyright$\\[1.2em]
     $endif$
-    \includegraphics[keepaspectratio=true, width=2.5cm]{cc_by_nc_sa_40.eps}\\[1em]
-    \normalsize License: $license$\\[1em]
-    \normalsize $licensetext$\\[1em]
-    \normalsize PDF is generated using pdfTeX-1.40.18 on \today.\\[1em]
+    \includegraphics[keepaspectratio=true, width=2.5cm]{cc_by_nc_sa_40.eps}\\
+    \normalsize License: $license$\\
+    \normalsize $licensetext$\\
+
+    \ifxetex
+        \normalsize PDF is generated using XeTeX \the\eTeXversion\eTeXrevision-\the\XeTeXversion\XeTeXrevision\space on \today.
+    \else
+        \normalsize PDF is generated using pdfTeX \the\eTeXversion\eTeXrevision-\the\pdftexversion.\pdftexrevision\space on \today.
+    \fi
+
     $if(source)$
+        \\[1em]
         \normalsize $source$
     $endif$
 %}
