@@ -70,8 +70,8 @@ The following diagram shows how the poll monitoring information has been structu
 
 ![Operations][image_operations]
 
-[image_geo]: ./geo.svg
-[image_operations]: ./operations.svg
+[image_geo]: ./erd_geo.svg
+[image_operations]: ./erd_operations.svg
 
 
 
