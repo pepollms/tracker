@@ -8,7 +8,7 @@ author:
     email: rmaicle@gmail.com
   - name: Dan Zambrano
     email: dan.kidtech@gmail.com
-version: Version 0.1.0
+version: Version 0.2.0
 date: January 2019
 distribution: |
     | Private; distribution limited to company use only.
@@ -115,8 +115,16 @@ The following table shows the structure of the CSV file that is read by the syst
 |      9     | contact           | text      |   50   |
 |     10     | target            | numeric   |        |
 
-The data in the district column is assumed to be formatted as abbreviations of ordinal numbers.
-Municipal code is assumed as numbers. Voters and Target column data cannot contain negative values.
+The following are remarks or clarifications about the import table structure above:
+
+1. The data in the `district` column is assumed to contain only abbreviations of ordinal numbers.
+Ordinal number examples are `1st`, `2nd`, `3rd` and so on.
+2. The `municipal code` column is assumed to contain only positive integral numbers.
+3. The `voters` and `target` column is assumed to contain positive integral numbers.
+4. The `voters` column is assumed to contain the number of voters.
+5. The `target` column is assumed to contain a percentage value.
+That means the column expects values from zero to a hundred percent (0-100).
+The column does not expect a percentage (%) symbol.
 
 
 
@@ -134,7 +142,7 @@ The `import.sh` bash shell script driver file is used to prepare the CSV files, 
 
 
 
-## Database Design
+## Database Design <a name="database-design"></a>
 
 The following diagrams show the database conceptual design.
 The conceptual design is primarily influenced by the structure of the source data.
@@ -459,17 +467,17 @@ contact | 9166006445
 
 ## Exporting Data as JSON Files
 
-The system displays the data in web pages as HTML files. To build these HTML files with data, Jekyll reads the JSON files containing the data from the database.
+To build these HTML files, Jekyll reads the JSON files in the data directory `<project>/_data`.
 
-To create all JSON files that will be used by Jekyll in generating the static HTML files, a separate script file has to be executed in the script directory, `<project>/_scripts`. The JSON files will be created in the directory `<project>/_data`.
+To create all JSON files in the data directory, the bash shell script file `create_json.sh` in the script directory `<project>/_scripts` must be executed.
 
 ~~~
-$ ./create_json_all.sh
+$ ./create_json.sh
 ~~~
 
-The following SQL script files are used by `create_json_all.sh` to generate the JSON files:
+The following SQL script files in the `<project>/_scripts/sql/json` directory are used by `create_json.sh` to generate the JSON files:
 
-* create_json_regions.sql
+* create_json_province.sql
 * create_json_districts.sql
 * create_json_municipalities.sql
 * create_json_barangays.sql
@@ -477,7 +485,6 @@ The following SQL script files are used by `create_json_all.sh` to generate the 
 * create_json_municipalities_details.sql
 * create_json_barangays_details.sql
 * create_json_precincts_details.sql
-* create_json_totals.sql
 
 
 
@@ -490,7 +497,7 @@ Also, the static web pages are re-generated every time Jekyll is executed.
 
 # System Setup and Configuration
 
-The following sections describe how how to setup and configure the softwares used by the system.
+This section describes the setup and configuration procedures of the system.
 
 
 
@@ -498,7 +505,9 @@ The following sections describe how how to setup and configure the softwares use
 
 The system uses the Git version control[^git_version_control].
 The system uses a GitHub account to host the project repository and to host the static web pages.
-Currently, the link `https://github.com/rmaicle/vtracker` is used to host the static web pages.
+
+Currently, the project `vtracker` is hosted on GitHub using the user account `rmaicle`.
+It could be accessed via browser at `https://github.com/rmaicle/vtracker`.
 
 For production, a new account must be used.
 
@@ -520,20 +529,105 @@ $ sudo pacman -S git
 
 ### Clone the Git repository
 
-A copy of the project repository is needed in the local filesystem.
-Get a copy of of the project files from the GitHub site.
-The following command will create a subdirectory named `vtracker` from the current directory.
+A clone or a copy of the project repository is needed in the local filesystem.
+A clone is an exact and complete copy of the project files, and all the changes made.
+
+The project files must be cloned from the remote GitHub site, `https://github.com/rmaicle/vtracker`.
+
+The following command will create a clone of the project files from the remote site in a subdirectory named `vtracker`.
+The default behaviour of the `git clone` command is to create the subdirectory based on the name of the project which is `vtracker`.
 
 ~~~
 $ git clone https://github.com/rmaicle/vtracker
 ~~~
 
-If a different subdirectory name is preferred or necessary, then issue the command and adding a name for the preferred output subdirectory.
+If a different subdirectory name is preferred or necessary, then the `git clone` command has an option for that.
+Issue the same command and add the preferred subdirectory name to be created.
+
 The following command will create a subdirectory named `preferred_dir`.
 
 ~~~
 $ git clone https://github.com/rmaicle/vtracker preferred_dir
 ~~~
+
+Note that the project subdirectory will be created on the current working directory.
+Therefore, more than one copy of the project files can be present in the filesystem.
+
+
+
+### Commit Log
+
+Git maintains a log of all changes made to the project files.
+Each change contains a log message about the change, a list of modified or new files, and the actuall `diff`[^diff].
+
+To display log messages, run the command inside the project directory:
+
+~~~
+$ git log
+~~~
+
+A more compact way of displaying log messages is the following command:
+
+~~~
+$ git log --oneline
+~~~
+
+The following command is a more detailed and colorful display of log messages:
+
+~~~
+$ git log \
+    --decorate \
+    --graph \
+    --pretty=format:'%C(green)%h %<(10)%C(cyan)%ad%Creset %s%C(red)%d' \
+    --abbrev-commit \
+    --date=format:'%Y-%m-%d %H:%M:%S' \
+    --max-count=25
+~~~
+
+Note that the date argument `--date=format:'%Y-%m-%d %H:%M:%S'` only works with `git` version 2.6.0 and higher.
+
+The last command can be created as an alias.
+An alias is a short-named command used in place of a, usually long, command.
+
+Edit the `git` configuration file of the current user's home directory.
+This is usually at `/home/<user>/.gitconfig`.
+Add the following:
+
+~~~
+[alias]
+    logm = log \
+        --decorate \
+        --graph \
+        --pretty=format:'%C(green)%h %<(10)%C(cyan)%ad%Creset %s%C(red)%d' \
+        --abbrev-commit \
+        --date=format:'%Y-%m-%d %H:%M:%S' \
+        --max-count=25
+~~~
+
+The short-named command is `logm`.
+Whenever `git logm` is entered at the project directory, it will output something like the following:
+
+~~~
+$ git logt
+* d361663 2019-01-15 11:21:44 Update documentation (HEAD -> gh-pages,
+                              origin/gh-pages)
+* 54d336b 2019-01-15 11:21:10 Split the creation of database objects into
+                              different files
+* 17a7863 2019-01-15 11:19:48 Update data management script
+* 3527aa0 2019-01-15 11:18:32 Reorganize Latex template
+* edc616b 2019-01-15 11:17:36 Use 3rd party pandoc preprocessor for the
+                              documentation
+* 325c919 2019-01-15 00:07:40 Update documentation markdown file
+* 30448ba 2019-01-15 00:06:57 Rename documentation generation scripts and Latex
+                              template files
+* 108dd7d 2019-01-14 08:21:56 Rename documentation build files
+* d00dd61 2019-01-14 08:21:30 Add server checks before executing any SQL
+                              operation
+* fe2d434 2019-01-14 08:20:58 Rename output columns of leader assignment
+~~~
+
+
+[^diff]: Typically, a `diff` is an output showing the changes between two versions of the same file.  The tool used to produce it is also called `diff` The output is also sometimes called or a `patch`, since the output can be applied with the Unix program `patch`.
 
 
 
@@ -549,6 +643,20 @@ send changes to the remote repository.
 
 ~~~
 $ git push
+~~~
+
+
+
+### Getting Project Updates
+
+Any changes in the remote site may be obtained by updating the local copy of the project.
+In the Git version control, this is called a `pull`.
+All changes can be pulled from the remote site and put on the local copy.
+
+The following command "pulls" all changes from the project remote repository and put on the local git repository.
+
+~~~
+$ git pull
 ~~~
 
 
@@ -696,6 +804,8 @@ $ gem install jekyll bundler
 
 ### Bundle Install
 
+Install the bundled Ruby Gems or Ruby libraries into `./vendor/bundle/` in contrast to installing into the system-wide directory.
+This allows the dependencies to be in an isolated environment which ensures that they do not conflict with other Ruby Gems on the system.
 Note that the machine must be online to access the operating system remote repositories.
 
 ~~~
@@ -759,33 +869,50 @@ Configuration file: /mnt/work/projects/dan/source/vtracker/_config.yml
 This section provides the source file listings.
 
 
-## Database Creation
+## Import Script
 
-Database creation is distributed into different script files corresponding to their functionality.
+The data source import script `import.sh` in the scripts directory `<project>/_scripts` is used to prepare the system.
+It is responsible with the following operations:
+
+1. Create the all database objects.
+2. Import the source data into the `import` table and populate other tables.
+3. Optionally create mock data for the `monitor` table.
+4. Create the markdown files used by Jekyll to generate the static HTML pages.
+
+Database creation is distributed into different SQL script files corresponding to their functionality.
+The scripts are located in the scripts directory, `<project>/_scripts/sql`.
+The individual scripts are called from the [source data import script](#source-data-import-script) `import.sh`.
+There is no driver file for the database creation script but are executed sequentially in the following order:
+
+1. create_base_tables.sql
+3. create_monitor_views.sql
+4. create_dm_functions.sql
+2. create_utility_functions.sql
 
 
 
-### Pre-creation
+### Source Data Import Script <a name="source-data-import-script"></a>
 
-To support easier recreation of database objects, certain objects are required to be deleted or dropped before recreating other database objects. This operation is handled by the `drop_views.sql` SQL script file.
+The bash shell script file `import.sh` in the scripts directory `<project>/_scripts` is used as the driver
 
-!source(../_scripts/drop_views.sql)(sql)
+!source(../_scripts/import.sh)(bash)
 
 
 
 ### Tables
 
-The database tables that are initially populated at the start of operations and tables concerned with the pre-election poll monitoring.
+The bash shell script file `create_base_tables.sql` in the script directory `<project>/_scripts/sql` is used to create all database tables; geographical subdivisions, voting jurisdictions and poll monitoring tables.
+See the section [Database Design](#database-design) section for a conceptual overview of the database model.
 
-!source(../_scripts/create_tables.sql)(sql)
+!source(../_scripts/sql/create_base_tables.sql)(sql)
 
 
 
 ### Views
 
-Facility to aid in query reusability and usage.
+Database views used to aid in query reusability and ease of use..
 
-!source(../_scripts/create_views.sql)(sql)
+!source(../_scripts/sql/create_monitor_views.sql)(sql)
 
 
 
@@ -793,7 +920,7 @@ Facility to aid in query reusability and usage.
 
 Database functions that help in the data management operations.
 
-!source(../_scripts/create_dm_functions.sql)(sql)
+!source(../_scripts/sql/create_dm_functions.sql)(sql)
 
 
 
@@ -801,11 +928,11 @@ Database functions that help in the data management operations.
 
 Database functions that are used during testing and to help in other operations.
 
-!source(../_scripts/create_utility_functions.sql)(sql)
+!source(../_scripts/sql/create_utility_functions.sql)(sql)
 
 
 
-## Data Management Script
+## Data Management
 
 Source file listing of `dm.sh` in the scripts directory `_scripts`.
 
@@ -813,75 +940,89 @@ Source file listing of `dm.sh` in the scripts directory `_scripts`.
 
 
 
-## JSON Creation Scripts
+## JSON Creation
 
-The information kept in the database are exported to JSON files which will be used by Jekyll to generate the static web pages.
 
-The following script, `create_json_all.sh` bash script consolidates the creation of all JSON files.
-It is therefore the only script file to be executed to produce the latest JSON files.
 
-!source(../_scripts/create_json_all.sh)(bash)
+The bash shell script `create_json.sh` in the scripts directory `<project>/_scripts` consolidates the creation of all JSON files.
+It calls the SQL scripts in the `<project>/_scripts/sql/json` directory.
+
+!source(../_scripts/create_json.sh)(bash)
+
+The following is a brief description of the arguments to the PostgrSQL `psql` application:
+
+| Option | Description |
+|--------+-------------|
+| -d     | Specifies the name of the database to connect to. |
+| -w     | Never issue a password prompt. |
+| -t     | Suppress printing of column names and result row count footers, etc. |
+| -c     | Command or SQL statement(s) to execute. |
+| -f     | Specifies the file where commands will be read and executed. |
+| -o     | Specifies the file where the output of the commands will be sent. |
+
+All integral and non-percentage outputs are formatted as `FM999,999` which means no padding blank spaces and leading zeroes.
 
 
 
 ### Provincial
 
-Create the provincial total, `all.json`, in the data directory `<project>/_data`.
+The bash shell script `create_json_province.json` creates the provincial total.
 
-!source(../_scripts/create_json_totals.sql)(sql)
+!source(../_scripts/sql/json/create_json_province.sql)(sql)
 
 
 
 ### District Summary
 
-District summary total, `districts.json`, in the data directory `<project>/_data`.
+The bash shell script `create_json_districts.json` creates the district summary total.
 
-!source(../_scripts/create_json_districts.sql)(sql)
+!source(../_scripts/sql/json/create_json_districts.sql)(sql)
 
 
 
 ### Municipality Summary
 
-Municipality summary total, `municipalities.json`, in the data directory `<project>/_data`.
+The bash shell script `create_json_municipalities.json` creates the municipality summary total.
 
-!source(../_scripts/create_json_municipalities.sql)(sql)
+!source(../_scripts/sql/json/create_json_municipalities.sql)(sql)
 
 
 
 ### Municipality Details
 
-Municipality details total, `municipalities_details.json`, in the data directory `<project>/_data`.
+The bash shell script `create_json_municipalities_details.json` creates the municipality details total.
 
-!source(../_scripts/create_json_municipalities_details.sql)(sql)
+!source(../_scripts/sql/json/create_json_municipalities_details.sql)(sql)
 
 
 
 ### Barangay Summary
 
-Barangay summary total, `barangays.json`, in the data directory `<project>/_data`.
+The bash shell script `create_json_barangays.json` creates the barangay summary total.
 
-!source(../_scripts/create_json_barangays.sql)(sql)
+!source(../_scripts/sql/json/create_json_barangays.sql)(sql)
 
 
 
 ### Barangay Details
 
-Barangay details total, `barangays_details.json`, in the data directory `<project>/_data`.
+The bash shell script `create_json_barangays_details.json` creates the barangay details total.
 
-!source(../_scripts/create_json_barangays_details.sql)(sql)
+!source(../_scripts/sql/json/create_json_barangays_details.sql)(sql)
 
 
 
 ### Precinct Summary
 
-Precinct summary total, `precicnts.json`, in the data directory `<project>/_data`.
+The bash shell script `create_json_precincts.json` creates the precinct summary total.
 
-!source(../_scripts/create_json_precincts.sql)(sql)
+!source(../_scripts/sql/json/create_json_precincts.sql)(sql)
 
 
 
 ### Precinct Details
 
-Precinct details total, `precincts_details.json`, in the data directory `<project>/_data`.
+The bash shell script `create_json_precincts_details.json` creates the precinct details total.
 
-!source(../_scripts/create_json_precincts_details.sql)(sql)
+!source(../_scripts/sql/json/create_json_precincts_details.sql)(sql)
+
