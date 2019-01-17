@@ -284,6 +284,8 @@ $endif$
 % Fix footnotes in tables (requires footnote package)
 \usepackage{footnote}
 \makesavenoteenv{longtable}
+% Change footnote font size
+\renewcommand{\footnotesize}{\small}
 % Make links footnotes instead of hotlinks
 \DeclareRobustCommand{\href}[2]{#2\footnote{\url{#1}}}
 % Add space before the footnote number in texts.
