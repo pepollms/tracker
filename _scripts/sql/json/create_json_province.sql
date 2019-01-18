@@ -1,10 +1,9 @@
--- Generate JSON file for Totals
--- with formatted values
-
-select row_to_json(x)
+select
+    row_to_json(x)
 from (
     select (
-        select row_to_json(t)
+        select
+            row_to_json(t)
         from (
             select
                 to_char(current_count_sum, 'FM999,999') as current_count,
@@ -14,6 +13,6 @@ from (
                 target_percentage
             from
                 view_province
-        ) t
-    ) as total
-) x;
+            ) t
+        ) as total
+    ) x;

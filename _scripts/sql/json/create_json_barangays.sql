@@ -1,7 +1,5 @@
--- Generate JSON file for Barangays
--- with formatted values
-
-select array_to_json(array_agg(row_to_json(t)))
+select
+    array_to_json(array_agg(row_to_json(t)))
 from (
     select
         municipality_id,
@@ -18,4 +16,4 @@ from (
     order by
         municipality,
         barangay
-) t;
+    ) t;

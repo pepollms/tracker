@@ -1,4 +1,4 @@
--- Dummy data for vt_current.current
+-- Mock data for the vt_precinct_monitor table
 
 
 
