@@ -7,24 +7,35 @@ declare -r DISTRICT_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/districts"
 declare -r MUNICIPAL_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/municipalities"
 declare -r BARANGAY_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/barangays"
 
-declare debug=0
+declare -r CMD_HELP="--help"
+declare -r CMD_DEBUG="--debug"
+declare -r CMD_CREATE_DB="--create-db"
+declare -r CMD_IMPORT="--import"
+declare -r CMD_MOCK="--mock"
+declare -r CMD_CREATE_MARKDOWN="--create-markdown"
 
-declare op_prepare=0
+declare -r COMMANDS=(
+    "${CMD_CREATE_DB}"
+    "${CMD_IMPORT}"
+    "${CMD_MOCK}"
+    "${CMD_CREATE_MARKDOWN}"
+)
+
+declare debug=0
 declare op_create_db=0
 declare op_import_data=0
-declare op_generate_dummy_data=0
+declare op_generate_mock_data=0
 declare op_create_markdown=0
 
 function show_usage {
-    echo "$PROGRAM_NAME - Import data from a CSV file."
+    echo "Import data from a CSV file."
     echo ""
-    echo "Prepare and import the comma-separated values (CSV) files into a"
-    echo "PostgreSQL database. The CSV files will be read from the following"
-    echo "directory:"
+    echo "Import the comma-separated values (CSV) files into a PostgreSQL"
+    echo "database. The CSV files will be read from:"
     echo ""
     echo "  <project>/_data/to_import"
     echo ""
-    echo "Generated files will be created in the following directories:"
+    echo "Generated markdown files will be created in:"
     echo ""
     echo "  <project>/districts"
     echo "  <project>/municipalities"
@@ -33,12 +44,11 @@ function show_usage {
     echo "Usage: $PROGRAM_NAME [options]"
     echo ""
     echo "Options in sequential order:"
-    echo "  --help                  Show usage help text"
-    echo "  --prepare               Prepare CSV files and copy to import directory"
-    echo "  --create-db             Recreate database objects"
-    echo "  --import                Import data from CSV files"
-    echo "  --dummy <file>          Run <file> to generate dummy data"
-    echo "  --create-markdown       Create markdown files"
+    echo "  ${CMD_HELP}                  Show usage help text"
+    echo "  ${CMD_CREATE_DB}             Recreate database objects"
+    echo "  ${CMD_IMPORT}                Import data from CSV files"
+    echo "  ${CMD_MOCK} <file>           Run <file> to generate mock data"
+    echo "  ${CMD_CREATE_MARKDOWN}       Create markdown files"
     echo ""
 } # show_usage
 
@@ -81,6 +91,7 @@ function create_district_markdown_file {
 
 function create_district_markdown_files {
     local count=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_district;"`
+    echo "  District markdown files: ${count}"
     # Use three-expression bash for loops syntax which share a common heritage
     # with the C programming language. It is characterized by a three-parameter
     # loop control expression; consisting of an initializer (EXP1), a loop-test
@@ -111,6 +122,7 @@ function create_municipality_markdown_file {
 
 function create_municipality_markdown_files {
     local count=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_municipality;"`
+    echo "  Municipality markdown files: ${count}"
     local start=1
     local end=$((count + 0))
     for (( i=$start; i<=$end; i++ )); do
@@ -137,6 +149,7 @@ function create_barangay_markdown_file {
 
 function create_barangay_markdown_files {
     local count=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_barangay;"`
+    echo "  Barangay markdown files: ${count}"
     local start=1
     local end=$((count + 0))
     for (( i=$start; i<=$end; i++ )); do
@@ -162,6 +175,7 @@ function create_leader_markdown_file {
 
 function create_leader_markdown_files {
     local count=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader;"`
+    echo "  Leader markdown files: ${count}"
     local start=1
     local end=$((count + 0))
     for (( i=$start; i<=$end; i++ )); do
@@ -172,96 +186,48 @@ function create_leader_markdown_files {
 
 
 if [ $# -eq 0 ]; then
+    op_create_db=1
+    op_import_data=1
+    op_create_markdown=1
+fi
+
+if [ "$1" == "${CMD_HELP}" ]; then
     show_usage
     exit
 fi
 
-if [ "$1" == "--help" ]; then
-    show_usage
-    exit
-fi
-
-if [ "$1" == "--debug" ]; then
+if [ "$1" == "${CMD_DEBUG}" ]; then
     debug=1
     shift 1
 fi
 
-arg_directory=""
-if [ "$1" == "--prepare" ]; then
-    if [ ! -d "${IMPORT_DIR}" ]; then
-        echo_err "Import directory does not exist: ${IMPORT_DIR}"
-        exit 1
+arg_mock_data_file=""
+while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
+    if [ "${1}" == "${CMD_CREATE_DB}" ]; then
+        op_create_db=1
+        shift 1
+    elif [ "${1}" == "${CMD_IMPORT}" ]; then
+        op_import_data=1
+        shift 1
+    elif [ "$1" == "${CMD_MOCK}" ]; then
+        arg_mock_data_file="$2"
+        shift 2
+        if [ ! -e ${arg_mock_data_file} ]; then
+            echo "Mock data script file not found: '${arg_mock_data_file}'."
+            exit 1
+        fi
+        op_generate_mock_data=1
+    elif [ "$1" == "${CMD_CREATE_MARKDOWN}" ]; then
+        op_create_markdown=1
+        shift 1
     fi
-    op_prepare=1
-    op_create_db=1
-    op_import_data=1
-    op_create_markdown=1
-fi
-
-if [ "$1" == "--create-db" ]; then
-    op_create_db=1
-    op_import_data=1
-    op_create_markdown=1
-fi
-
-if [ "$1" == "--import" ]; then
-    op_import_data=1
-    op_create_markdown=1
-fi
-
-arg_dummy_data_file=""
-if [ "$1" == "--dummy" ]; then
-    arg_dummy_data_file="$2"
-    shift 2
-    if [ ! -e ${arg_dummy_data_file} ]; then
-        echo "Dummy data generation file not found: '${arg_dummy_data_file}'."
-        exit 1
-    fi
-    op_generate_dummy_data=1
-fi
-
-if [ "$1" == "--create-markdown" ]; then
-    op_create_markdown=1
-fi
+done
 
 
 
 #-------------------------------------------------------------------------------
 
 
-
-if [ ${op_prepare} -eq 1 ]; then
-    # Make sure CSV files are readable
-    chmod 777 ${IMPORT_DIR}/district_1.csv
-    chmod 777 ${IMPORT_DIR}/district_2.csv
-    chmod 777 ${IMPORT_DIR}/district_3.csv
-    echo_debug "CSV files file mode changed."
-
-    # Delete files from destination directory
-    destination_dir="${IMPORT_DIR}/converted"
-    if [ ! -d ${destination_dir} ]; then
-        mkdir ${destination_dir}
-    else
-        rm -f ${destination_dir}/district_1.csv
-        rm -f ${destination_dir}/district_2.csv
-        rm -f ${destination_dir}/district_3.csv
-    fi
-
-    # Convert to UTF-8 files and copy to import directory
-    iconv -f UTF-8 -t UTF-8 ${IMPORT_DIR}/district_1.csv -o ${destination_dir}/district_1.csv
-    iconv -f UTF-8 -t UTF-8 ${IMPORT_DIR}/district_2.csv -o ${destination_dir}/district_2.csv
-    iconv -f UTF-8 -t UTF-8 ${IMPORT_DIR}/district_3.csv -o ${destination_dir}/district_3.csv
-
-    echo_debug "Files copied to ${destination_dir}."
-
-    current_dir=`pwd`
-    cd ${destination_dir}
-    # Display file encodings
-    file -i district_1.csv district_2.csv district_3.csv
-    cd ${current_dir}
-
-    echo "Done preparing CSV files."
-fi
 
 if [ ${op_create_db} -eq 1 ]; then
     if ! /usr/bin/pg_isready &>/dev/null; then
@@ -270,11 +236,10 @@ if [ ${op_create_db} -eq 1 ]; then
         exit 1
     fi
     echo "Create database objects."
-    psql -d postgres -w -f drop_views.sql
-    psql -d postgres -w -f create_utility_functions.sql
-    psql -d postgres -w -f create_tables.sql
-    psql -d postgres -w -f create_views.sql
-    psql -d postgres -w -f create_dm_functions.sql
+    psql -d postgres -w -f ./sql/create_base_tables.sql
+    psql -d postgres -w -f ./sql/create_utility_functions.sql
+    psql -d postgres -w -f ./sql/create_monitor_views.sql
+    psql -d postgres -w -f ./sql/create_dm_functions.sql
     echo "Done."
 fi
 
@@ -284,23 +249,25 @@ if [ ${op_import_data} -eq 1 ]; then
         echo "Aborting operation."
         exit 1
     fi
-    echo "Import data."
-    psql -d postgres -w -f import.sql
+    echo "Import from source data files"
+    psql -d postgres -w -f ./sql/import.sql
+    psql -d postgres -w -f ./sql/process_import.sql
     echo "Done."
 fi
 
-if [ ${op_generate_dummy_data} -eq 1 ]; then
+if [ ${op_generate_mock_data} -eq 1 ]; then
     if ! /usr/bin/pg_isready &>/dev/null; then
         echo "PostgreSQL service is not running."
         echo "Aborting operation."
         exit 1
     fi
-    echo "Generate dummy data."
-    psql -d postgres -w -f ${arg_dummy_data_file}
+    echo "Generate mock data."
+    psql -d postgres -w -f ./sql/mock/${arg_mock_data_file}
     echo "Done."
 fi
 
 if [ ${op_create_markdown} -eq 1 ]; then
+    echo "Create markdown files:"
     # Make sure destination directories exists
     if [ ! -d ${DISTRICT_MARKDOWN_FILE_DIR} ]; then
         echo "Create ${DISTRICT_MARKDOWN_FILE_DIR}"
@@ -320,8 +287,8 @@ if [ ${op_create_markdown} -eq 1 ]; then
     fi
 
     create_district_markdown_files
-#    create_municipality_markdown_files
-#    create_barangay_markdown_files
+    create_municipality_markdown_files
+    create_barangay_markdown_files
 #    create_leader_markdown_files
 fi
 
