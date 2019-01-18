@@ -354,7 +354,7 @@ function get_existing_leader_id {
             SQL="${SELECT} ${WHERE_NAME_IS};"
         fi
     elif [ "${column}" == "contact" ]; then
-        if [[ "${criteria}" == *"%"* || "${criteria}" == *"_"* ]]; thenn
+        if [[ "${criteria}" == *"%"* || "${criteria}" == *"_"* ]]; then
             SQL="${SELECT} ${WHERE_CONTACT_LIKE};"
         else
             SQL="${SELECT} ${WHERE_CONTACT_IS};"
@@ -901,7 +901,7 @@ function display_precinct_info {
         `" from"`
         `"     view_precinct"`
         `" where"`
-        `"     prec_id = ${precinct_id};"`
+        `"     prec_id = ${precinct_id};"
     psql -d postgres -w -q      \
         -c '\pset pager off'    \
         -c '\pset footer off'   \
