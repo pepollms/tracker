@@ -47,8 +47,8 @@ echo "Converting markdown files to PDF file."
 
 files=(
     "cc_by_nc_sa_40.eps"
-    "geo.svg"
-    "operations.svg"
+    "erd_geo.svg"
+    "erd_operations.svg"
     "template_doc_us.tex"
     "template_doc_a4.tex"
 )
