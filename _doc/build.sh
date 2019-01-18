@@ -55,8 +55,8 @@ files=(
 
 doc_files=(
     "op_1_introduction.md"
-    "op_2_conops.md"
-    "op_3_system_overview.md"
+    "op_2_system_overview.md"
+    "op_3_conops.md"
     "op_4_db_design.md"
     "op_5_setup_and_config.md"
     "op_6_source_files.md"
@@ -134,8 +134,8 @@ done
 echo "Converting to PDF..."
 pandoc                                  \
         -s op_1_introduction_pp.md      \
-           op_2_conops_pp.md            \
-           op_3_system_overview_pp.md   \
+           op_2_system_overview_pp.md   \
+           op_3_conops_pp.md            \
            op_4_db_design_pp.md         \
            op_5_setup_and_config_pp.md  \
            op_6_source_files_pp.md      \
