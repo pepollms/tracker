@@ -118,15 +118,6 @@ for file in "${doc_files[@]}"; do
     pp ${file} > "${ppfile}"
 done
 
-#pp op_1_introduction.md     > "op_1_introduction_pp.md"
-#pp op_2_conops.md           > "op_2_conops_pp.md"
-#pp op_3_system_overview.md  > "op_3_system_overview_pp.md"
-#pp op_4_db_design.md        > "op_4_db_design_pp.md"
-#pp op_5_setup_and_config.md > "op_5_setup_and_config_pp.md"
-#pp op_6_source_files.md     > "op_6_source_files_pp.md"
-
-
-
 # Other arguments to pandoc:
 #
 #   --pdf-engine=[pdflatex | xelatex]
