@@ -1,4 +1,4 @@
-# System Setup and Configuration
+# Software Setup and Configuration {#chapter-software-setup-and-configuration}
 
 This section describes the setup and configuration procedures of the system.
 

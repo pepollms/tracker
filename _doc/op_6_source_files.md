@@ -1,4 +1,4 @@
-# Source Files
+# Source Files {#chapter-source-files}
 
 This section provides the source file listings.
 
