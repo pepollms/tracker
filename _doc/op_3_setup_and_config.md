@@ -2,6 +2,70 @@
 
 This section describes the setup and configuration procedures of the system.
 
+The target software system shall use a GNU/Linux platform.
+All supporting software tools shall use open source software only.
+
+The system uses the following:
+
+* GitHub - web site for hosting the static web pages for testing and possibly for production.
+* PostgreSQL - relational database to hold all system data.
+* Jekyll - static site generator for creating HTML pages.
+
+
+
+## Project Files {#section-project-files}
+
+All project files are in the `<project>` directory.
+This directory could be created anywhere in the filesystem owned by the current logged in user.
+The following hierarchy shows the project directory structure:
+
+~~~
+<project>
+    |
+    +-- barangays/
+    +-- css/                [stylesheets]
+    +-- _data/              [JSON files]
+        |
+        +-- to_import       [import directory]
+            |
+            +-- region
+            +-- province
+            +-- district
+    +-- districts/
+    +-- _doc/               [documentation files]
+    +-- images/             [web page images]
+    +-- _includes/          [include page files]
+    +-- javascripts/
+    +-- _layouts/           [page layouts]
+    +-- municipalities/
+    +-- _posts/             [not used]
+    +-- _sass/              [SASS stylesheets]
+    +-- _scripts/           [script files]
+        |
+        +-- sql             [SQL script files]
+            |
+            +-- base        [database table SQL script files]
+            +-- dm          [data management SQL script files]
+            +-- import      [import SQL script files]
+            +-- json        [JSON file SQL script files]
+            +-- mock
+            +-- utility     [database utility functions SQL script files]
+            +-- view        [database view SQL script files]
+    +-- _site/              [output web pages]
+    +-- _temp/
+    +-- vendor/             [Jekyll-specific files]
+    +-- 404.html
+    +-- about.md
+    +-- _config.yml         [Jekyll configuration file]
+    +-- Gemfile             [Ruby dependencies]
+    +-- Gemfile.lock
+    +-- index.md
+~~~
+
+The project files are kept in a Git version control repository.
+The Git repository is hosted on GitHub ([https://github.com/](https://github.com/)).
+
+
 
 
 ## Project Repository
@@ -10,7 +74,7 @@ The system uses the Git version control[^git_version_control].
 The system uses a GitHub account to host the project repository and to host the static web pages.
 
 Currently, the project `vtracker` is hosted on GitHub using the user account `rmaicle`.
-It could be accessed via browser at `https://github.com/rmaicle/vtracker`.
+It could be accessed from a browser at `https://github.com/rmaicle/vtracker`.
 
 For production, a new account must be used.
 
@@ -111,7 +175,7 @@ The short-named command is `logm`.
 Whenever `git logm` is entered at the project directory, it will output something like the following:
 
 ~~~
-$ git logt
+$ git logm
 * d361663 2019-01-15 11:21:44 Update documentation (HEAD -> gh-pages,
                               origin/gh-pages)
 * 54d336b 2019-01-15 11:21:10 Split the creation of database objects into
@@ -303,6 +367,8 @@ $ gem install jekyll bundler
 ...
 ~~~
 
+See the [Jekyll Install](#section-jekyll-install) section of the Output chapter to see the details of the output of the command above.
+
 
 
 ### Bundle Install
@@ -359,8 +425,10 @@ Configuration file: /mnt/work/projects/dan/source/vtracker/_config.yml
        Destination: ./_site
  Incremental build: disabled. Enable with --incremental
       Generating...
-                    done in 11.831 seconds.
+                    done in 20.018 seconds.
  Auto-regeneration: enabled for '.'
     Server address: http://127.0.0.1:4000/vtracker/
   Server running... press ctrl-c to stop.
 ~~~
+
+\clearpage
