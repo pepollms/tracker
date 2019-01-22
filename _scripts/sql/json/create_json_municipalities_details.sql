@@ -6,15 +6,15 @@ from (
         district,
         municipality_id,
         municipality,
-        to_char(current_count_sum, 'FM999,999') as current_count,
-        to_char(target_count_sum, 'FM999,999') as target_count,
-        to_char(total_voters_sum, 'FM999,999') as total_voters,
+        to_char(current_sum, 'FM999,999') as current_count,
+        to_char(target_sum, 'FM999,999') as target_count,
+        to_char(voters_sum, 'FM999,999') as total_voters,
         current_percentage,
         target_percentage
     from
         view_municipality
     order by
         current_percentage,
-        current_count_sum / target_count_sum,
+        current_sum / target_sum,
         municipality
     ) t;
