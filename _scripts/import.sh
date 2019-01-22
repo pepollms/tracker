@@ -73,6 +73,21 @@ function echo_err {
 
 
 
+function create_file {
+    if [ $# -eq 0 ]; then
+        echo "Missing file and content parameters."
+        return 1
+    fi
+    local -r file="$1"
+    shift 1
+    local content=""
+    if [ $# -eq 1 ]; then
+        content="$1"
+        shift 1
+    fi
+    echo -e ${content} > "${file}"
+}
+
 function create_district_markdown_file {
     if [ $# -eq 0 ]; then
         echo "Missing district id parameter."
@@ -90,7 +105,8 @@ function create_district_markdown_file {
 }
 
 function create_district_markdown_files {
-    local count=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_district;"`
+    local -r SQL="select count(*) from vt_district;"
+    local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
     echo "  District markdown files: ${count}"
     # Use three-expression bash for loops syntax which share a common heritage
     # with the C programming language. It is characterized by a three-parameter
@@ -121,7 +137,8 @@ function create_municipality_markdown_file {
 }
 
 function create_municipality_markdown_files {
-    local count=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_municipality;"`
+    local -r SQL="select count(*) from vt_municipality;"
+    local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
     echo "  Municipality markdown files: ${count}"
     local start=1
     local end=$((count + 0))
@@ -148,7 +165,8 @@ function create_barangay_markdown_file {
 }
 
 function create_barangay_markdown_files {
-    local count=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_barangay;"`
+    local -r SQL="select count(*) from vt_barangay;"
+    local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
     echo "  Barangay markdown files: ${count}"
     local start=1
     local end=$((count + 0))
@@ -174,7 +192,8 @@ function create_leader_markdown_file {
 }
 
 function create_leader_markdown_files {
-    local count=`psql -d postgres -w --tuples-only --no-align -c "select count(*) from vt_leader;"`
+    local -r SQL="select count(*) from vt_leader;"
+    local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
     echo "  Leader markdown files: ${count}"
     local start=1
     local end=$((count + 0))
@@ -210,9 +229,17 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
         op_import_data=1
         shift 1
     elif [ "$1" == "${CMD_MOCK}" ]; then
-        arg_mock_data_file="$2"
-        shift 2
-        if [ ! -e ${arg_mock_data_file} ]; then
+        shift 1
+        if [ $# -eq 0 ]; then
+            arg_mock_data_file="precinct_monitor_data.sql"
+        else
+            arg_mock_data_file="$1"
+            shift 1
+        fi
+        if [ -z "${arg_mock_data_file}" ]; then
+            arg_mock_data_file="precinct_monitor_data.sql"
+        fi
+        if [ ! -e ./sql/mock/${arg_mock_data_file} ]; then
             echo "Mock data script file not found: '${arg_mock_data_file}'."
             exit 1
         fi
@@ -250,7 +277,47 @@ if [ ${op_import_data} -eq 1 ]; then
         exit 1
     fi
     echo "Import from source data files"
-    psql -d postgres -w -f ./sql/import.sql
+
+    psql -d postgres -w -f ./sql/import/region.sql
+    psql -d postgres -w -f ./sql/import/province.sql
+
+    #
+    # Create the SQL files for importing the district level data.
+    #
+
+    # Make sure the district import directory is empty
+    district_source_dir="../_data/to_import/district"
+    district_dest_dir="./sql/import"
+    district_files=$(find ${district_source_dir}/ -maxdepth 1 -iname "*.csv")
+    echo "Import District Files:"
+    echo "${district_files}"
+    readarray -t files <<<"${district_files}"
+    IFS=$'\n' files=($(sort <<<"${files[*]}"))
+    unset IFS
+    sql_district_files=()
+    for file in ${files[@]}; do
+        filename=$(basename ${file})
+        sql_file="${district_dest_dir}/${filename%.*}.sql"
+        echo "Creating ${sql_file}."
+        sql_district_files+="${sql_file}"
+        district_file_content=""`
+            `"\\COPY vt_import("`
+            `" province,"`
+            `" district,"`
+            `" municipality,"`
+            `" municipality_code,"`
+            `" barangay,"`
+            `" precinct,"`
+            `" voters,"`
+            `" leader,"`
+            `" contact,"`
+            `" target) FROM '${file}' DELIMITER ',' CSV HEADER ENCODING 'UTF8';"
+        create_file ${sql_file} "${district_file_content}"
+        echo "Executing ${sql_file}."
+        psql -d postgres -w -f ${sql_file}
+    done
+
+    echo "Processing imported data."
     psql -d postgres -w -f ./sql/process_import.sql
     echo "Done."
 fi
@@ -261,7 +328,7 @@ if [ ${op_generate_mock_data} -eq 1 ]; then
         echo "Aborting operation."
         exit 1
     fi
-    echo "Generate mock data."
+    echo "Generate mock data using ${arg_mock_data_file}."
     psql -d postgres -w -f ./sql/mock/${arg_mock_data_file}
     echo "Done."
 fi
@@ -292,4 +359,5 @@ if [ ${op_create_markdown} -eq 1 ]; then
 #    create_leader_markdown_files
 fi
 
+echo "Done (${PROGRAM_NAME})."
 exit 0
