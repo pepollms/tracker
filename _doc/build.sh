@@ -55,11 +55,10 @@ files=(
 
 doc_files=(
     "op_1_introduction.md"
-    "op_2_system_overview.md"
-    "op_3_conops.md"
-    "op_4_db_design.md"
-    "op_5_setup_and_config.md"
-    "op_6_source_files.md"
+    "op_2_design.md"
+    "op_3_setup_and_config.md"
+    "op_4_source_files.md"
+    "op_5_output.md"
 )
 
 echo "Checking required files..."
@@ -134,14 +133,13 @@ done
 echo "Converting to PDF..."
 pandoc                                  \
         -s op_1_introduction_pp.md      \
-           op_2_system_overview_pp.md   \
-           op_3_conops_pp.md            \
-           op_4_db_design_pp.md         \
-           op_5_setup_and_config_pp.md  \
-           op_6_source_files_pp.md      \
+           op_2_design_pp.md            \
+           op_3_setup_and_config_pp.md  \
+           op_4_source_files_pp.md      \
+           op_5_output.md               \
            op_0_links.md                \
         --template=${template_file}     \
-        -f markdown+raw_tex+fenced_code_blocks+footnotes+implicit_figures   \
+        -f markdown+raw_tex+fenced_code_blocks+footnotes+link_attributes+implicit_figures   \
         -t latex                        \
         -o ${output_file}               \
         `#--pdf-engine=pdflatex`        \
