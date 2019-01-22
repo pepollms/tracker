@@ -54,6 +54,8 @@ exclude:
    - vendor/cache/
    - vendor/gems/
    - vendor/ruby/
+   - _doc/
+   - _scripts/
 
 # Filtering Content
 strict_front_matter: true
