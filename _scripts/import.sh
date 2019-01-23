@@ -88,117 +88,84 @@ function create_file {
     echo -e ${content} > "${file}"
 }
 
-function create_district_markdown_file {
-    if [ $# -eq 0 ]; then
-        echo "Missing district id parameter."
-        return 1
-    fi
-    arg_id=$1
-    local contents=""
-    contents+="---\n"
-    contents+="layout: district\n"
-    contents+="district_id: ${arg_id}\n"
-    contents+="---"
-    local file="${DISTRICT_MARKDOWN_FILE_DIR}/district_${arg_id}.md"
-
-    echo -e ${contents} > "${file}"
-}
-
 function create_district_markdown_files {
     local -r SQL="select count(*) from vt_district;"
-    local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
+    local -r count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
     echo "  District markdown files: ${count}"
     # Use three-expression bash for loops syntax which share a common heritage
     # with the C programming language. It is characterized by a three-parameter
     # loop control expression; consisting of an initializer (EXP1), a loop-test
     # or condition (EXP2), and a counting expression (EXP3).
     # Ref: https://www.cyberciti.biz/faq/unix-linux-iterate-over-a-variable-range-of-numbers-in-bash/
-    local start=1
-    local end=$((count + 0))
+    local -r start=1
+    local -r end=$((count + 0))
+    file=""
+    content=""
     for (( i=$start; i<=$end; i++ )); do
-        create_district_markdown_file $i
+        content=""`
+            `"---\n"`
+            `"layout: district\n"`
+            `"district_id: ${i}\n"`
+            `"---"
+        file="${DISTRICT_MARKDOWN_FILE_DIR}/district_${i}.md"
+        echo -e ${content} > "${file}"
     done
-}
-
-function create_municipality_markdown_file {
-    if [ $# -eq 0 ]; then
-        echo "Missing municipality id parameter."
-        return 1
-    fi
-    arg_id=$1
-    local contents=""
-    contents+="---\n"
-    contents+="layout: municipality\n"
-    contents+="municipality_id: ${arg_id}\n"
-    contents+="---"
-    local file="${MUNICIPAL_MARKDOWN_FILE_DIR}/municipality_${arg_id}.md"
-
-    echo -e ${contents} > "${file}"
 }
 
 function create_municipality_markdown_files {
     local -r SQL="select count(*) from vt_municipality;"
     local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
     echo "  Municipality markdown files: ${count}"
-    local start=1
-    local end=$((count + 0))
+    local -r start=1
+    local -r end=$((count + 0))
+    file=""
+    content=""
     for (( i=$start; i<=$end; i++ )); do
-        create_municipality_markdown_file $i
+        content=""`
+            `"---\n"`
+            `"layout: municipality\n"`
+            `"municipality_id: ${i}\n"`
+            `"---"
+        file="${MUNICIPAL_MARKDOWN_FILE_DIR}/municipality_${i}.md"
+        echo -e ${content} > "${file}"
     done
-}
-
-
-function create_barangay_markdown_file {
-    if [ $# -eq 0 ]; then
-        echo "Missing barangay id parameter."
-        return 1
-    fi
-    arg_id=$1
-    local contents=""
-    contents+="---\n"
-    contents+="layout: barangay\n"
-    contents+="barangay_id: ${arg_id}\n"
-    contents+="---"
-    local file="${BARANGAY_MARKDOWN_FILE_DIR}/barangay_${arg_id}.md"
-
-    echo -e ${contents} > "${file}"
 }
 
 function create_barangay_markdown_files {
     local -r SQL="select count(*) from vt_barangay;"
     local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
     echo "  Barangay markdown files: ${count}"
-    local start=1
-    local end=$((count + 0))
+    local -r start=1
+    local -r end=$((count + 0))
+    file=""
+    content=""
     for (( i=$start; i<=$end; i++ )); do
-        create_barangay_markdown_file $i
+        content=""`
+            `"---\n"`
+            `"layout: barangay\n"`
+            `"barangay_id: ${i}\n"`
+            `"---"
+        file="${BARANGAY_MARKDOWN_FILE_DIR}/barangay_${i}.md"
+        echo -e ${content} > "${file}"
     done
-}
-
-function create_leader_markdown_file {
-    if [ $# -eq 0 ]; then
-        echo "Missing leader id parameter."
-        return 1
-    fi
-    arg_id=$1
-    local contents=""
-    contents+="---\n"
-    contents+="layout: leader\n"
-    contents+="leader_id: ${arg_id}\n"
-    contents+="---"
-    local file="${LEADER_MARKDOWN_FILE_DIR}/leader_${arg_id}.md"
-
-    echo -e ${contents} > "${file}"
 }
 
 function create_leader_markdown_files {
     local -r SQL="select count(*) from vt_leader;"
     local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
     echo "  Leader markdown files: ${count}"
-    local start=1
-    local end=$((count + 0))
+    local -r start=1
+    local -r end=$((count + 0))
+    file=""
+    content=""
     for (( i=$start; i<=$end; i++ )); do
-        create_leader_markdown_file $i
+        content=""`
+            `"---\n"`
+            `"layout: leader\n"`
+            `"leader_id: ${i}\n"`
+            `"---"
+        file="${DISTRICT_MARKDOWN_FILE_DIR}/leader_${i}.md"
+        echo -e ${content} > "${file}"
     done
 }
 
@@ -335,28 +302,35 @@ fi
 
 if [ ${op_create_markdown} -eq 1 ]; then
     echo "Create markdown files:"
+    if ! /usr/bin/pg_isready &>/dev/null; then
+        echo "PostgreSQL service is not running."
+        echo "Aborting operation."
+        exit 1
+    fi
     # Make sure destination directories exists
     if [ ! -d ${DISTRICT_MARKDOWN_FILE_DIR} ]; then
-        echo "Create ${DISTRICT_MARKDOWN_FILE_DIR}"
+        echo "Create <project>/districts directory."
         mkdir ${DISTRICT_MARKDOWN_FILE_DIR}
     fi
+    create_district_markdown_files
+
     if [ ! -d ${MUNICIPAL_MARKDOWN_FILE_DIR} ]; then
-        echo "Create ${MUNICIPAL_MARKDOWN_FILE_DIR}"
+        echo "Create <project>/municipalities directory."
         mkdir ${MUNICIPAL_MARKDOWN_FILE_DIR}
     fi
+    create_municipality_markdown_files
+
     if [ ! -d ${BARANGAY_MARKDOWN_FILE_DIR} ]; then
-        echo "Create ${BARANGAY_MARKDOWN_FILE_DIR}"
+        echo "Create <project>/barangays directory."
         mkdir ${BARANGAY_MARKDOWN_FILE_DIR}
     fi
-    if [ ! -d ${LEADER_MARKDOWN_FILE_DIR} ]; then
-        echo "Create ${LEADER_MARKDOWN_FILE_DIR}"
-        mkdir ${LEADER_MARKDOWN_FILE_DIR}
-    fi
-
-    create_district_markdown_files
-    create_municipality_markdown_files
     create_barangay_markdown_files
-#    create_leader_markdown_files
+
+    #if [ ! -d ${LEADER_MARKDOWN_FILE_DIR} ]; then
+    #    echo "Create ${LEADER_MARKDOWN_FILE_DIR}"
+    #    mkdir ${LEADER_MARKDOWN_FILE_DIR}
+    #fi
+    #create_leader_markdown_files
 fi
 
 echo "Done (${PROGRAM_NAME})."
