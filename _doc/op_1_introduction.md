@@ -8,7 +8,7 @@ author:
     email: rmaicle@gmail.com
   - name: Dan Zambrano
     email: dan.kidtech@gmail.com
-version: Version 0.2.0
+version: Version 0.3.0
 date: January 2019
 distribution: |
     | Private; distribution limited to company use only.
