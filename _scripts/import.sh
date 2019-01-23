@@ -150,25 +150,6 @@ function create_barangay_markdown_files {
     done
 }
 
-function create_leader_markdown_files {
-    local -r SQL="select count(*) from vt_leader;"
-    local count=`psql -d postgres -w --tuples-only --no-align -c "${SQL}"`
-    echo "  Leader markdown files: ${count}"
-    local -r start=1
-    local -r end=$((count + 0))
-    file=""
-    content=""
-    for (( i=$start; i<=$end; i++ )); do
-        content=""`
-            `"---\n"`
-            `"layout: leader\n"`
-            `"leader_id: ${i}\n"`
-            `"---"
-        file="${DISTRICT_MARKDOWN_FILE_DIR}/leader_${i}.md"
-        echo -e ${content} > "${file}"
-    done
-}
-
 
 
 if [ $# -eq 0 ]; then
@@ -325,12 +306,6 @@ if [ ${op_create_markdown} -eq 1 ]; then
         mkdir ${BARANGAY_MARKDOWN_FILE_DIR}
     fi
     create_barangay_markdown_files
-
-    #if [ ! -d ${LEADER_MARKDOWN_FILE_DIR} ]; then
-    #    echo "Create ${LEADER_MARKDOWN_FILE_DIR}"
-    #    mkdir ${LEADER_MARKDOWN_FILE_DIR}
-    #fi
-    #create_leader_markdown_files
 fi
 
 echo "Done (${PROGRAM_NAME})."
