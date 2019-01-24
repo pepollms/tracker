@@ -13,6 +13,86 @@ The system uses the following:
 
 
 
+## Manjaro
+
+This section describes the maintenance of the Manjaro Linux operating system.
+
+
+
+### Synching Mirror Sites
+
+The official Manjaro repositories (also known as mirrors) are hosted on _Software Servers_ located throughout the world.
+These servers are responsible for receiving requests from software packages via the terminal, or GUI-based applications and delivering them to your local system.
+Three primary factors will determine the speed of downloads from these servers:
+
+* Your internet connection
+* The speed of the server itself, and
+* The proximity of the server to you (i.e. how close or how far away it is)
+
+Using `pacman-mirrors` is the preferred way of getting a mirror list.
+It accepts `-fasttrack [number]` or `-f [number]`.
+The `-fasttrack` option ensures that the local machine connects to a server with the latest software.
+The `[number]` specifies the number of servers to be written in the local mirror list and the default is to use all up-to-date mirrors.
+
+The following command uses all mirror sites.
+
+~~~
+$ sudo pacman-mirrors --fasttrack
+~~~
+
+The following command limits mirror sites to 10.
+
+~~~
+$ sudo pacman-mirrors --fasttrack 10
+~~~
+
+These are the steps performed by the command:
+
+* Pacman-mirrors will download a status file from the mirror service URL.
+* From that file you will get 10 random mirrors that have updated software for your current branch.
+* The 10 mirrors will be sorted by their current response times and written to the mirror list.
+
+Refer to a more detailed information on Pacman mirrors at this url:
+
+~~~
+https://wiki.manjaro.org/Pacman-mirrors
+~~~
+
+
+
+### Synchronizing Package Database
+
+Manjaro Linux maintains a local database of all software packages that are available from the official repositories.
+These repositories are used to locate and download software packages. Synchronizing this database ensures that it is up to date to avoid potential problems when downloading software packages.
+
+The following command needs a bit of explanation.
+The parameter options `-Sy` will synchronize and download a fresh copy of the master package database.
+Specifying `-Syy` will force a refresh of all package databases even if they appear to be up-to-date which is the recommended parameter option..
+
+~~~
+$ sudo pacman -Syy
+~~~
+
+
+### Update
+
+Updating Manjaro Linux with the latest software packages requires downloading those packages from mirror sites.
+
+The following command does the job:
+
+~~~
+$ sudo pacman -Su
+~~~
+
+But this is not the recommended way.
+The recommended way is to combine the package database synchronization option and the update in one command.
+
+~~~
+$ sudo pacman -Syyu
+~~~
+
+
+
 ## Project Files {#section-project-files}
 
 All project files are in the `<project>` directory.
