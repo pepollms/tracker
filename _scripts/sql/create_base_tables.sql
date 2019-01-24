@@ -17,6 +17,7 @@ drop view if exists view_precinct;
 \ir ./base/utility.sql
 
 \ir ./base/import.sql
+\ir ./base/current.sql
 
 \ir ./base/region.sql
 \ir ./base/province.sql

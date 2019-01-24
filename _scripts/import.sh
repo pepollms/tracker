@@ -3,6 +3,9 @@
 declare -r PROGRAM_NAME="${0##*/}"
 declare -r PROJECT_ROOT=".."
 declare -r IMPORT_DIR="${PROJECT_ROOT}/_data/to_import"
+
+declare -r IMPORT_SOURCE_DIR="${IMPORT_DIR}/district"
+declare -r IMPORT_CURRENT_DIR="${IMPORT_DIR}/current"
 declare -r DISTRICT_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/districts"
 declare -r MUNICIPAL_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/municipalities"
 declare -r BARANGAY_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/barangays"
@@ -23,17 +26,23 @@ declare -r COMMANDS=(
 
 declare debug=0
 declare op_create_db=0
-declare op_import_data=0
+declare op_import_source_data=0
+declare op_import_current_data=0
 declare op_generate_mock_data=0
 declare op_create_markdown=0
 
 function show_usage {
-    echo "Import data from a CSV file."
+    echo "Import data from a comma-separated values (CSV) file."
     echo ""
-    echo "Import the comma-separated values (CSV) files into a PostgreSQL"
-    echo "database. The CSV files will be read from:"
+    echo "Import CSV source data files into PostgreSQL database."
+    echo "The CSV files will be read from:"
     echo ""
-    echo "  <project>/_data/to_import"
+    echo "  <project>/_data/to_import/district"
+    echo ""
+    echo "Import CSV current data files into PostgreSQL database."
+    echo "The CSV files will be read from:"
+    echo ""
+    echo "  <project>/_data/to_import/current"
     echo ""
     echo "Generated markdown files will be created in:"
     echo ""
@@ -44,11 +53,11 @@ function show_usage {
     echo "Usage: $PROGRAM_NAME [options]"
     echo ""
     echo "Options in sequential order:"
-    echo "  ${CMD_HELP}                  Show usage help text"
-    echo "  ${CMD_CREATE_DB}             Recreate database objects"
-    echo "  ${CMD_IMPORT}                Import data from CSV files"
-    echo "  ${CMD_MOCK} <file>           Run <file> to generate mock data"
-    echo "  ${CMD_CREATE_MARKDOWN}       Create markdown files"
+    echo "  ${CMD_HELP}                         Show usage help text"
+    echo "  ${CMD_CREATE_DB}                    Recreate database objects"
+    echo "  ${CMD_IMPORT} [source | current]    Import data from CSV files"
+    echo "  ${CMD_MOCK} <file>                  Run <file> to generate mock data"
+    echo "  ${CMD_CREATE_MARKDOWN}              Create markdown files"
     echo ""
 } # show_usage
 
@@ -154,7 +163,7 @@ function create_barangay_markdown_files {
 
 if [ $# -eq 0 ]; then
     op_create_db=1
-    op_import_data=1
+    op_import_source_data=1
     op_create_markdown=1
 fi
 
@@ -174,8 +183,18 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
         op_create_db=1
         shift 1
     elif [ "${1}" == "${CMD_IMPORT}" ]; then
-        op_import_data=1
         shift 1
+        if [ $# -gt 0 ]; then
+            echo "Missing --import parameter"
+            exit 1
+        else
+            if [ "${1}" == "source" ]; then
+                op_import_source_data=1
+            elif [ "${1}" == "current" ]; then
+                op_import_current_data=1
+            fi
+            shift 1
+        fi
     elif [ "$1" == "${CMD_MOCK}" ]; then
         shift 1
         if [ $# -eq 0 ]; then
@@ -218,7 +237,7 @@ if [ ${op_create_db} -eq 1 ]; then
     echo "Done."
 fi
 
-if [ ${op_import_data} -eq 1 ]; then
+if [ ${op_import_source_data} -eq 1 ]; then
     if ! /usr/bin/pg_isready &>/dev/null; then
         echo "PostgreSQL service is not running."
         echo "Aborting operation."
@@ -234,10 +253,9 @@ if [ ${op_import_data} -eq 1 ]; then
     #
 
     # Make sure the district import directory is empty
-    district_source_dir="../_data/to_import/district"
     district_dest_dir="./sql/import"
-    district_files=$(find ${district_source_dir}/ -maxdepth 1 -iname "*.csv")
-    echo "Import District Files:"
+    district_files=$(find ${IMPORT_SOURCE_DIR}/ -maxdepth 1 -iname "*.csv")
+    echo "Import source data files:"
     echo "${district_files}"
     readarray -t files <<<"${district_files}"
     IFS=$'\n' files=($(sort <<<"${files[*]}"))
@@ -267,6 +285,43 @@ if [ ${op_import_data} -eq 1 ]; then
 
     echo "Processing imported data."
     psql -d postgres -w -f ./sql/process_import.sql
+    echo "Done."
+fi
+
+if [ ${op_import_current_data} -eq 1 ]; then
+    if ! /usr/bin/pg_isready &>/dev/null; then
+        echo "PostgreSQL service is not running."
+        echo "Aborting operation."
+        exit 1
+    fi
+    echo "Import from current data files"
+
+    current_dest_dir="./sql/import"
+    current_files=$(find ${IMPORT_CURRENT_DIR}/ -maxdepth 1 -iname "*.csv")
+    echo "Import current data files:"
+    echo "${current_files}"
+    readarray -t files <<<"${current_files}"
+    IFS=$'\n' files=($(sort <<<"${files[*]}"))
+    unset IFS
+    sql_current_files=()
+    for file in ${files[@]}; do
+        filename=$(basename ${file})
+        sql_file="${current_dest_dir}/${filename%.*}.sql"
+        echo "Creating ${sql_file}."
+        sql_current_files+="${sql_file}"
+        current_file_content=""`
+            `"\\COPY vt_current("`
+            `" contact,"`
+            `" municipality_code,"`
+            `" precinct,"`
+            `" current) FROM '${file}' DELIMITER ',' CSV HEADER ENCODING 'UTF8';"
+        create_file ${sql_file} "${current_file_content}"
+        echo "Executing ${sql_file}."
+        psql -d postgres -w -f ${sql_file}
+    done
+
+    echo "Processing imported current data."
+    psql -d postgres -w -f ./sql/process_current.sql
     echo "Done."
 fi
 
