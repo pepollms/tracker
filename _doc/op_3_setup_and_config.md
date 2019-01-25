@@ -124,13 +124,13 @@ The following hierarchy shows the project directory structure:
         |
         +-- sql             [SQL script files]
             |
-            +-- base        [database table SQL script files]
-            +-- dm          [data management SQL script files]
-            +-- import      [import SQL script files]
-            +-- json        [JSON file SQL script files]
+            +-- base        [database table creation]
+            +-- dm          [data management]
+            +-- import      [source data importing]
+            +-- json        [JSON creation]
             +-- mock
-            +-- utility     [database utility functions SQL script files]
-            +-- view        [database view SQL script files]
+            +-- utility     [database utility functions]
+            +-- view        [database view creation]
     +-- _site/              [output web pages]
     +-- _temp/
     +-- vendor/             [Jekyll-specific files]
