@@ -153,10 +153,7 @@ The Git repository is hosted on GitHub ([https://github.com/](https://github.com
 The system uses the Git version control[^git_version_control].
 The system uses a GitHub account to host the project repository and to host the static web pages.
 
-Currently, the project `vtracker` is hosted on GitHub using the user account `rmaicle`.
-It could be accessed from a browser at `https://github.com/rmaicle/vtracker`.
-
-For production, a new account must be used.
+Currently, the project `tracker` is hosted on GitHub, `https://github.com/pepollms/tracker`.
 
 For reference, there is an online documentation available at [https://git-scm.com/docs](https://git-scm.com/docs) and a downloadable electronic book in `pdf`, `epub` and `mobi` formats at [https://git-scm.com/book/en/v2](https://git-scm.com/book/en/v2).
 
@@ -179,13 +176,20 @@ $ sudo pacman -S git
 A clone or a copy of the project repository is needed in the local filesystem.
 A clone is an exact and complete copy of the project files, and all the changes made.
 
-The project files must be cloned from the remote GitHub site, `https://github.com/rmaicle/vtracker`.
+The project files must be cloned from the remote GitHub site.
+
+Note that there are a couple of ways to clone a git repository on GitHub; HTTPS and SSH.
+HTTPS provide access to the Git repository over a secure connection and is available even if behind a firewall or proxy.
+Using SSH URLS provide access to the Git repository via SSH, a secure protocol, which requires creating SSH keys.
+The difference is that using HTTPS requires that the user provide their GitHub username and password every time a `git pull`, `git push` or `git fetch` command is executed.
+To be able to push changes to the repository, without providing the GitHub username and password everytime, the project will use SSH.
+See the [GitHub](#section-github) section on how to setup and use SSH.
 
 The following command will create a clone of the project files from the remote site in a subdirectory named `vtracker`.
 The default behaviour of the `git clone` command is to create the subdirectory based on the name of the project which is `vtracker`.
 
 ~~~
-$ git clone https://github.com/rmaicle/vtracker
+$ git clone git@github.com:pepollms/tracker.git
 ~~~
 
 If a different subdirectory name is preferred or necessary, then the `git clone` command has an option for that.
@@ -278,15 +282,19 @@ $ git logm
 
 
 
-### Commit Changes
+### Commit Changes and Push Changes to Remote Repository
 
-Changes are stored in the repository by issuing the following command:
+All changes are stored in the Git repository.
+Add new changes by issuing the following command inside the project directory.
 
 ~~~
 $ git commit -a -m "commit message"
 ~~~
 
-send changes to the remote repository.
+or use the `git gui  &` command to run a graphical user interface.
+
+When the last `git push` command was issued, Git bookmarks that event so that the next time the command is executed, Git will only send changes from that time onwards.
+To send the changes in the local repository to the remote repository, run the following command:
 
 ~~~
 $ git push
@@ -294,7 +302,7 @@ $ git push
 
 
 
-### Getting Project Updates
+### Getting Project Updates from Remote Repository
 
 Any changes in the remote site may be obtained by updating the local copy of the project.
 In the Git version control, this is called a `pull`.
@@ -305,6 +313,20 @@ The following command "pulls" all changes from the project remote repository and
 ~~~
 $ git pull
 ~~~
+
+If the command above produces an error like the one below, it means that the remote site could not verify the SSH public key.
+Add the public key to the `ssh-agent`.
+See the [Add SSH Key to `ssh-agent`](#section-add-ssh-key-to-ssh-agent) section.
+
+~~~
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+~~~
+
+
 
 ## GitHub {#section-github}
 
