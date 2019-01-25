@@ -306,6 +306,127 @@ The following command "pulls" all changes from the project remote repository and
 $ git pull
 ~~~
 
+## GitHub {#section-github}
+
+The project uses GitHub, a web-based hosting service for version control using Git.
+
+
+
+### Connecting to GitHub with SSH
+
+The steps to enable connecting to GitHub via SSH is discussed in detail in [https://help.github.com/articles/connecting-to-github-with-ssh/](https://help.github.com/articles/connecting-to-github-with-ssh/).
+
+
+
+### Generating SSH Key
+
+Enter the following command to create a new SSH key in the current directory using the RSA algorithm.
+
+~~~
+$ ssh-keygen -t rsa
+~~~
+
+It will prompt for a filename wherein to save the key and a passphrase.
+The filename could be renamed if necessary.
+The passphrase asked whenever adding the SSH key to the ssh-agent.
+
+
+
+#### Add SSH Key to `ssh-agent` {#section-add-ssh-key-to-ssh-agent}
+
+Add the SSH private key to the ssh-agent.
+
+The following command assumes that the SSH key is in the `~/.ssh` directory and the key name is `github_pepollms_rsa`.
+
+~~~
+$ ssh-add ~/.ssh/github_pepollms_rsa
+~~~
+
+Note that the command must be executed everytime the machine is restarted.
+
+
+
+#### Add SSH Key to GitHub
+
+The `xclip` program may be necessary to install if it has not yet been installed.
+`xclip` is a commandline program used to copy text into.
+
+Install `xclip`.
+
+~~~
+$ sudo pacman -Syu xclip
+[sudo] password for <user>:
+:: Synchronizing package databases...
+ core is up to date
+ extra is up to date
+ community is up to date
+ multilib is up to date
+:: Starting full system upgrade...
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (1) xclip-0.13-2
+
+Total Download Size:   0.01 MiB
+Total Installed Size:  0.06 MiB
+
+:: Proceed with installation? [Y/n] y
+:: Retrieving packages...
+ xclip-0.13-2-x86_64       14.8 KiB  46.8K/s 00:00 [#####] 100%
+(1/1) checking keys in keyring                     [#####] 100%
+(1/1) checking package integrity                   [#####] 100%
+(1/1) loading package files                        [#####] 100%
+(1/1) checking for file conflicts                  [#####] 100%
+(1/1) checking available disk space                [#####] 100%
+:: Processing package changes...
+(1/1) installing xclip                             [#####] 100%
+:: Running post-transaction hooks...
+(1/1) Arming ConditionNeedsUpdate...
+~~~
+
+Copy the SSH Key to the clipboard.
+Note that the `<filename>` is the public SSH key filename you created with `ssh-keygen`.
+The public key is the filename with the `.pub` extension.
+
+~~~
+$ xclip -sel clip < ~/.ssh/<filename>
+~~~
+
+Add the SSH key in the GitHub account settings and under the SSH and GPG keys section by pasting the copied SSH key text in the clipboard.
+
+
+
+#### Run `ssh-agent` on System Start-Up
+
+Add the following to the `~/.bash_profile` file.
+
+~~~
+SSH_ENV="$HOME/.ssh/environment"
+
+function start_agent {
+    echo "Initialising new SSH agent..."
+    /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+    echo succeeded
+    chmod 600 "${SSH_ENV}"
+    . "${SSH_ENV}" > /dev/null
+    /usr/bin/ssh-add;
+}
+
+# Source SSH settings, if applicable
+
+if [ -f "${SSH_ENV}" ]; then
+    . "${SSH_ENV}" > /dev/null
+    #ps ${SSH_AGENT_PID} doesn't work under cywgin
+    ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+        start_agent;
+    }
+else
+    start_agent;
+fi
+~~~
+
+The following was taken from Stack Overflow site, [https://stackoverflow.com/questions/18880024/start-ssh-agent-on-login](https://stackoverflow.com/questions/18880024/start-ssh-agent-on-login).
+
 
 
 ## Database
