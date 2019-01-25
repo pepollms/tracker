@@ -11,9 +11,9 @@ The following sub-sections show the database conceptual design.
 
 
 
-### Import Table
+### Source Data Import Table
 
-The database is created and initially populated with the source data supplied during system setup and performed once at the start of the system operation. The import table is structured as a standalone table whose structure is identical to the source data file strucutre.
+The database is created and initially populated with the source data supplied during system setup and performed once at the start of the system operation. The source import table is structured as a standalone table whose structure is identical to the source data file structure.
 
 The source data files are comma-separated value (CSV) files with a header line.
 The following table shows the structure of the CSV file that is read by the system.
@@ -31,7 +31,7 @@ The following table shows the structure of the CSV file that is read by the syst
 |      9     | contact           | text      |   50   |
 |     10     | target            | numeric   |        |
 
-The following information clarifies some more information on the import table structure above.
+The following clarifies some information on the source import table structure above.
 
 1. The data in the `district` column is assumed to contain only abbreviations of ordinal numbers.
 Ordinal number examples are `1st`, `2nd`, `3rd` and so on.
@@ -43,6 +43,7 @@ That means the column expects values from zero to a hundred percent (0-100).
 The column does not expect a percentage (%) symbol.
 
 The source data files are expected to be in UTF-8 encoding to accomodate special characters like the Spanish "enye", Ñ (lower case ñ).
+
 
 
 ### Subdivisions
@@ -74,7 +75,7 @@ The percentage value from the import table is converted to an actual value using
 
 
 
-### Importing Data
+### Importing Source Data Files
 
 Pre-Election Poll Monitoring System imports source data file(s) like geographical subdivisions, voting jurisdictions, number of registered voters and campaign leaders.
 
@@ -82,8 +83,8 @@ Maintainer imports the source data file(s) once on system setup.
 
 !uml(images/pp-import-data.svg {width=550})(Import Source Data File(s))
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Maintainer -> "Import\nProgram" : import data source file(s)
-"Import\nProgram" -> "Poll Database" : insert data into import table
+Maintainer -> "Import\nProgram" : import source data file(s)
+"Import\nProgram" -> "Poll Database" : insert data into source import table
 "Poll Database" -> "Poll Database" : distribute data from import table\ninto geographical subdivisions,\nvoting jurisdictions and\npoll monitoring tables.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \
