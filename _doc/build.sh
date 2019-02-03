@@ -57,8 +57,9 @@ doc_files=(
     "op_1_introduction.md"
     "op_2_design.md"
     "op_3_setup_and_config.md"
-    "op_4_source_files.md"
-    "op_5_output.md"
+    "op_4_operations.md"
+    "op_5_source_files.md"
+    "op_6_output.md"
 )
 
 echo "Checking required files..."
@@ -135,8 +136,9 @@ pandoc                                  \
         -s op_1_introduction_pp.md      \
            op_2_design_pp.md            \
            op_3_setup_and_config_pp.md  \
-           op_4_source_files_pp.md      \
-           op_5_output.md               \
+           op_4_operations_pp.md      \
+           op_5_source_files_pp.md      \
+           op_6_output.md               \
            op_0_links.md                \
         --template=${template_file}     \
         -f markdown+raw_tex+fenced_code_blocks+footnotes+link_attributes+implicit_figures   \
