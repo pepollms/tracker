@@ -143,8 +143,6 @@ The following hierarchy shows the project directory structure:
 ~~~
 
 The project files are kept in a Git version control repository.
-The Git repository is hosted on GitHub ([https://github.com/](https://github.com/)).
-
 
 
 
@@ -153,9 +151,9 @@ The Git repository is hosted on GitHub ([https://github.com/](https://github.com
 The system uses the Git version control[^git_version_control].
 The system uses a GitHub account to host the project repository and to host the static web pages.
 
-Currently, the project `tracker` is hosted on GitHub, `https://github.com/pepollms/tracker`.
+Currently, the project repository name is `tracker` and hosted remotely on GitHub, `https://github.com/pepollms/tracker`.
 
-For reference, there is an online documentation available at [https://git-scm.com/docs](https://git-scm.com/docs) and a downloadable electronic book in `pdf`, `epub` and `mobi` formats at [https://git-scm.com/book/en/v2](https://git-scm.com/book/en/v2).
+For Git reference, an online documentation available at [https://git-scm.com/docs](https://git-scm.com/docs) and a downloadable electronic book in `pdf`, `epub` and `mobi` formats at [https://git-scm.com/book/en/v2](https://git-scm.com/book/en/v2).
 
 [^git_version_control]: https://en.wikipedia.org/wiki/Git
 
@@ -163,7 +161,7 @@ For reference, there is an online documentation available at [https://git-scm.co
 
 ### Install `git`
 
-Note that the machine must be online to access the operating system remote repositories.
+Note that the machine must be online to access the remote repository.
 
 ~~~
 $ sudo pacman -S git
@@ -173,10 +171,8 @@ $ sudo pacman -S git
 
 ### Clone the Git repository
 
-A clone or a copy of the project repository is needed in the local filesystem.
-A clone is an exact and complete copy of the project files, and all the changes made.
-
-The project files must be cloned from the remote GitHub site.
+A clone is a copy of a repository.
+The remote repository on GitHub must be cloned to have a local copy in the filesystem.
 
 Note that there are a couple of ways to clone a git repository on GitHub; HTTPS and SSH.
 HTTPS provide access to the Git repository over a secure connection and is available even if behind a firewall or proxy.
@@ -467,8 +463,9 @@ $ sudo pacman -S postgresql
 
 
 
-#### Switch to User &nbsp;`postgres`
+#### Database Initialization
 
+Creating the PostgreSQL database requires that the command `initdb` be executed as a `postgres` user.
 Become `root` then as `postgres`[^archlinux162075].
 
 ~~~
@@ -476,24 +473,54 @@ $ su -
 # su - postgres
 ~~~
 
-The last command will change the current working directory to `/var/lib/postgres`.
+The directory `/var/lib/postgres` is the home directory of the user `postgres`.
 
-[^archlinux162075]: [https://bbs.archlinux.org/viewtopic.php?id=162075](https://bbs.archlinux.org/viewtopic.php?id=162075)
-
-
-
-#### Database Initialization
-
-The following command initializes the database storage area on disk; also called _database cluster_ in PostgreSQL and _catalog cluster_ in the SQL standard[^postgres_945_17_2].
+The following command initializes the database storage area on disk also called a _database cluster_.
+A database cluster is a collection of databases managed by a single instance of a running database server.[^postgres_11_1_sec_18_2]
 
 ~~~
 $ initdb --locale en_PH.UTF-8 -E UTF8 -D '/var/lib/postgres/data'
 ~~~
 
-The directory `/var/lib/postgres/data` is called _data directory_ or _data area_.
-The command must be executed while logged as PostgrSQL user account.
+The option `--locale` tells `initdb` to create the database using the locale named `en_PH` and the optional codeset `UTF-8`.[^postgres_11_1_sec_23_1_1]
 
-[^postgres_945_17_2]: PostgreSQL 9.4.5 §17.2 [http://www.postgresql.org/docs/9.4/interactive/creating-cluster.html](http://www.postgresql.org/docs/9.4/interactive/creating-cluster.html)
+The directory `/var/lib/postgres/data` is where the data will be stored, also called _data directory_ or _data area_.
+It could have been created anywhere in the system but the project uses the popular location.
+
+The following is an output of the command above.
+
+~~~
+$ initdb --locale en_PH.UTF-8 -E UTF8 -D '/var/lib/postgres/data'
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_PH.UTF-8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgres/data ... ok
+creating subdirectories ... ok
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting dynamic shared memory implementation ... posix
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+WARNING: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgres/data -l logfile start
+~~~
+
+[^archlinux162075]: [https://bbs.archlinux.org/viewtopic.php?id=162075](https://bbs.archlinux.org/viewtopic.php?id=162075)
+[^postgres_11_1_sec_18_2]: PostgreSQL 11.1 §18.2 [https://www.postgresql.org/docs/11/creating-cluster.html](https://www.postgresql.org/docs/11/creating-cluster.html)
+[^postgres_11_1_sec_23_1_1]: PostgreSQL 11.1 §23.1.1 [https://www.postgresql.org/docs/11/locale.html](https://www.postgresql.org/docs/11/locale.html)
 
 
 
@@ -514,7 +541,15 @@ And the corresponding command stops a running database server:
 $ systemctl stop postgresql
 ~~~
 
-Note that the command requires a privilege to execute and will prompt for the password of the current user.
+The commands above require privilege to execute and will prompt for the password of the current user.
+
+If for some reason the command `systemctl start postgresql` produces the error below, it is possible that the PostgreSQL database has not been created or initialized yet.
+
+~~~
+$ systemctl start postgresql
+Job for postgresql.service failed because the control process exited with error code.
+See "systemctl status postgresql.service" and "journalctl -xe" for details.
+~~~
 
 
 
@@ -535,6 +570,8 @@ Otherwise, the following will be displayed:
 $ pg_isready
 /run/postgresql:5432 - accepting connections
 ~~~
+
+The numbers `5432` is the port number used by the PostgreSQL database server to listen to connections.
 
 
 
@@ -570,23 +607,66 @@ There are a number of ways to check the PostgreSQL version.
 The system shall use Jekyll 3.8.4 or higher.
 The following are the system requirements for Jekyll 3.8.4:
 
-* Ruby version 2.2.5 or above, including all development headers (ruby version can be checked by running ruby -v)
-* RubyGems (which you can check by running gem -v)
-* GCC and Make (in case your system doesn’t have them installed, which you can check by running `gcc -v`, `g++ -v` and `make -v` on the command line)
+* Ruby version 2.2.5 or above, including all development headers (ruby version can be checked by running ruby -v).
+* RubyGems is a package manager for Ruby modules, called _gems_ (which you can check by running gem -v).
+* GCC and Make (in case your system doesn’t have them installed, which you can check by running `gcc -v`, `g++ -v` and `make -v` on the command line).
 
 The following references may be consulted on how to setup Jekyll with GitHub pages.
 
 [Setting up your GitHub Pages site locally with Jekyll](https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/)
 [Setting up GitHub Pages with Jekyll](http://www.stephaniehicks.com/githubPages_tutorial/pages/githubpages-jekyll.html)
 
+### Install Ruby
 
+### Install Bundler
 
-### Install Jekyll
-
-Note that the machine must be online to access the operating system remote repositories.
+Bundler manages a Ruby application's dependencies.
+Bundler allows you to specify which gems and optionally their version that your application depends on.
+Once this specification is in place, Bundler installs all required gems (including the full gem dependency tree) and logs the results for later inspection.
 
 ~~~
-$ gem install jekyll bundler
+$ gem install bundler
+Fetching bundler-2.0.1.gem
+WARNING:  You don't have /home/dan/.gem/ruby/2.6.0/bin in your PATH,
+      gem executables will not run.
+Successfully installed bundler-2.0.1
+1 gem installed
+~~~
+
+If the warning appears, edit `.bashrc` and add the Ruby executable path to the `PATH` environment variable.
+
+~~~
+export PATH=$PATH:~/.gem/ruby/2.6.0/bin
+~~~
+
+And execute the following:
+
+~~~
+$ source ~/.bashrc
+~~~
+
+
+
+### Install Jekyll and Other Dependencies
+
+Jekyll is a Ruby program and therefore requires Ruby to be installed first.
+
+Create a `Gemfile` to tell `bundler` what to install.
+
+~~~
+source 'https://rubygems.org'
+gem 'github-pages', group: :jekyll_plugins
+~~~
+
+The first line tells `bundler` where to get the _gems_.
+The second line tells `bundler` to use GitHub Pages.
+
+Install Jekyll and other dependencies by running the command below.
+The parameter `--path ./vendor/bundle` tells `bundler` to create and install to that directory.
+This allows the dependencies to be in an isolated environment which ensures that they do not conflict with other Ruby Gems on the system.
+
+~~~
+$ bundle install --path ./vendor/bundle
 ...
 ~~~
 
@@ -594,22 +674,19 @@ See the [Jekyll Install](#section-jekyll-install) section of the Output chapter 
 
 
 
-### Bundle Install
+### Upgrade
 
-Install the bundled Ruby Gems or Ruby libraries into `./vendor/bundle/` in contrast to installing into the system-wide directory.
-This allows the dependencies to be in an isolated environment which ensures that they do not conflict with other Ruby Gems on the system.
-Note that the machine must be online to access the operating system remote repositories.
+To upgrade, run the following command in the project directory.
 
 ~~~
-$ bundle install --path ./vendor/bundle
-...
+$ bundle update github-pages
 ~~~
 
 
 
 ### Configure Ignored Directory
 
-Add the following to the `git` ignore file `.gitignore` file:
+Add the following to the Git ignore file `.gitignore` file:
 
 ~~~
 vendor/**
@@ -619,7 +696,7 @@ Gemfile
 Gemfile.lock
 ~~~
 
-Add the following to the `jekyll` configuration file `_config.yml`:
+Add the following to the Jekyll configuration file `_config.yml`:
 
 ~~~
 # Exclude from processing.
@@ -633,6 +710,8 @@ exclude:
    - vendor/cache/
    - vendor/gems/
    - vendor/ruby/
+   - _doc/
+   - _scripts/
 ~~~
 
 
