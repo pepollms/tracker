@@ -68,11 +68,12 @@ select
             and vt_import.barangay = vt_barangay.name
             and vt_import.municipality = vt_municipality.name
             and vt_district.name like vt_import.district || '%') as bid,
+    vt_import.voters,
     -- Compute value from percentage
     -- The input target is a percentage, so we need to compute the approximate
     -- value of that percentage.
     get_percentage_value(vt_import.target, vt_import.voters),
-    vt_import.voters,
+    -- Initial value for current
     0
 from
     vt_import;
