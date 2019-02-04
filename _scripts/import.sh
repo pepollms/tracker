@@ -12,12 +12,14 @@ declare -r BARANGAY_MARKDOWN_FILE_DIR="${PROJECT_ROOT}/barangays"
 
 declare -r CMD_HELP="--help"
 declare -r CMD_DEBUG="--debug"
+declare -r CMD_INIT="--init"
 declare -r CMD_CREATE_DB="--create-db"
 declare -r CMD_IMPORT="--import"
 declare -r CMD_MOCK="--mock"
 declare -r CMD_CREATE_MARKDOWN="--create-markdown"
 
 declare -r COMMANDS=(
+    "${CMD_INIT}"
     "${CMD_CREATE_DB}"
     "${CMD_IMPORT}"
     "${CMD_MOCK}"
@@ -32,7 +34,20 @@ declare op_generate_mock_data=0
 declare op_create_markdown=0
 
 function show_usage {
-    echo "Import data from a comma-separated values (CSV) file."
+    echo "Import source/current data from a comma-separated values (CSV) file."
+    echo ""
+    echo "Usage: $PROGRAM_NAME [options]"
+    echo ""
+    echo "Options in sequential order:"
+    echo "  ${CMD_HELP}                         Show usage help text"
+    echo "  ${CMD_INIT} [-y]                   Initialize the system"
+    echo "                                   -y option will skip the confirmation step"
+    echo "  ${CMD_CREATE_DB}                    Recreate database objects"
+    echo "  ${CMD_IMPORT} [source | current]    Import data from CSV files"
+    #echo "  ${CMD_MOCK} <file>                  Run <file> to generate mock data"
+    echo "  ${CMD_MOCK} <from> <to>             Generate in-favor mock data"
+    echo "      from|to: <-a n | -p x m>     where n and m is any number, x is 0..100"
+    echo "  ${CMD_CREATE_MARKDOWN}              Create markdown files"
     echo ""
     echo "Import CSV source data files into PostgreSQL database."
     echo "The CSV files will be read from:"
@@ -49,15 +64,6 @@ function show_usage {
     echo "  <project>/districts"
     echo "  <project>/municipalities"
     echo "  <project>/barangays"
-    echo ""
-    echo "Usage: $PROGRAM_NAME [options]"
-    echo ""
-    echo "Options in sequential order:"
-    echo "  ${CMD_HELP}                         Show usage help text"
-    echo "  ${CMD_CREATE_DB}                    Recreate database objects"
-    echo "  ${CMD_IMPORT} [source | current]    Import data from CSV files"
-    echo "  ${CMD_MOCK} <file>                  Run <file> to generate mock data"
-    echo "  ${CMD_CREATE_MARKDOWN}              Create markdown files"
     echo ""
 } # show_usage
 
@@ -162,9 +168,8 @@ function create_barangay_markdown_files {
 
 
 if [ $# -eq 0 ]; then
-    op_create_db=1
-    op_import_source_data=1
-    op_create_markdown=1
+    show_usage
+    exit
 fi
 
 if [ "$1" == "${CMD_HELP}" ]; then
@@ -177,9 +182,40 @@ if [ "$1" == "${CMD_DEBUG}" ]; then
     shift 1
 fi
 
-arg_mock_data_file=""
+mock_data_ccolumn="vt_precinct_monitor.target"
+mock_data_lb="1"
+mock_data_ub="vt_precinct_monitor.target::integer"
 while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
-    if [ "${1}" == "${CMD_CREATE_DB}" ]; then
+    if [ "${1}" == "${CMD_INIT}" ]; then
+        shift 1
+        if [ "${1}" == "-y" ]; then
+            shift 1
+            op_create_db=1
+            op_import_source_data=1
+            op_create_markdown=1
+            break
+        else
+            echo ""
+            echo "System initialization is only performed during system startup."
+            echo "It will destroy all existing data in the current database."
+            echo ""
+            echo "The following operations will be performed:"
+            echo "  1. Create database"
+            echo "  2. Import source data"
+            echo "  3. Create markdown files"
+            echo ""
+            echo "Do you want to initialize the system?"
+            select yn in "Yes" "No"; do
+                case $yn in
+                    Yes )   op_create_db=1
+                            op_import_source_data=1
+                            op_create_markdown=1
+                            break ;;
+                    No )    exit ;;
+                esac
+            done
+        fi
+    elif [ "${1}" == "${CMD_CREATE_DB}" ]; then
         op_create_db=1
         shift 1
     elif [ "${1}" == "${CMD_IMPORT}" ]; then
@@ -243,6 +279,10 @@ if [ ${op_import_source_data} -eq 1 ]; then
         echo "Aborting operation."
         exit 1
     fi
+    if [ ! -e "${IMPORT_SOURCE_DIR}" ]; then
+        echo "Source data import directory does not exist: '${IMPORT_SOURCE_DIR}'."
+        exit 1
+    fi
     echo "Import from source data files"
 
     psql -d postgres -w -f ./sql/import/region.sql
@@ -255,37 +295,41 @@ if [ ${op_import_source_data} -eq 1 ]; then
     # Make sure the district import directory is empty
     district_dest_dir="./sql/import"
     district_files=$(find ${IMPORT_SOURCE_DIR}/ -maxdepth 1 -iname "*.csv")
-    echo "Import source data files:"
-    echo "${district_files}"
     readarray -t files <<<"${district_files}"
     IFS=$'\n' files=($(sort <<<"${files[*]}"))
     unset IFS
-    sql_district_files=()
-    for file in ${files[@]}; do
-        filename=$(basename ${file})
-        sql_file="${district_dest_dir}/${filename%.*}.sql"
-        echo "Creating ${sql_file}."
-        sql_district_files+="${sql_file}"
-        district_file_content=""`
-            `"\\COPY vt_import("`
-            `" province,"`
-            `" district,"`
-            `" municipality,"`
-            `" municipality_code,"`
-            `" barangay,"`
-            `" precinct,"`
-            `" voters,"`
-            `" leader,"`
-            `" contact,"`
-            `" target) FROM '${file}' DELIMITER ',' CSV HEADER ENCODING 'UTF8';"
-        create_file ${sql_file} "${district_file_content}"
-        echo "Executing ${sql_file}."
-        psql -d postgres -w -f ${sql_file}
-    done
+    if (( "${#files[@]}" )); then
+        echo "Import source data files:"
+        echo "${files}"
+        sql_district_files=()
+        for file in ${files[@]}; do
+            filename=$(basename ${file})
+            sql_file="${district_dest_dir}/${filename%.*}.sql"
+            echo "Creating ${sql_file}."
+            sql_district_files+="${sql_file}"
+            district_file_content=""`
+                `"\\COPY vt_import("`
+                `" province,"`
+                `" district,"`
+                `" municipality,"`
+                `" municipality_code,"`
+                `" barangay,"`
+                `" precinct,"`
+                `" voters,"`
+                `" leader,"`
+                `" contact,"`
+                `" target) FROM '${file}' DELIMITER ',' CSV HEADER ENCODING 'UTF8';"
+            create_file ${sql_file} "${district_file_content}"
+            echo "Executing ${sql_file}."
+            psql -d postgres -w -f ${sql_file}
+        done
 
-    echo "Processing imported data."
-    psql -d postgres -w -f ./sql/process_import.sql
-    echo "Done."
+        echo "Processing imported data."
+        psql -d postgres -w -f ./sql/process_import.sql
+        echo "Source data has been imported"
+    else
+        echo "No import files found."
+    fi
 fi
 
 if [ ${op_import_current_data} -eq 1 ]; then
