@@ -29,11 +29,11 @@ as
         vt_leader.id,
         vt_leader.name,
         vt_leader.contact,
-        current,
-        target,
-        voters,
-        get_percentage(current, target),
-        get_percentage(target, voters)
+        vt_precinct_monitor.current,
+        vt_precinct_monitor.target,
+        vt_precinct_monitor.voters,
+        get_percentage(vt_precinct_monitor.current, vt_precinct_monitor.target),
+        get_percentage(vt_precinct_monitor.target, vt_precinct_monitor.voters)
     from
         vt_precinct
         inner join vt_precinct_monitor
