@@ -340,35 +340,41 @@ if [ ${op_import_current_data} -eq 1 ]; then
         echo "Aborting operation."
         exit 1
     fi
-    echo "Import from current data files"
-
+    if [ ! -e "${IMPORT_CURRENT_DIR}" ]; then
+        echo "In-favor data import directory does not exist: '${IMPORT_CURRENT_DIR}'."
+        exit 1
+    fi
     current_dest_dir="./sql/import"
     current_files=$(find ${IMPORT_CURRENT_DIR}/ -maxdepth 1 -iname "*.csv")
-    echo "Import current data files:"
-    echo "${current_files}"
     readarray -t files <<<"${current_files}"
     IFS=$'\n' files=($(sort <<<"${files[*]}"))
     unset IFS
-    sql_current_files=()
-    for file in ${files[@]}; do
-        filename=$(basename ${file})
-        sql_file="${current_dest_dir}/${filename%.*}.sql"
-        echo "Creating ${sql_file}."
-        sql_current_files+="${sql_file}"
-        current_file_content=""`
-            `"\\COPY vt_current("`
-            `" contact,"`
-            `" municipality_code,"`
-            `" precinct,"`
-            `" current) FROM '${file}' DELIMITER ',' CSV HEADER ENCODING 'UTF8';"
-        create_file ${sql_file} "${current_file_content}"
-        echo "Executing ${sql_file}."
-        psql -d postgres -w -f ${sql_file}
-    done
+    if (( "${#files[@]}" )); then
+        echo "Importing ${#files[@]} files:"
+        echo "${files}"
+        sql_current_files=()
+        for file in ${files[@]}; do
+            filename=$(basename ${file})
+            sql_file="${current_dest_dir}/${filename%.*}.sql"
+            echo "Creating ${sql_file}."
+            sql_current_files+="${sql_file}"
+            current_file_content=""`
+                `"\\COPY vt_current("`
+                `" contact,"`
+                `" municipality_code,"`
+                `" precinct,"`
+                `" current) FROM '${file}' DELIMITER ',' CSV HEADER ENCODING 'UTF8';"
+            create_file ${sql_file} "${current_file_content}"
+            echo "Executing ${sql_file}."
+            psql -d postgres -w -f ${sql_file}
+        done
 
-    echo "Processing imported current data."
-    psql -d postgres -w -f ./sql/process_current.sql
-    echo "Done."
+        echo "Processing imported current data."
+        psql -d postgres -w -f ./sql/process_current.sql
+        echo "Current data has been imported."
+    else
+        echo "No import files found."
+    fi
 fi
 
 if [ ${op_generate_mock_data} -eq 1 ]; then
