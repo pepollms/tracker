@@ -3,7 +3,7 @@
 insert into vt_district(province_id, name)
 select distinct
     1,
-    district || ' DISTRICT' as district_name
+    district || ' District' as district_name
 from vt_import
 order by district_name asc;
 
