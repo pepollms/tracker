@@ -86,8 +86,6 @@ function echo_err {
     echo "-----"
 } # echo_err
 
-
-
 function create_file {
     if [ $# -eq 0 ]; then
         echo "Missing file and content parameters."
@@ -235,20 +233,27 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
         fi
     elif [ "$1" == "${CMD_MOCK}" ]; then
         shift 1
-        if [ $# -eq 0 ]; then
-            arg_mock_data_file="precinct_monitor_data.sql"
-        else
-            arg_mock_data_file="$1"
-            shift 1
-        fi
-        if [ -z "${arg_mock_data_file}" ]; then
-            arg_mock_data_file="precinct_monitor_data.sql"
-        fi
-        if [ ! -e ./sql/mock/${arg_mock_data_file} ]; then
-            echo "Mock data script file not found: '${arg_mock_data_file}'."
-            exit 1
-        fi
         op_generate_mock_data=1
+        if [ $# -eq 0 ]; then
+            continue
+        fi
+        if [ "${1}" == "-a" ]; then
+            mock_data_lb="least($2, $mock_data_ccolumn)::integer"
+            shift 2
+        elif [ "${1}" == "-p" ]; then
+            mock_data_lb="get_percentage_value($2, least($3, $mock_data_ccolumn))"
+            shift 3
+        fi
+        if [ $# -eq 0 ]; then
+            continue
+        fi
+        if [ "${1}" == "-a" ]; then
+            mock_data_ub="least($2, $mock_data_ccolumn)::integer"
+            shift 2
+        elif [ "${1}" == "-p" ]; then
+            mock_data_ub="get_percentage_value($2, least($3, $mock_data_ccolumn))"
+            shift 3
+        fi
     elif [ "$1" == "${CMD_CREATE_MARKDOWN}" ]; then
         op_create_markdown=1
         shift 1
@@ -272,7 +277,7 @@ if [ ${op_create_db} -eq 1 ]; then
     psql -d postgres -w -f ./sql/create_utility_functions.sql
     psql -d postgres -w -f ./sql/create_monitor_views.sql
     psql -d postgres -w -f ./sql/create_dm_functions.sql
-    echo "Done."
+    echo "Database objects has been created."
 fi
 
 if [ ${op_import_source_data} -eq 1 ]; then
@@ -383,9 +388,23 @@ if [ ${op_generate_mock_data} -eq 1 ]; then
         echo "Aborting operation."
         exit 1
     fi
-    echo "Generate mock data using ${arg_mock_data_file}."
-    psql -d postgres -w -f ./sql/mock/${arg_mock_data_file}
-    echo "Done."
+
+    content=""`
+    `"update vt_precinct_monitor\n"`
+    `"set current = random_between(${mock_data_lb}, ${mock_data_ub})\n"`
+    `"from\n"`
+    `"    vt_precinct\n"`
+    `"    inner join vt_barangay on\n"`
+    `"        (vt_barangay.id = vt_precinct.barangay_id)\n"`
+    `"    inner join vt_municipality on\n"`
+    `"        (vt_municipality.id = vt_barangay.municipality_id)\n"`
+    `"where\n"`
+    `"    vt_precinct.id = vt_precinct_monitor.precinct_id;"
+
+    file="./sql/mock//mock_data.sql"
+    create_file ${file} "${content}"
+    psql -d postgres -w -f ./sql/mock/mock_data.sql
+    echo "In-favor mock data has been generated."
 fi
 
 if [ ${op_create_markdown} -eq 1 ]; then
@@ -413,7 +432,8 @@ if [ ${op_create_markdown} -eq 1 ]; then
         mkdir ${BARANGAY_MARKDOWN_FILE_DIR}
     fi
     create_barangay_markdown_files
+    echo "Markdown files has been created."
 fi
 
-echo "Done (${PROGRAM_NAME})."
+echo "Done."
 exit 0
