@@ -100,8 +100,10 @@ function create_file {
         content="$1"
         shift 1
     fi
-    echo -e ${content} > "${file}"
+    echo -e "${content}" > "${file}"
 }
+
+
 
 function create_district_markdown_files {
     local -r SQL="select count(*) from vt_district;"
@@ -123,7 +125,7 @@ function create_district_markdown_files {
             `"district_id: ${i}\n"`
             `"---"
         file="${DISTRICT_MARKDOWN_FILE_DIR}/district_${i}.md"
-        echo -e ${content} > "${file}"
+        echo -e "${content}" > "${file}"
     done
 }
 
@@ -142,7 +144,7 @@ function create_municipality_markdown_files {
             `"municipality_id: ${i}\n"`
             `"---"
         file="${MUNICIPAL_MARKDOWN_FILE_DIR}/municipality_${i}.md"
-        echo -e ${content} > "${file}"
+        echo -e "${content}" > "${file}"
     done
 }
 
@@ -161,7 +163,7 @@ function create_barangay_markdown_files {
             `"barangay_id: ${i}\n"`
             `"---"
         file="${BARANGAY_MARKDOWN_FILE_DIR}/barangay_${i}.md"
-        echo -e ${content} > "${file}"
+        echo -e "${content}" > "${file}"
     done
 }
 
