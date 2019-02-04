@@ -222,7 +222,7 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
         shift 1
     elif [ "${1}" == "${CMD_IMPORT}" ]; then
         shift 1
-        if [ $# -gt 0 ]; then
+        if [ $# -eq 0 ]; then
             echo "Missing --import parameter"
             exit 1
         else
