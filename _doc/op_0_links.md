@@ -8,15 +8,10 @@ author: &id_author
     email: rmaicle@gmail.com
   - name: Dan Zambrano Jr.
     email: dan.kidtech@gmail.com
-version: Version 0.4.0
+version: Version 0.6.0
 date: January 2019
 distribution: |
-    | Private; distribution limited to company use only.
-    |
-xdistribution: |
-    | For private use; distribution limited to executive level only.
-    | This is an optional second line.
-    | Approved for public release and unlimited distribution.
+    | Private; distribution limited to internal use only.
     |
 xcopyright: Copyleft \textcopyright\space2017
 licenseimage: cc_by_nc_sa_40.eps

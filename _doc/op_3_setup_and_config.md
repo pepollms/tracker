@@ -102,7 +102,7 @@ The following hierarchy shows the project directory structure:
 ~~~
 <project>
     |
-    +-- barangays/
+    +-- barangays/          [auto-created]
     +-- css/                [stylesheets]
     +-- _data/              [JSON files]
         |
@@ -111,13 +111,14 @@ The following hierarchy shows the project directory structure:
             +-- region
             +-- province
             +-- district
-    +-- districts/
+            +-- current
+    +-- districts/          [auto-created]
     +-- _doc/               [documentation files]
     +-- images/             [web page images]
     +-- _includes/          [include page files]
     +-- javascripts/
     +-- _layouts/           [page layouts]
-    +-- municipalities/
+    +-- municipalities/     [auto-created]
     +-- _posts/             [not used]
     +-- _sass/              [SASS stylesheets]
     +-- _scripts/           [script files]
@@ -132,7 +133,6 @@ The following hierarchy shows the project directory structure:
             +-- utility     [database utility functions]
             +-- view        [database view creation]
     +-- _site/              [output web pages]
-    +-- _temp/
     +-- vendor/             [Jekyll-specific files]
     +-- 404.html
     +-- about.md
@@ -524,7 +524,7 @@ Success. You can now start the database server using:
 
 
 
-### Starting and Stopping the Database Server
+### Starting and Stopping the Database Server {#section-starting-stopping-database-server}
 
 The database server may be started using the GNU/Linux `systemctl`.
 The program `systemctl` controls the systemd system and service manager.
@@ -716,7 +716,7 @@ exclude:
 
 
 
-### Generate Files
+### Generate Local Files
 
 To generate static HTML pages, change directory to the project directory then execute the command, `bundle exec jekyll serve`.
 

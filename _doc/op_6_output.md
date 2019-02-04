@@ -2,6 +2,137 @@
 
 This section provides terminal outputs.
 
+## System Initialization
+
+~~~
+$ ./import.sh --init
+
+System initialization is only performed during system startup.
+It will destroy all existing data in the current database.
+
+The following operations will be performed:
+  1. Create database
+  2. Import source data
+  3. Create markdown files
+
+Do you want to initialize the system?
+1) Yes
+2) No
+#? 1
+Create database objects.
+psql:./sql/create_base_tables.sql:7: NOTICE:  view "view_districts_per_province" does not exist, skipping
+DROP VIEW
+psql:./sql/create_base_tables.sql:8: NOTICE:  view "view_municipalities_per_district" does not exist, skipping
+DROP VIEW
+psql:./sql/create_base_tables.sql:9: NOTICE:  view "view_barangays_per_municipality" does not exist, skipping
+DROP VIEW
+psql:./sql/create_base_tables.sql:10: NOTICE:  view "view_precincts_per_barangay" does not exist, skipping
+DROP VIEW
+DROP VIEW
+DROP VIEW
+DROP VIEW
+DROP VIEW
+DROP VIEW
+DROP FUNCTION
+DROP TYPE
+CREATE TYPE
+CREATE FUNCTION
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP TABLE
+CREATE TABLE
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+psql:./sql/view/precinct.sql:1: NOTICE:  view "view_precinct" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+psql:./sql/view/barangay.sql:1: NOTICE:  view "view_barangay" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+psql:./sql/view/municipality.sql:1: NOTICE:  view "view_municipality" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+psql:./sql/view/district.sql:1: NOTICE:  view "view_district" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+psql:./sql/view/province.sql:1: NOTICE:  view "view_province" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+DROP FUNCTION
+CREATE FUNCTION
+Database objects has been created.
+Import from source data files
+COPY 17
+COPY 6
+Import source data files:
+../_data/to_import/district/mock_data_district_1_alamada.csv
+Creating ./sql/import/mock_data_district_1_alamada.sql.
+Executing ./sql/import/mock_data_district_1_alamada.sql.
+COPY 5
+Creating ./sql/import/mock_data_district_2_kidapawan.sql.
+Executing ./sql/import/mock_data_district_2_kidapawan.sql.
+COPY 5
+Creating ./sql/import/mock_data_district_3_banisilan.sql.
+Executing ./sql/import/mock_data_district_3_banisilan.sql.
+COPY 5
+Processing imported data.
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 15
+INSERT 0 15
+INSERT 0 15
+INSERT 0 15
+Source data has been imported
+Create markdown files:
+  District markdown files: 3
+  Municipality markdown files: 3
+  Barangay markdown files: 3
+Markdown files has been created.
+Done.
+~~~
 
 
 ## Jekyll
