@@ -2,9 +2,9 @@ drop view if exists view_district;
 create or replace view view_district
     (district_id,
         district,
-        voters_sum,
-        target_sum,
         current_sum,
+        target_sum,
+        voters_sum,
         current_percentage,
         target_percentage)
 as

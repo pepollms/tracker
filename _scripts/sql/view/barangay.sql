@@ -6,9 +6,9 @@ create or replace view view_barangay
         municipality,
         barangay_id,
         barangay,
-        voters_sum,
-        target_sum,
         current_sum,
+        target_sum,
+        voters_sum,
         current_percentage,
         target_percentage)
 as

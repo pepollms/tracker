@@ -4,9 +4,9 @@ create or replace view view_municipality
         district,
         municipality_id,
         municipality,
-        voters_sum,
-        target_sum,
         current_sum,
+        target_sum,
+        voters_sum,
         current_percentage,
         target_percentage)
 as
