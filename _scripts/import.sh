@@ -364,7 +364,7 @@ if [ ${op_import_current_data} -eq 1 ]; then
             echo "Creating ${sql_file}."
             sql_current_files+="${sql_file}"
             current_file_content=""`
-                `"\\COPY vt_current("`
+                `"\\COPY vt_import_current("`
                 `" contact,"`
                 `" municipality_code,"`
                 `" precinct,"`
