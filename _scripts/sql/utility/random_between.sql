@@ -1,4 +1,3 @@
--- Create user-defined function returning a number between a specified range
 DROP FUNCTION IF EXISTS random_between CASCADE;
 CREATE OR REPLACE FUNCTION random_between(p_start integer, p_end integer)
     RETURNS integer
