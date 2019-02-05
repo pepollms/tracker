@@ -11,7 +11,7 @@ BEGIN
     if retval = 0 then
         return 0;
     end if;
-    retval := target from vt_precinct where id = p_id;
+    retval := target from vt_precinct_monitor where id = p_id;
     return retval;
 end;
 $function$;

@@ -11,11 +11,11 @@ BEGIN
     IF p_count::integer = 0 THEN
         RETURN 0;
     ELSE
-        retval := count(*) from vt_current where id = p_id;
+        retval := count(*) from vt_precinct where id = p_id;
         if retval = 0 then
             return 0;
         end if;
-        update vt_current set current=current + p_count where precinct_id = p_id;
+        update vt_precinct_monitor set current=current + p_count where precinct_id = p_id;
         return p_count;
     END IF;
 end;

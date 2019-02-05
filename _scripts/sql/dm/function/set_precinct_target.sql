@@ -15,7 +15,7 @@ BEGIN
         if retval = 0 then
             return 0;
         end if;
-        update vt_precinct set target=p_count where id = p_id;
+        update vt_precinct_monitor set target=p_count where id = p_id;
         return p_count;
     END IF;
 end;
