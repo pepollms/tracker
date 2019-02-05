@@ -14,9 +14,12 @@ drop view if exists view_municipality;
 drop view if exists view_barangay;
 drop view if exists view_precinct;
 
+drop view if exists view_import_current;
+
 \ir ./base/utility.sql
 
 \ir ./base/import.sql
+\ir ./base/import_current.sql
 
 \ir ./base/region.sql
 \ir ./base/province.sql
