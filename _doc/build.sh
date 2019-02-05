@@ -136,7 +136,7 @@ pandoc                                  \
         -s op_1_introduction_pp.md      \
            op_2_design_pp.md            \
            op_3_setup_and_config_pp.md  \
-           op_4_operations_pp.md      \
+           op_4_operations_pp.md        \
            op_5_source_files_pp.md      \
            op_6_output.md               \
            op_0_links.md                \
