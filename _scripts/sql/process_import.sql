@@ -99,4 +99,6 @@ select
         where
             vt_leader.name = vt_import.leader) as leader_id
 from
-    vt_import;
+    vt_import
+where
+    leader is not null;
