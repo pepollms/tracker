@@ -1,13 +1,6 @@
-update vt_precinct_monitor
-set current = s.current_sum
+update vt_precinct_monitor as pm
+set current = pm.current + s.current
 from
-    vt_precinct_monitor pm
-    inner join (
-        select precinct_id, sum(current) as current_sum
-        from
-            view_current
-        group by
-            municipality_id,
-            precinct_id
-        ) s on (s.precinct_id = pm.precinct_id);
-
+    view_import_current as s
+where
+    pm.precinct_id = s.precinct_id;
