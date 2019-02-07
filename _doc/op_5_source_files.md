@@ -6,34 +6,34 @@ This section provides the source file listings.
 
 ## Import Script {#section-import-script}
 
-The data source import script `import.sh` in the scripts directory `<project>/_scripts` is responsible for the following operations:
-It is responsible with the following operations:
+The _data source import script_ is responsible for a number of operations:
 
 1. Create the all database objects.
 2. Import the source data into the `import` table and populate other tables.
 3. Optionally create mock data for the `monitor` table.
 4. Create the markdown files used by Jekyll to generate the static HTML pages.
 
-Database creation is distributed into different SQL script files corresponding to their functionality.
-The scripts are located in the scripts directory, `<project>/_scripts/sql`.
-The individual scripts are called from the [source data import script](#source-data-import-script) `import.sh`.
-There is no driver file for the database creation script but are executed sequentially in the following order:
+The creation of database objects are further divided into specific operations:
 
-1. create_base_tables.sql
-3. create_monitor_views.sql
-4. create_dm_functions.sql
-2. create_utility_functions.sql
+1. Create base tables
+3. Create poll monitoring views
+4. Create data management functions
+2. Create utility functions
 
-The bash shell script file `import.sh` in the scripts directory `<project>/_scripts` is the driver script.
+The following Bash shell script is the driver script for the operations above.
+
+File: `<project>/_scripts/import.sh`
 
 !source(../_scripts/import.sh)(bash .numberLines)
 
 
 
-## Tables
+## Base Tables
 
-The bash shell script file `create_base_tables.sql` in the script directory `<project>/_scripts/sql` is used to create all database tables; geographical subdivisions, voting jurisdictions and poll monitoring tables.
+The following Bash shell script is used to create all database tables; geographical subdivisions, voting jurisdictions and poll monitoring tables.
 See the [Database Design](#database-design) section for a conceptual overview of the database model.
+
+File: `<project>/_scripts/sql/create_base_tables.sql`
 
 !source(../_scripts/sql/create_base_tables.sql)(sql)
 
@@ -41,7 +41,9 @@ See the [Database Design](#database-design) section for a conceptual overview of
 
 ### Source Data Import Table
 
-Script to create the `vt_import` table, `<project>/_scripts/sql/base/import.sql`.
+Script to create the `vt_import` table.
+
+File: `<project>/_scripts/sql/base/import.sql`
 
 !source(../_scripts/sql/base/import.sql)(sql)
 
@@ -49,7 +51,9 @@ Script to create the `vt_import` table, `<project>/_scripts/sql/base/import.sql`
 
 ### Current Import Table
 
-Script to create the `vt_import_current` table, `<project>/_scripts/sql/base/import_current.sql`.
+Script to create the `vt_import_current` table.
+
+File: `<project>/_scripts/sql/base/import_current.sql`
 
 !source(../_scripts/sql/base/import_current.sql)(sql)
 
@@ -57,7 +61,9 @@ Script to create the `vt_import_current` table, `<project>/_scripts/sql/base/imp
 
 ### Region Table
 
-Script to create the `vt_region` table, `<project>/_scripts/sql/base/region.sql`.
+Script to create the `vt_region` table.
+
+File: `<project>/_scripts/sql/base/region.sql`
 
 !source(../_scripts/sql/base/region.sql)(sql)
 
@@ -65,7 +71,9 @@ Script to create the `vt_region` table, `<project>/_scripts/sql/base/region.sql`
 
 ### Province Table
 
-Script to create the `vt_province` table, `<project>/_scripts/sql/base/province.sql`.
+Script to create the `vt_province` table.
+
+File: `<project>/_scripts/sql/base/province.sql`
 
 !source(../_scripts/sql/base/province.sql)(sql)
 
@@ -73,7 +81,9 @@ Script to create the `vt_province` table, `<project>/_scripts/sql/base/province.
 
 ### District Table
 
-Script to create the `vt_district` table, `<project>/_scripts/sql/base/district.sql`.
+Script to create the `vt_district` table.
+
+File: `<project>/_scripts/sql/base/district.sql`
 
 !source(../_scripts/sql/base/district.sql)(sql)
 
@@ -81,7 +91,9 @@ Script to create the `vt_district` table, `<project>/_scripts/sql/base/district.
 
 ### Municipality Table
 
-Script to create the `vt_municipality` table, `<project>/_scripts/sql/base/municipality.sql`.
+Script to create the `vt_municipality` table.
+
+File: `<project>/_scripts/sql/base/municipality.sql`
 
 !source(../_scripts/sql/base/municipality.sql)(sql)
 
@@ -89,7 +101,9 @@ Script to create the `vt_municipality` table, `<project>/_scripts/sql/base/munic
 
 ### Barangay Table
 
-Script to create the `vt_barangay` table, `<project>/_scripts/sql/base/barangay.sql`.
+Script to create the `vt_barangay` table.
+
+File: `<project>/_scripts/sql/base/barangay.sql`
 
 !source(../_scripts/sql/base/barangay.sql)(sql)
 
@@ -97,7 +111,9 @@ Script to create the `vt_barangay` table, `<project>/_scripts/sql/base/barangay.
 
 ### Precinct Table
 
-Script to create the `vt_precinct` table, `<project>/_scripts/sql/base/precinct.sql`.
+Script to create the `vt_precinct` table.
+
+File: `<project>/_scripts/sql/base/precinct.sql`
 
 !source(../_scripts/sql/base/precinct.sql)(sql)
 
@@ -105,7 +121,9 @@ Script to create the `vt_precinct` table, `<project>/_scripts/sql/base/precinct.
 
 ### Leader Table
 
-Script to create the `vt_leader` table, `<project>/_scripts/sql/base/leader.sql`.
+Script to create the `vt_leader` table.
+
+File: `<project>/_scripts/sql/base/leader.sql`
 
 !source(../_scripts/sql/base/leader.sql)(sql)
 
@@ -113,7 +131,9 @@ Script to create the `vt_leader` table, `<project>/_scripts/sql/base/leader.sql`
 
 ### Leader-Precinct Assignment Table
 
-Script to create the `vt_leader_precinct_assignment` table, `<project>/_scripts/sql/base/leader_precinct_assignment.sql`.
+Script to create the `vt_leader_precinct_assignment` table.
+
+File: `<project>/_scripts/sql/base/leader_precinct_assignment.sql`
 
 !source(../_scripts/sql/base/leader_precinct_assignment.sql)(sql)
 
@@ -121,7 +141,9 @@ Script to create the `vt_leader_precinct_assignment` table, `<project>/_scripts/
 
 ### Precinct Monitor Table
 
-Script to create the `vt_precinct_monitor` table,  `<project>/_scripts/sql/base/precinct_monitor.sql`.
+Script to create the `vt_precinct_monitor` table.
+
+File: `<project>/_scripts/sql/base/precinct_monitor.sql`
 
 !source(../_scripts/sql/base/precinct_monitor.sql)(sql)
 
@@ -129,7 +151,9 @@ Script to create the `vt_precinct_monitor` table,  `<project>/_scripts/sql/base/
 
 ## Views
 
-Script that calls all specific view creation scripts, `<project>/_scripts/sql/create_monitor_views.sql`.
+Script that calls all specific view creation scripts.
+
+File: `<project>/_scripts/sql/create_monitor_views.sql`
 
 !source(../_scripts/sql/create_monitor_views.sql)(sql)
 
@@ -137,7 +161,9 @@ Script that calls all specific view creation scripts, `<project>/_scripts/sql/cr
 
 ### Precinct View
 
-Displays all precinct information, `<project>/_scripts/sql/view/precinct.sql`.
+Displays all precinct information.
+
+File: `<project>/_scripts/sql/view/precinct.sql`
 
 !source(../_scripts/sql/view/precinct.sql)(sql)
 
@@ -145,7 +171,9 @@ Displays all precinct information, `<project>/_scripts/sql/view/precinct.sql`.
 
 ### Barangay View
 
-Displays all barangay information, `<project>/_scripts/sql/view/barangay.sql`.
+Displays all barangay information.
+
+File: `<project>/_scripts/sql/view/barangay.sql`
 
 !source(../_scripts/sql/view/barangay.sql)(sql)
 
@@ -153,7 +181,9 @@ Displays all barangay information, `<project>/_scripts/sql/view/barangay.sql`.
 
 ### Municipality View
 
-Displays all municipality information, `<project>/_scripts/sql/view/municipality.sql`.
+Displays all municipality information.
+
+File: `<project>/_scripts/sql/view/municipality.sql`
 
 !source(../_scripts/sql/view/municipality.sql)(sql)
 
@@ -161,7 +191,9 @@ Displays all municipality information, `<project>/_scripts/sql/view/municipality
 
 ### District View
 
-Displays all district information, `<script>/_scripts/sql/view/district.sql`.
+Displays all district information.
+
+File: `<script>/_scripts/sql/view/district.sql`
 
 !source(../_scripts/sql/view/district.sql)(sql)
 
@@ -169,7 +201,9 @@ Displays all district information, `<script>/_scripts/sql/view/district.sql`.
 
 ### Province View
 
-Displays all province information, `<project>/_scripts/sql/view/province.sql`.
+Displays all province information.
+
+File: `<project>/_scripts/sql/view/province.sql`
 
 !source(../_scripts/sql/view/province.sql)(sql)
 
@@ -177,7 +211,12 @@ Displays all province information, `<project>/_scripts/sql/view/province.sql`.
 
 ## Data Management
 
-Data management script, `<project>/_scripts/dm.sh`.
+Data management is concerned with database queries, adding and updating informaiton.
+See the Operations chapter, [Data Management](#section-data-management) section.
+
+The following Bash shell script is the driver script for the data management operations above.
+
+File: `<project>/_scripts/dm.sh`
 
 !source(../_scripts/dm.sh)(bash)
 
@@ -185,7 +224,9 @@ Data management script, `<project>/_scripts/dm.sh`.
 
 ### Data Management Functions
 
-SQL functions that help in the data management operations, `<project>/_scripts/sql/create_dm_functions.sql`.
+SQL functions that help in the data management operations.
+
+File: `<project>/_scripts/sql/create_dm_functions.sql`
 
 !source(../_scripts/sql/create_dm_functions.sql)(sql)
 
@@ -193,7 +234,9 @@ SQL functions that help in the data management operations, `<project>/_scripts/s
 
 #### `get_leader_name` Function
 
-SQL function that returns the name of the specified Leader ID, `<project>/_scripts/sql/dm/function/get_leader_name.sql`.
+SQL function that returns the name of the specified Leader ID.
+
+File: `<project>/_scripts/sql/dm/function/get_leader_name.sql`
 
 !source(../_scripts/sql/dm/function/get_leader_name.sql)(sql)
 
@@ -201,7 +244,9 @@ SQL function that returns the name of the specified Leader ID, `<project>/_scrip
 
 #### `get_leader_contact` Function
 
-SQL function that returns the contact number of the specified Leader ID, `<project>/_scripts/sql/dm/function/get_leader_contact.sql`.
+SQL function that returns the contact number of the specified Leader ID.
+
+File: `<project>/_scripts/sql/dm/function/get_leader_contact.sql`
 
 !source(../_scripts/sql/dm/function/get_leader_contact.sql)(sql)
 
@@ -209,7 +254,9 @@ SQL function that returns the contact number of the specified Leader ID, `<proje
 
 #### `add_leader` Function
 
-SQL function that adds a new leader record, `<project>/_scripts/sql/dm/function/add_leader.sql`.
+SQL function that adds a new leader record.
+
+File: `<project>/_scripts/sql/dm/function/add_leader.sql`
 
 !source(../_scripts/sql/dm/function/add_leader.sql)(sql)
 
@@ -217,7 +264,9 @@ SQL function that adds a new leader record, `<project>/_scripts/sql/dm/function/
 
 #### `set_leader_name` Function
 
-SQL function that updates the name of the speficied Leader ID, `<project>/_scripts/sql/dm/function/set_leader_name.sql`.
+SQL function that updates the name of the speficied Leader ID.
+
+File: `<project>/_scripts/sql/dm/function/set_leader_name.sql`
 
 !source(../_scripts/sql/dm/function/set_leader_name.sql)(sql)
 
@@ -225,7 +274,9 @@ SQL function that updates the name of the speficied Leader ID, `<project>/_scrip
 
 #### `set_leader_contact` Function
 
-SQL function that updates the contact number of the specified Leader ID, `<project>/_scripts/sql/dm/function/set_leader_contact.sql`.
+SQL function that updates the contact number of the specified Leader ID.
+
+File: `<project>/_scripts/sql/dm/function/set_leader_contact.sql`
 
 !source(../_scripts/sql/dm/function/set_leader_contact.sql)(sql)
 
@@ -233,7 +284,9 @@ SQL function that updates the contact number of the specified Leader ID, `<proje
 
 #### `set_leader_assignment` Function
 
-SQL function that assigns a Precinct to a Leader, `<project>/_scripts/sql/dm/function/set_leader_assignment.sql`.
+SQL function that assigns a Precinct to a Leader.
+
+File: `<project>/_scripts/sql/dm/function/set_leader_assignment.sql`
 
 !source(../_scripts/sql/dm/function/set_leader_assignment.sql)(sql)
 
@@ -241,7 +294,9 @@ SQL function that assigns a Precinct to a Leader, `<project>/_scripts/sql/dm/fun
 
 #### `get_precinct_current` Function
 
-SQL function that returns the current value of the specified Precinct ID, `<project>/_scripts/sql/dm/function/get_precinct_current.sql`.
+SQL function that returns the current value of the specified Precinct ID.
+
+File: `<project>/_scripts/sql/dm/function/get_precinct_current.sql`
 
 !source(../_scripts/sql/dm/function/get_precinct_current.sql)(sql)
 
@@ -249,7 +304,9 @@ SQL function that returns the current value of the specified Precinct ID, `<proj
 
 #### `get_precinct_target` Function
 
-SQL function that returns the target value of the specified Precinct ID, `<project>/_scripts/sql/dm/function/get_precinct_target.sql`.
+SQL function that returns the target value of the specified Precinct ID.
+
+File: `<project>/_scripts/sql/dm/function/get_precinct_target.sql`
 
 !source(../_scripts/sql/dm/function/get_precinct_target.sql)(sql)
 
@@ -257,7 +314,9 @@ SQL function that returns the target value of the specified Precinct ID, `<proje
 
 #### `add_precinct_current` Function
 
-SQL function that adds a value to the current value of the specified Precinct ID, `<project>/_scripts/sql/dm/function/add_precinct_current.sql`.
+SQL function that adds a value to the current value of the specified Precinct ID.
+
+File: `<project>/_scripts/sql/dm/function/add_precinct_current.sql`
 
 !source(../_scripts/sql/dm/function/add_precinct_current.sql)(sql)
 
@@ -265,7 +324,9 @@ SQL function that adds a value to the current value of the specified Precinct ID
 
 #### `set_precinct_current` Function
 
-SQL function that sets the current value of the specified Precinct ID, `<project>/_scripts/sql/dm/function/set_precinct_current.sql`.
+SQL function that sets the current value of the specified Precinct ID.
+
+File: `<project>/_scripts/sql/dm/function/set_precinct_current.sql`
 
 !source(../_scripts/sql/dm/function/set_precinct_current.sql)(sql)
 
@@ -273,7 +334,9 @@ SQL function that sets the current value of the specified Precinct ID, `<project
 
 #### `set_precinct_target` Function
 
-SQL function that sets the target value of the specified Precinct ID, `<project>/_scripts/sql/dm/function/set_precinct_target.sql`.
+SQL function that sets the target value of the specified Precinct ID.
+
+File: `<project>/_scripts/sql/dm/function/set_precinct_target.sql`
 
 !source(../_scripts/sql/dm/function/set_precinct_target.sql)(sql)
 
@@ -281,8 +344,7 @@ SQL function that sets the target value of the specified Precinct ID, `<project>
 
 ## JSON Creation
 
-The bash shell script `create_json.sh` in the scripts directory `<project>/_scripts` consolidates the creation of all JSON files.
-It calls the SQL scripts in the `<project>/_scripts/sql/json` directory.
+This Bash shell script consolidates the creation of all JSON files.
 
 The following is a brief description of the arguments to the PostgrSQL `psql` application used in the script.
 
@@ -297,13 +359,17 @@ The following is a brief description of the arguments to the PostgrSQL `psql` ap
 
 All integral and non-percentage outputs are formatted as `FM999,999` which means no padding blank spaces and leading zeroes.
 
+File: `<project>/_scripts/create_json.sh`
+
 !source(../_scripts/create_json.sh)(bash)
 
 
 
 ### Provincial
 
-The Bash shell script `create_json_province.json` creates the JSON file containing the provincial totals, `<project>/_scripts/sql/json/create_json_province.sql.
+The Bash shell script creates the JSON file containing the provincial totals.
+
+File: `<project>/_scripts/sql/json/create_json_province.sql`
 
 !source(../_scripts/sql/json/create_json_province.sql)(sql)
 
@@ -311,7 +377,9 @@ The Bash shell script `create_json_province.json` creates the JSON file containi
 
 ### District Summary
 
-The Bash shell script `create_json_districts.json` creates the JSON file containing the District summary totals, `<project>/_scripts/sql/json/create_json_districts.sql.
+The Bash shell script creates the JSON file containing the District summary totals.
+
+File: `<project>/_scripts/sql/json/create_json_districts.sql`
 
 !source(../_scripts/sql/json/create_json_districts.sql)(sql)
 
@@ -319,7 +387,9 @@ The Bash shell script `create_json_districts.json` creates the JSON file contain
 
 ### Municipality Summary
 
-The Bash shell script `create_json_municipalities.json` creates the JSON file containing the Municipality summary totals, `<project>/_scripts/sql/json/create_json_municipalities.sql`.
+The Bash shell script creates the JSON file containing the Municipality summary totals.
+
+File: `<project>/_scripts/sql/json/create_json_municipalities.sql`
 
 !source(../_scripts/sql/json/create_json_municipalities.sql)(sql)
 
@@ -327,7 +397,9 @@ The Bash shell script `create_json_municipalities.json` creates the JSON file co
 
 ### Municipality Details
 
-The Bash shell script `create_json_municipalities_details.json` creates the JSON file containing the Municipality detail totals, `<project>/_scripts/sql/json/create_json_municipalities_details.sql`.
+The Bash shell script creates the JSON file containing the Municipality detail totals.
+
+File: `<project>/_scripts/sql/json/create_json_municipalities_details.sql`
 
 !source(../_scripts/sql/json/create_json_municipalities_details.sql)(sql)
 
@@ -335,7 +407,9 @@ The Bash shell script `create_json_municipalities_details.json` creates the JSON
 
 ### Barangay Summary
 
-The Bash shell script `create_json_barangays.json` creates the JSON file containing the Barangay summary totals, `<project>/_scripts/sql/json/create_json_barangays.sql`.
+The Bash shell script creates the JSON file containing the Barangay summary totals.
+
+File: `<project>/_scripts/sql/json/create_json_barangays.sql`
 
 !source(../_scripts/sql/json/create_json_barangays.sql)(sql)
 
@@ -343,7 +417,9 @@ The Bash shell script `create_json_barangays.json` creates the JSON file contain
 
 ### Barangay Details
 
-The Bash shell script `create_json_barangays_details.json` creates the JSON file containing the Barangay detail totals, `<project>/_scripts/sql/json/create_json_barangays_details.sql`.
+The Bash shell script creates the JSON file containing the Barangay detail totals.
+
+File: `<project>/_scripts/sql/json/create_json_barangays_details.sql`
 
 !source(../_scripts/sql/json/create_json_barangays_details.sql)(sql)
 
@@ -351,7 +427,9 @@ The Bash shell script `create_json_barangays_details.json` creates the JSON file
 
 ### Precinct Summary
 
-The Bash shell script `create_json_precincts.json` creates the JSON file containing the Precinct summary totals, `<project>/_scripts/sql/json/create_json_precincts.sql`.
+The Bash shell script creates the JSON file containing the Precinct summary totals.
+
+File: `<project>/_scripts/sql/json/create_json_precincts.sql`
 
 !source(../_scripts/sql/json/create_json_precincts.sql)(sql)
 
@@ -359,7 +437,9 @@ The Bash shell script `create_json_precincts.json` creates the JSON file contain
 
 ### Precinct Details
 
-The Bash shell script `create_json_precincts_details.json` creates the JSON file containing the Precinct detail totals, `<project>/_scripts/sql/json/create_json_precincts_details.sql`.
+The Bash shell script creates the JSON file containing the Precinct detail totals.
+
+File: `<project>/_scripts/sql/json/create_json_precincts_details.sql`
 
 !source(../_scripts/sql/json/create_json_precincts_details.sql)(sql)
 
@@ -367,7 +447,9 @@ The Bash shell script `create_json_precincts_details.json` creates the JSON file
 
 ## Utility Functions
 
-SQL functions for use during testing and other operations., `<project>/_scripts/sql/create_utility_functions.sql`.
+SQL functions for use during testing and other operations.
+
+File: `<project>/_scripts/sql/create_utility_functions.sql`
 
 !source(../_scripts/sql/create_utility_functions.sql)(sql)
 
@@ -375,10 +457,12 @@ SQL functions for use during testing and other operations., `<project>/_scripts/
 
 ### `get_percentage` Function
 
-SQL function that returns the percentage of a corresponding number based on another given number, `<project>/_scripts/sql/utility/get_percentage.sql`.
+SQL function that returns the percent rate of some number compared to some total number.
 
-Example, given the number 70 and 200, the function returns 35.
-It is read as, 70 is 35% of 200.
+File: `<project>/_scripts/sql/utility/get_percentage.sql`
+
+Example, 70 is what percentage of 200?
+The function returns 35.
 
 !source(../_scripts/sql/utility/get_percentage.sql)(sql)
 
@@ -386,10 +470,12 @@ It is read as, 70 is 35% of 200.
 
 ### `get_percentage_value` Function
 
-SQL function that returns the corresponding value of the percentage of a specified number, `<project>/_scripts/sql/utility/get_percentage_value.sql`.
+SQL function that returns the percentage value of a percent rate of some total number.
 
-Example, given the number 70 and 200, the function returns 140.
-It is read as, 70% of 200 is 140.
+File: `<project>/_scripts/sql/utility/get_percentage_value.sql`
+
+Example, 70% of 200 is what?
+The function returns 140.
 
 !source(../_scripts/sql/utility/get_percentage_value.sql)(sql)
 
@@ -397,7 +483,9 @@ It is read as, 70% of 200 is 140.
 
 ### `random_between` Function
 
-SQL function that returns a value between the specified lower bound and upper bound numbers, `<project>/_scripts/sql/utility/random_between.sql`.
+SQL function that returns a value between the specified lower bound and upper bound numbers.
+
+File: `<project>/_scripts/sql/utility/random_between.sql`
 
 !source(../_scripts/sql/utility/random_between.sql)(sql)
 
