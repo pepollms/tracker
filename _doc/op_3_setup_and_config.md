@@ -159,7 +159,7 @@ For Git reference, an online documentation available at [https://git-scm.com/doc
 
 
 
-### Install `git`
+### Installing Git Version Control
 
 Note that the machine must be online to access the remote repository.
 
@@ -169,7 +169,7 @@ $ sudo pacman -S git
 
 
 
-### Clone the Git repository
+### Cloning Git Repository
 
 A clone is a copy of a repository.
 The remote repository on GitHub must be cloned to have a local copy in the filesystem.
@@ -350,7 +350,7 @@ The passphrase asked whenever adding the SSH key to the ssh-agent.
 
 
 
-#### Add SSH Key to `ssh-agent` {#section-add-ssh-key-to-ssh-agent}
+#### Adding SSH Key to `ssh-agent` {#section-add-ssh-key-to-ssh-agent}
 
 Add the SSH private key to the ssh-agent.
 
@@ -364,7 +364,7 @@ Note that the command must be executed everytime the machine is restarted.
 
 
 
-#### Add SSH Key to GitHub
+#### Adding SSH Key to GitHub
 
 The `xclip` program may be necessary to install if it has not yet been installed.
 `xclip` is a commandline program used to copy text into.
@@ -453,7 +453,7 @@ The system shall use PostgreSQL version 11 or higher.
 
 
 
-### Install PostgreSQL
+### Installing PostgreSQL
 
 Note that the machine must be online to access the operating system remote repositories.
 
