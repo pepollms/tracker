@@ -252,21 +252,17 @@ https://pepollms.github.io/tracker/
 
 
 
+## Data Management {#section-data-management}
 
+Data management handles database query, insert and update operations.
 
-
-## Data Management
-
-Data management handles all database query, insert and update operations.
-
-The bash shell script, `dm.sh` in the scripts directory, `<project>/_scripts`, is the driver program for data management..
+The bash shell script, `dm.sh` in the _scripts directory_ `<project>/_scripts` is the driver for data management.
 
 Query operations:
 
-1. List all municipalities
-2. Get precinct information
-3. Get leader information
-4. Get leader-precinct assignment
+1. Get precinct information
+2. Get leader information
+3. Get leader-precinct assignment
 
 Insert and update operations:
 
@@ -277,6 +273,12 @@ Insert and update operations:
 5. Add In-Favor count
 6. Set In-Favor count
 7. Set Target count
+
+To display the help text, execute the following command:
+
+~~~
+$ ./dm.sh --help
+~~~
 
 
 
