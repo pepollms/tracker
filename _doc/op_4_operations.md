@@ -247,7 +247,7 @@ $ git push
 The poll monitoring status can be viewed as HTML pages from the remote site using a web browser and going to the following URL:
 
 ~~~
-https://pepollms.github.io/vtracker/
+https://pepollms.github.io/tracker/
 ~~~
 
 
