@@ -64,7 +64,7 @@ The following table shows the structure of the CSV file that is read by the syst
 |      1     | contact           | text      |   50   |
 |      2     | municipality      | text      |   50   |
 |      3     | precinct          | text      |   10   |
-|      4     | target            | numeric   |        |
+|      4     | current           | numeric   |        |
 
 The _in-favor data import file_ is expected to be in UTF-8 encoding.
 All _in-favor data import files_ must be in the _in-favor data import directory_ `_data/to_import/current`.
