@@ -92,6 +92,24 @@ $ ./import.sh --import source
 
 
 
+## Create Markdown Files
+
+Markdown files are template files for rendering by Jekyll.
+They are automatically created based on data imported into the database and processed by Jekyll to produce the HTML files.
+
+This procedure is automatically called during system initialization.
+This procedure may be performed separately only during testing.
+
+The following command creates all markdown files in the `district`, `municipality` and `barangay` directories under the project root directory.
+
+~~~
+$ ./import.sh --create-markdown
+~~~
+
+The number of created markdown files will depend on the number districts, municipalities and barangays in the database.
+
+
+
 ## Generate In-Favor Mock Data
 
 In-Favor mock data is used during testing to verify correct system output.
@@ -146,24 +164,6 @@ The default value for the lower bound is 1 and the upper bound is the poll targe
 Note that the poll target value is set when the source data was imported.
 
 See the [Source Data Import Table](#section-source-data-import-table) section for further information.
-
-
-
-## Create Markdown Files
-
-Markdown files are template files for rendering by Jekyll.
-They are automatically created based on data imported into the database and processed by Jekyll to produce the HTML files.
-
-This procedure is automatically called during system initialization.
-This procedure may be performed separately only during testing.
-
-The following command creates all markdown files in the `district`, `municipality` and `barangay` directories under the project root directory.
-
-~~~
-$ ./import.sh --create-markdown
-~~~
-
-The number of created markdown files will depend on the number districts, municipalities and barangays in the database.
 
 
 
