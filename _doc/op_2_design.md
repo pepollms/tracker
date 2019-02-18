@@ -198,6 +198,8 @@ To update the poll database, use the data management script.
 To build these HTML files, Jekyll reads the JSON files in the data directory `<project>/_data`.
 The following diagram shows the sequence of events and operations performed.
 
+\clearpage
+
 !uml(images/pp-create-json-files.svg {width=300})(Create JSON Files)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Maintainer -> "Create JSON\nProgram" : call
