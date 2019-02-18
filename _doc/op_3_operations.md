@@ -26,16 +26,16 @@ $ iconv -i <file>
 $ iconv -f us-ascii -t utf-8 <input> -o <output>
 ~~~
 
-### System Initialization
+### Initialization Script
 
-This procedure initializes the system by automatically calling other required procedures:
+The script calls other specific procedures to perform the system initialization:
 
 * Database creation
 * Source data files importation
 * Markdown files generation
 
-The command will prompt the user whether to proceed or not for confirmation since this is a destructive operaiton.
-It will erase all data in an existing database, recreate all database objects, populate them with new data from the imported source data files and generate all markdown files.
+The command will prompt the user for confirmation whether to proceed or not since this is a destructive operaiton.
+It will erase all data in the database by recreating all database objects, populate them with new data from the imported source data files and generate all markdown files.
 
 ~~~
 $ ./import.sh --init
@@ -62,12 +62,11 @@ The user is required to enter either `1` or `2` only.
 ## Create Database
 
 All database tables, functions, views, procedures, triggers will be created.
-This procedure will erase these database objects if they were previously created and all existing data will be lost.
+This procedure will delete database objects if they were previously created and recreate them, erasing  all existing data.
 
-This procedure is automatically called during system initialization.
-This procedure may be performed separately only during testing.
+The database creation script is automatically called by the initialization script, although it may be performed separately.
 
-The following command in the _scripts directory_ (re)creates all database objects.
+The following command (re)creates the database objects:
 
 ~~~
 $ ./import.sh --create-db
@@ -77,14 +76,13 @@ $ ./import.sh --create-db
 
 ## Import Source Data
 
-The database will be populated with data from the source data files.
+The database will be populated with the _source data files_.
 This procedure will read the CSV files from the _source data import directory_ and imported into the _source data import table_.
 See the [Source Data Import Table](#section-source-data-import-table) section for more details.
 
-This procedure is automatically called during system initialization.
-This procedure may be performed separately only during testing.
+Importing the _source data files_ is automatically called by the initialization script, although it may be performed separately.
 
-The following command in the _scripts directory_ imports the source data into the database.
+The following command imports the _source data files_ into the database.
 
 ~~~
 $ ./import.sh --import source
@@ -94,31 +92,27 @@ $ ./import.sh --import source
 
 ## Create Markdown Files
 
-Markdown files are template files for rendering by Jekyll.
-They are automatically created based on data imported into the database and processed by Jekyll to produce the HTML files.
+Markdown files are template files rendered by Jekyll to produce HTML files.
+They are automatically created based on the data in the database.
 
-This procedure is automatically called during system initialization.
-This procedure may be performed separately only during testing.
+The markdown file creation is automatically called by the initialization script, although it may be performed separately.
 
-The following command creates all markdown files in the `district`, `municipality` and `barangay` directories under the project root directory.
+The following command creates all markdown files for the `district`, `municipality` and `barangay` directories under the project root directory. The number of created markdown files depends on the number districts, municipalities and barangays in the database.
 
 ~~~
 $ ./import.sh --create-markdown
 ~~~
 
-The number of created markdown files will depend on the number districts, municipalities and barangays in the database.
-
 
 
 ## Generate In-Favor Mock Data
 
-In-Favor mock data is used during testing to verify correct system output.
+In-Favor mock data is used during testing to verify computation routines.
 This procedure creates mock data in the _poll monitoring table_.
 
-This procedure is not called during system initialization.
-This procedure may be performed separately only during testing.
+This procedure is not called by the initialization script.
 
-The command has the following sytax:
+The following command syntax shows how it can be used:
 
 ~~~
 $ ./import.sh --mock <-a n | -p x m> <-a n | -p x m>
@@ -133,7 +127,6 @@ The absolute value is specified using option `-a` followed by a number.
 The percentage value is specified using option `-p` followed by a percentage value and a number.
 The syntax `-p x m` is read as, `x` percent of `m`.
 
-### Examples
 
 The following will compute a value between 1 and 500.
 
@@ -169,16 +162,16 @@ See the [Source Data Import Table](#section-source-data-import-table) section fo
 
 ## Updating In-Favor Value
 
-In-Favor values in the database are updated by importing the In-Favor message collection or manually adding/setting a precinct in-favor value.
+In-favor values in the database are updated by importing the in-favor message collection or manually adding/setting a precinct in-favor value.
 
 There are three ways to update the in-favor values:
 
-1. Add a value to the current precinct in-favor value
-2. Import one or more CSV files containing precincts and in-favor values to be add to the current precinct in-favor values
+1. Add a value to the current precinct in-favor value;
+2. Import one or more _in-favor data files_ to be added to the current precinct in-favor values;l
 3. Set the current precinct in-favor value
 
 The _data management script_ does all three ways and the _import script_ does the second.
-Importing the precinct in-favor values to be added requires that the CSV files be in the _import directory_ `<project>/_data/to_import/current`.
+Importing the _in-favor data files_ requires that the CSV files be in the _import directory_ `<project>/_data/to_import/current`.
 
 The following command will add the specified value `4` to the current in-favor value of the precinct whose id is `100` using the _data management script_.
 
@@ -211,13 +204,13 @@ $ ./import.sh --import current
 
 After updating the database, the data from the database must be exported to JSON files that Jekyll uses to (re)create the HTML files.
 
-The following command creates all JSON files in the _script directory_ `<project>/_scripts`.
+The following command will create all JSON files.
 
 ~~~
 $ ./create_json.sh
 ~~~
 
-The output JSON files will be created in the data directory `<project>/_data`.
+The JSON files will be created in the _data directory_ `<project>/_data`.
 
 
 
@@ -533,7 +526,7 @@ Create a new leader record.
 The software will check that the leader name and contact number is unique.
 
 ~~~
-$ ./dm.sh
+$ ./dm.sh add-leader "Black, Joe" +639160000091
 ~~~
 
 
@@ -543,12 +536,20 @@ $ ./dm.sh
 Set the name of an existing leader record.
 The software will check that the new name is unique.
 
+~~~
+$ ./dm.sh set-leader-name 16 "Black, Jack"
+~~~
+
 
 
 ### Set Leader Contact
 
 Set the contact number of an existing leader record.
 The software will check that the new contact number is unique.
+
+~~~
+$ ./dm.sh set-leader-contact 16 "+639160000081"
+~~~
 
 
 
@@ -557,10 +558,30 @@ The software will check that the new contact number is unique.
 Assign a leader to a precinct voting jurisdiction.
 The precinct must not currently be assigned to any leader.
 
+~~~
+$ ./dm.sh set-leader-assignment 16 10
+~~~
+
 
 
 ### Set Target Count
 
 Set the target In-Favor value.
+The precinct ID must exist.
+
+~~~
+$ ./dm.sh set-precinct-target 1 10
+~~~
+
+
+
+### Set In-Favor Count
+
+Set the current In-Favor value.
+The precinct ID must exist.
+
+~~~
+$ ./dm.sh set-precinct-current 1 10
+~~~
 
 \clearpage
