@@ -9,12 +9,12 @@ This chapter discusses the operations in detail and the commands needed to execu
 At the start of operation, this procedure is all there is to perform.
 This procedure involves other procedures that are called automatically.
 
-### Start the Database Server
+__Start the Database Server__
 
 Make sure that the PostgreSQL database server is running before performing any of the following procedures.
 See the [Starting and Stopping the Database Server](#section-starting-stopping-database-server) section.
 
-### Ensure Source Data Files are in UTF-8 Encoding
+__Ensure Source Data Files are in UTF-8 Encoding__
 
 Prepare the _source data import files_.
 See the [Source Data Import Table section](#section-source-data-import-table) for more information on the _source data import files_.
@@ -26,7 +26,7 @@ $ iconv -i <file>
 $ iconv -f us-ascii -t utf-8 <input> -o <output>
 ~~~
 
-### Initialization Script
+__Initialization Script__
 
 The script calls other specific procedures to perform the system initialization:
 
@@ -59,7 +59,7 @@ The user is required to enter either `1` or `2` only.
 
 
 
-## Create Database
+### Create Database
 
 All database tables, functions, views, procedures, triggers will be created.
 This procedure will delete database objects if they were previously created and recreate them, erasing  all existing data.
@@ -74,7 +74,7 @@ $ ./import.sh --create-db
 
 
 
-## Import Source Data
+### Import Source Data
 
 The database will be populated with the _source data files_.
 This procedure will read the CSV files from the _source data import directory_ and imported into the _source data import table_.
@@ -90,7 +90,7 @@ $ ./import.sh --import source
 
 
 
-## Create Markdown Files
+### Create Markdown Files
 
 Markdown files are template files rendered by Jekyll to produce HTML files.
 They are automatically created based on the data in the database.
@@ -105,7 +105,56 @@ $ ./import.sh --create-markdown
 
 
 
-## Generate In-Favor Mock Data
+## In-Favor Value
+
+There are 3 ways to update the in-favor value by precinct.
+A fourth exists only for testing.
+
+1. Add a value to the current precinct in-favor value;
+2. Set the current precinct in-favor value
+3. Import one or more _in-favor data files_ to be added to the current precinct in-favor values;
+
+The _data management script_ is used to do all three ways.
+The _import script_ does only the third.
+
+
+
+### Add or Setting the Precinct In-Favor Value
+
+The following command will add the specified value `4` to the current in-favor value of the precinct whose id is `100` using the _data management script_.
+
+~~~
+$ ./dm.sh add-precinct-current 100 4
+~~~
+
+The following command will change the current in-favor value to `4` of the precinct whose id is `100` using the _data management script_.
+
+~~~
+$ ./dm.sh set-precinct-current 100 4
+~~~
+
+The following command will import the precinct in-favor values to be added to the current in-favor values of the corresponding precincts using the _data management script_.
+
+~~~
+$ ./dm.sh add-precinct-current -f
+~~~
+
+
+
+### Importing In-Favor Data Files
+
+Importing the _in-favor data files_ requires that the CSV files be in the _import directory_ `<project>/_data/to_import/current`.
+
+The _import script_ can also be used to update the precinct in-favor value by importing one or more CSV files.
+This command is the same if it was executed using the _data management script_ above.
+
+~~~
+$ ./import.sh --import current
+~~~
+
+
+
+### Generate In-Favor Mock Data
 
 In-Favor mock data is used during testing to verify computation routines.
 This procedure creates mock data in the _poll monitoring table_.
@@ -160,46 +209,6 @@ See the [Source Data Import Table](#section-source-data-import-table) section fo
 
 
 
-## Updating In-Favor Value
-
-In-favor values in the database are updated by importing the in-favor message collection or manually adding/setting a precinct in-favor value.
-
-There are three ways to update the in-favor values:
-
-1. Add a value to the current precinct in-favor value;
-2. Import one or more _in-favor data files_ to be added to the current precinct in-favor values;l
-3. Set the current precinct in-favor value
-
-The _data management script_ does all three ways and the _import script_ does the second.
-Importing the _in-favor data files_ requires that the CSV files be in the _import directory_ `<project>/_data/to_import/current`.
-
-The following command will add the specified value `4` to the current in-favor value of the precinct whose id is `100` using the _data management script_.
-
-~~~
-$ ./dm.sh add-precinct-current 100 4
-~~~
-
-The following command will import the precinct in-favor values to be added to the current in-favor values of the corresponding precincts using the _data management script_.
-
-~~~
-$ ./dm.sh add-precinct-current -f
-~~~
-
-The following _data mangement script_ command will change the current in-favor value to `4` of the precinct whose id is `100` using the _data management script_.
-
-~~~
-$ ./dm.sh set-precinct-current 100 4
-~~~
-
-The _import script_ can also be used to update the precinct in-favor value by importing one or more CSV files.
-This command is the same if it was executed using the _data management script_ above.
-
-~~~
-$ ./import.sh --import current
-~~~
-
-
-
 ## Create JSON Files
 
 After updating the database, the data from the database must be exported to JSON files that Jekyll uses to (re)create the HTML files.
@@ -245,7 +254,7 @@ https://pepollms.github.io/tracker/
 
 
 
-## Data Management {#section-data-management}
+## Other Data Management Functions {#section-other-data-management-functions}
 
 Data management handles database query, insert and update operations.
 
@@ -309,39 +318,6 @@ The following table shows which texts satisfies the criteria column.
 | abcde    | No     | Yes     | No       |
 | 123abc   | No     | No      | Yes      |
 | 123abcde | No     | No      | No       |
-
-
-
-
-### List all municipalities
-
-The following lists all municipalities in alphabetical order.
-
-~~~
-$ ./dm.sh list-municipality
-Municipality list
- id | municipality
-----+--------------
-  1 | ALAMADA
-  2 | ALEOSAN
-  7 | ANTIPAS
-  8 | ARAKAN
- 13 | BANISILAN
- 14 | CARMEN
- 15 | KABACAN
-  9 | KIDAPAWAN
-  3 | LIBUNGAN
- 10 | MAGPET
- 11 | MAKILALA
- 16 | MATALAM
-  4 | MIDSAYAP
- 17 | MLANG
-  5 | PIGKAWAYAN
-  6 | PIKIT
- 12 | PRES. ROXAS
- 18 | TULUNAN
-(18 rows)
-~~~
 
 
 
@@ -571,17 +547,6 @@ The precinct ID must exist.
 
 ~~~
 $ ./dm.sh set-precinct-target 1 10
-~~~
-
-
-
-### Set In-Favor Count
-
-Set the current In-Favor value.
-The precinct ID must exist.
-
-~~~
-$ ./dm.sh set-precinct-current 1 10
 ~~~
 
 
