@@ -3,7 +3,6 @@
 declare -r PROGRAM_NAME="${0##*/}"
 
 declare -r CMD_TEST="test"
-declare -r CMD_LIST_MUNICIPALITY="list-municipality"
 declare -r CMD_GET_PRECINCT_INFO="get-precinct-info"
 declare -r CMD_GET_LEADER_INFO="get-leader-info"
 declare -r CMD_GET_LEADER_ASSIGNMENT="get-leader-assignment"
@@ -26,7 +25,6 @@ function show_usage {
     echo ""
     echo "Query Commands:"
     echo ""
-    echo "  $CMD_LIST_MUNICIPALITY          List all municipalities"
     echo "  $CMD_GET_PRECINCT_INFO          Get precinct information"
     echo "  $CMD_GET_LEADER_INFO            Get leader information"
     echo "  $CMD_GET_LEADER_ASSIGNMENT      Get leader-precinct assignment"
@@ -43,7 +41,6 @@ function show_usage {
     echo ""
     echo "Command arguments: "
     echo ""
-    echo "  $CMD_LIST_MUNICIPALITY"
     echo "  $CMD_GET_PRECINCT_INFO          <id \"id\" | name \"name\">"
     echo "  $CMD_GET_LEADER_INFO            <id \"id\" |"
     echo "                                  name \"name\" |"
@@ -79,20 +76,6 @@ function check_if_server_is_ready {
         echo "Aborting operation."
         exit 1
     fi
-}
-
-function list_municipality {
-    check_if_server_is_ready
-    echo "Municipality list"
-    local -r SQL=""`
-        `" select"`
-        `"     municipality_id as id,"`
-        `"     municipality"`
-        `" from"`
-        `"     view_municipality"`
-        `" order by"`
-        `"     municipality;"
-    psql -d postgres -w -q -c '\pset pager off' -c '\pset footer off' -c "${SQL}"
 }
 
 function get_precinct_info {
@@ -1112,7 +1095,6 @@ fi
 
 commands=(
     $CMD_TEST
-    $CMD_LIST_MUNICIPALITY
     $CMD_GET_PRECINCT_INFO
     $CMD_GET_LEADER_INFO
     $CMD_GET_LEADER_ASSIGNMENT
@@ -1137,7 +1119,6 @@ shift
 
 case "${arg_command}" in
     $CMD_TEST)                      test "$@" ;;
-    $CMD_LIST_MUNICIPALITY)         list_municipality ;;
     $CMD_GET_PRECINCT_INFO)         get_precinct_info "$@" ;;
     $CMD_GET_LEADER_INFO)           get_leader_info "$@" ;;
     $CMD_GET_LEADER_ASSIGNMENT)     get_leader_assignment "$@" ;;
