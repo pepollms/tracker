@@ -44,23 +44,23 @@ function show_usage {
     echo "Command arguments: "
     echo ""
     echo "  $CMD_LIST_MUNICIPALITY"
-    echo "  $CMD_GET_PRECINCT_INFO          [id <\"id\">] [name <\"name\">]"
-    echo "  $CMD_GET_LEADER_INFO            [id <\"id\">]"
-    echo "                                  [name <\"name\">]"
-    echo "                                  [contact <\"contact\">]"
-    echo "  $CMD_GET_LEADER_ASSIGNMENT      [id <\"id\">] [name <\"name\">]"
+    echo "  $CMD_GET_PRECINCT_INFO          <id \"id\" | name \"name\">"
+    echo "  $CMD_GET_LEADER_INFO            <id \"id\" |"
+    echo "                                  name \"name\" |"
+    echo "                                  contact \"contact\">"
+    echo "  $CMD_GET_LEADER_ASSIGNMENT      <id \"id\" | name \"name\">"
     echo ""
-    echo "  $CMD_ADD_LEADER                 <\"name\"> <\"contact\">"
-    echo "  $CMD_SET_LEADER_NAME            <id> <\"name\">"
-    echo "  $CMD_SET_LEADER_CONTACT         <id> <\"contact\">"
-    echo "  $CMD_SET_LEADER_ASSIGNMENT      <leader-id> <precinct-id>"
-    echo "  $CMD_ADD_PRECINCT_CURRENT       <precinct-id> <number>"
-    echo "  $CMD_SET_PRECINCT_CURRENT       <precinct-id> <number>"
-    echo "  $CMD_SET_PRECINCT_TARGET        <precinct-id> <number>"
+    echo "  $CMD_ADD_LEADER                 \"name\" \"contact\""
+    echo "  $CMD_SET_LEADER_NAME            id \"name\""
+    echo "  $CMD_SET_LEADER_CONTACT         id \"contact\""
+    echo "  $CMD_SET_LEADER_ASSIGNMENT      leader-id precinct-id"
+    echo "  $CMD_ADD_PRECINCT_CURRENT       [municipality-code precinct number | -id precinct-id number | -f]"
+    echo "  $CMD_SET_PRECINCT_CURRENT       <precinct-id number>"
+    echo "  $CMD_SET_PRECINCT_TARGET        <precinct-id number>"
     echo ""
     echo "Parameters enclosed in quotes may contain spaces and wildcard"
     echo "characters. Wildcard character '%' means any number of characters."
-    echo "  '%abc' - any text ending with 'abc'; abc, 123abc, xyzabc"
+    echo "'%abc' - any text ending with 'abc'; 'abc', '123abc', 'xyzabc'."
     echo ""
 } # show_usage
 
@@ -72,13 +72,6 @@ function echo_err {
 } # echo_err
 
 
-
-function test {
-    local column="$1"
-    local parameter="$2"
-    echo "Column: $column"
-    echo "Parameter: $parameter"
-}
 
 function check_if_server_is_ready {
     if ! /usr/bin/pg_isready &>/dev/null; then
@@ -111,7 +104,7 @@ function get_precinct_info {
     fi
 
     local column="$1"
-    shift 1
+    shift
     if [ $# -eq 0 ]; then
         echo "Missing $column argument for operation $CMD_GET_PRECINCT_INFO."
         echo "Syntax: $CMD_GET_PRECINCT_INFO [id <\"id\">] [name <\"name\">]"
@@ -456,7 +449,7 @@ function get_leader_info {
     fi
 
     local column="$1"
-    shift 1
+    shift
     if [ $# -eq 0 ]; then
         echo "Missing $column argument for operation $CMD_GET_LEADER_INFO."
         echo "Syntax: $CMD_GET_LEADER_INFO [id <\"id\">]"
@@ -483,19 +476,19 @@ function get_leader_info {
 
     if [[ "${column}" == "id" || "${column}" == "name" ]]; then
         local count=$(leader_exists "${column}=${criteria}")
-        if [ "${count}" -eq "0" ]; then
+        if [ ${count} -eq 0 ]; then
             echo "No leader found."
             return -1
-        elif [ ! "${count}" -eq "1" ]; then
+        elif [ ${count} -gt 1 ]; then
             echo "Multiple leaders found."
             return -1
         fi
     elif [ "${column}" == "contact" ]; then
-        local count=$(contact_exists "${criteria}")
-        if [ ! "${count}" -eq "1" ]; then
+        local -r count=$(contact_exists "${criteria}")
+        if [ ${count} -eq 0 ]; then
             echo "No leader found."
             return -1
-        elif [ ! "${count}" -eq "1" ]; then
+        elif [ ${count} -gt 1 ]; then
             echo "Multiple leaders found."
             return -1
         fi
@@ -552,7 +545,7 @@ function get_leader_assignment {
     fi
 
     local column="$1"
-    shift 1
+    shift
     if [ $# -eq 0 ]; then
         echo "Missing column argument for $CMD_GET_LEADER_ASSIGNMENT."
         echo "Syntax: $CMD_GET_LEADER_ASSIGNMENT [id <\"id\">]"
@@ -571,10 +564,10 @@ function get_leader_assignment {
     local -r criteria="$1"
 
     local count=$(leader_exists "${column}=${criteria}")
-    if [ "${count}" -eq "0" ]; then
+    if [ ${count} -eq 0 ]; then
         echo "No leader found."
         return -1
-    elif [ ! "${count}" -eq "1" ]; then
+    elif [ ${count} -gt 1 ]; then
         echo "Multiple leaders found."
         return -1
     fi
@@ -603,7 +596,7 @@ function add_leader {
     fi
 
     local name="$1"
-    shift 1
+    shift
 
     if [ $# -eq 0 ]; then
         echo "Missing 'contact' argument to $CMD_ADD_LEADER operation."
@@ -612,25 +605,25 @@ function add_leader {
     fi
 
     local contact="$1"
-    shift 1
+    shift
 
     local count=$(leader_exists "name=${name}")
-    if [ "${count}" -eq "1" ]; then
+    if [ ${count} -eq 1 ]; then
         echo "Leader '${name}' already exists."
         return -1
-    elif [ ! "${count}" -eq "0" ]; then
+    elif [ ${count} -gt 0 ]; then
         echo "Multiple '${name}' leaders found."
         return -1
     fi
 
     # Check if contact number already exists
     count=$(contact_exists "${contact}")
-    if [ "${count}" -eq "1" ]; then
+    if [ ${count} -eq 1 ]; then
         echo "An existing leader already uses that contact number."
         # Show the leader who owns the existing contact number
         display_leader_info "contact" "${contact}"
         return -1
-    elif [ ! "${count}" -eq "0" ]; then
+    elif [ ${count} -gt 0 ]; then
         echo "Multiple leaders having the same contact numbers."
         echo "This should have been checked when adding new leaders."
         return -1
@@ -663,7 +656,7 @@ function set_leader_name {
     fi
 
     local leader_id="$1"
-    shift 1
+    shift
 
     if [ $# -eq 0 ]; then
         echo "Missing 'name' argument to $CMD_SET_LEADER_NAME operation."
@@ -672,13 +665,13 @@ function set_leader_name {
     fi
 
     local name="$1"
-    shift 1
+    shift
 
     local count=$(leader_exists "id=${leader_id}")
-    if [ "${count}" -eq "0" ]; then
+    if [ ${count} -eq 0 ]; then
         echo "Leader ID '${leader_id}' is not found."
         return -1
-    elif [ ! "${count}" -eq "1" ]; then
+    elif [ ${count} -gt 1 ]; then
         echo "Multiple '${name}' leaders found."
         return -1
     fi
@@ -713,7 +706,7 @@ function set_leader_contact {
     fi
 
     local leader_id="$1"
-    shift 1
+    shift
 
     if [ $# -eq 0 ]; then
         echo "Missing 'name' argument to $CMD_SET_LEADER_NAME operation."
@@ -722,13 +715,13 @@ function set_leader_contact {
     fi
 
     local contact="$1"
-    shift 1
+    shift
 
     local count=$(leader_exists "id=${leader_id}")
-    if [ "${count}" -eq "0" ]; then
+    if [ ${count} -eq 0 ]; then
         echo "Leader ID '${leader_id}' is not found."
         return -1
-    elif [ ! "${count}" -eq "1" ]; then
+    elif [ ${count} -gt 1 ]; then
         echo "Multiple '${name}' leaders found."
         return -1
     fi
@@ -789,8 +782,8 @@ function precinct_exists {
         return -1
     fi
 
-    criteria="$1"
     if [ -z "$criteria" ]; then
+        # Criteria is empty
         echo "0"
         return -1
     fi
@@ -821,7 +814,7 @@ function set_leader_assignment {
     fi
 
     local leader_id="$1"
-    shift 1
+    shift
 
     if [ $# -eq 0 ]; then
         echo "Missing 'name' argument to $CMD_SET_LEADER_NAME operation."
@@ -830,22 +823,22 @@ function set_leader_assignment {
     fi
 
     local precinct_id="$1"
-    shift 1
+    shift
 
     local count=$(leader_exists "id=${leader_id}")
-    if [ "${count}" -eq "0" ]; then
+    if [ ${count} -eq 0 ]; then
         echo "Leader ID '${leader_id}' is not found."
         return -1
-    elif [ ! "${count}" -eq "1" ]; then
+    elif [ ${count} -gt 1 ]; then
         echo "Multiple '${name}' leaders found."
         return -1
     fi
 
     count=$(precinct_exists "id=${precinct_id}")
-    if [ "${count}" -eq "0" ]; then
+    if [ ${count} -eq 0 ]; then
         echo "Precinct ID '${precinct_id}' is not found."
         return -1
-    elif [ ! "${count}" -eq "1" ]; then
+    elif [ ${count} -gt 1 ]; then
         echo "Multiple '${precinct_id}' precincts found."
         return -1
     fi
@@ -884,31 +877,49 @@ function set_leader_assignment {
 #   display_precinct_info 10
 function display_precinct_info {
     local -r precinct_id="$1"
-    shift 1
-
+    shift
+    echo ""
     local -r SQL=""`
         `" select"`
-        `"     municipality_id as mun_id,"`
+        `"     municipality_id,"`
         `"     municipality,"`
         `"     barangay,"`
-        `"     precinct_id as prec_id,"`
+        `"     precinct_id,"`
         `"     precinct,"`
         `"     current_sum,"`
         `"     target_sum,"`
         `"     voters_sum,"`
         `"     current_percentage,"`
-        `"     target_percentage,"`
+        `"     target_percentage"`
         `" from"`
         `"     view_precinct"`
         `" where"`
-        `"     prec_id = ${precinct_id};"
+        `"     precinct_id = ${precinct_id};"
     psql -d postgres -w -q      \
+        -c '\t'                 \
+        -c '\pset expanded'     \
         -c '\pset pager off'    \
         -c '\pset footer off'   \
         -c "$SQL"
 }
 
 function add_precinct_current {
+    if [ $# -eq 0 ]; then
+        echo "Missing arguments to $CMD_ADD_PRECINCT_CURRENT operation."
+        echo "Syntax: $CMD_ADD_PRECINCT_CURRENT <precinct-id> <number>"
+        return -1
+    fi
+    if [[ "${1}" == "-f" ]]; then
+        shift
+        add_precinct_current_from_file
+    elif [[ "${1}" == "-id" ]]; then
+        add_precinct_current_value_using_id "${1}" "${2}"
+    else
+        add_precinct_current_value_using_name
+    fi
+}
+
+function add_precinct_current_value_using_id {
     check_if_server_is_ready
     if [ $# -eq 0 ]; then
         echo "Missing arguments to $CMD_ADD_PRECINCT_CURRENT operation."
@@ -917,7 +928,7 @@ function add_precinct_current {
     fi
 
     local precinct_id="$1"
-    shift 1
+    shift
 
     if [ $# -eq 0 ]; then
         echo "Missing 'name' argument to $CMD_ADD_PRECINCT_CURRENT operation."
@@ -925,19 +936,19 @@ function add_precinct_current {
         return -1
     fi
 
-    local add_value="$2"
-    shift 1
+    local add_value="$1"
+    shift
 
     local -r count=$(precinct_exists "id=${precinct_id}")
-    if [ "${count}" -eq "0" ]; then
+    if [[ "${count}" -eq "0" ]]; then
         echo "Precinct ID '${precinct_id}' is not found."
         return -1
-    elif [ ! "${count}" -eq "1" ]; then
+    elif [[ "${count}" -gt "1" ]]; then
         echo "Multiple '${precinct_id}' precincts found."
         return -1
     fi
 
-    if [ "${add_value}" -eq "0" ]; then
+    if [[ "${add_value}" -eq "0" ]]; then
         echo "Operation aborted."
         echo "Adding or subtracting zero (0) makes no sense."
         return -1
@@ -963,10 +974,18 @@ function add_precinct_current {
         -c "select get_precinct_current(${precinct_id});"`
 
     echo "Added ${add_value} to Precinct ID ${precinct_id} current value."
-    echo "Old: ${old_value}"
-    echo "New: ${new_value}"
+    echo "Old value: ${old_value}"
+    echo "New value: ${new_value}"
 
     display_precinct_info ${precinct_id}
+}
+
+function add_precinct_current_value_using_name {
+    echo "Implement add_precinct_current_value_using_name function."
+}
+
+function add_precinct_current_from_file {
+    ./import.sh --import current
 }
 
 function set_precinct_current {
@@ -978,7 +997,7 @@ function set_precinct_current {
     fi
 
     local precinct_id="$1"
-    shift 1
+    shift
 
     if [ $# -eq 0 ]; then
         echo "Missing 'name' argument to $CMD_ADD_PRECINCT_CURRENT operation."
@@ -987,22 +1006,16 @@ function set_precinct_current {
     fi
 
     local value="$1"
-    shift 1
+    shift
 
     local -r count=$(precinct_exists "id=${precinct_id}")
-    if [ "${count}" -eq "0" ]; then
+    if [ ${count} -eq 0 ]; then
         echo "Precinct ID '${precinct_id}' is not found."
         return -1
-    elif [ ! "${count}" -eq "1" ]; then
+    elif [ ! ${count} -eq 1 ]; then
         echo "Multiple '${precinct_id}' precincts found."
         return -1
     fi
-
-    #if [ "${value}" -eq "0" ]; then
-    #    echo "Operation aborted."
-    #    echo "Adding or subtracting zero (0) makes no sense."
-    #    return -1
-    #fi
 
     local -r old_value=`psql -d postgres -w -q  \
         --no-align                              \
@@ -1024,8 +1037,8 @@ function set_precinct_current {
         -c "select get_precinct_current(${precinct_id});"`
 
     echo "Added ${value} to Precinct ID ${precinct_id} current value."
-    echo "Old: ${old_value}"
-    echo "New: ${new_value}"
+    echo "Old value: ${old_value}"
+    echo "New value: ${new_value}"
 
     display_precinct_info ${precinct_id}
 }
@@ -1039,7 +1052,7 @@ function set_precinct_target {
     fi
 
     local precinct_id="$1"
-    shift 1
+    shift
 
     if [ $# -eq 0 ]; then
         echo "Missing 'name' argument to $CMD_SET_PRECINCT_TARGET operation."
@@ -1048,13 +1061,13 @@ function set_precinct_target {
     fi
 
     local value="$1"
-    shift 1
+    shift
 
     local -r count=$(precinct_exists "id=${precinct_id}")
-    if [ "${count}" -eq "0" ]; then
+    if [ ${count} -eq 0 ]; then
         echo "Precinct ID '${precinct_id}' is not found."
         return -1
-    elif [ ! "${count}" -eq "1" ]; then
+    elif [ ! ${count} -eq 1 ]; then
         echo "Multiple '${precinct_id}' precincts found."
         return -1
     fi
@@ -1079,8 +1092,8 @@ function set_precinct_target {
         -c "select get_precinct_target(${precinct_id});"`
 
     echo "Added ${value} to Precinct ID ${precinct_id} current value."
-    echo "Old: ${old_value}"
-    echo "New: ${new_value}"
+    echo "Old value: ${old_value}"
+    echo "New value: ${new_value}"
 
     display_precinct_info ${precinct_id}
 }
@@ -1120,7 +1133,7 @@ if [[ ! "${commands[@]}" =~ "${1}" ]]; then
 fi
 
 arg_command="${1}"
-shift 1
+shift
 
 case "${arg_command}" in
     $CMD_TEST)                      test "$@" ;;
@@ -1133,8 +1146,8 @@ case "${arg_command}" in
     $CMD_SET_LEADER_NAME)           set_leader_name "$@" ;;
     $CMD_SET_LEADER_CONTACT)        set_leader_contact "$@" ;;
 
-    $CMD_SET_LEADER_ASSIGNMENT)     set_leader_assignment $@ ;;
-    $CMD_ADD_PRECINCT_CURRENT)      add_precinct_current $@ ;;
+    $CMD_SET_LEADER_ASSIGNMENT)     set_leader_assignment "$@" ;;
+    $CMD_ADD_PRECINCT_CURRENT)      add_precinct_current "$@" ;;
     $CMD_SET_PRECINCT_CURRENT)      set_precinct_current $@ ;;
     $CMD_SET_PRECINCT_TARGET)       set_precinct_target $@ ;;
 esac
