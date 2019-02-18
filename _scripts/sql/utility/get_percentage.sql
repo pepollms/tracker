@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION get_percentage(p_n numeric, p_total numeric)
     LANGUAGE plpgsql
     AS $function$
 BEGIN
-    IF p_n::integer = 0 THEN
+    IF p_n::integer = 0 OR p_total::integer = 0 THEN
         RETURN 0;
     ELSE
         RETURN (p_n / p_total) * 100;
