@@ -8,15 +8,11 @@ CREATE OR REPLACE FUNCTION set_precinct_current(p_id integer, p_count integer)
 DECLARE
     retval integer := 0;
 BEGIN
-    IF p_count::integer = 0 THEN
-        RETURN 0;
-    ELSE
-        retval := count(*) from vt_precinct where id = p_id;
-        if retval = 0 then
-            return 0;
-        end if;
-        update vt_precinct_monitor set current=p_count where precinct_id = p_id;
-        return p_count;
-    END IF;
+    retval := count(*) from vt_precinct where id = p_id;
+    if retval = 0 then
+        return 0;
+    end if;
+    update vt_precinct_monitor set current=p_count where precinct_id = p_id;
+    return 1;
 end;
 $function$;

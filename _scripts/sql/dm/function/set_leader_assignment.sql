@@ -22,13 +22,13 @@ BEGIN
         return -2;
     end if;
 
-    retval := count(*) from vt_leader_assignment
+    retval := count(*) from vt_leader_precinct_assignment
         where leader_id = p_leader_id and precinct_id = p_precinct_id;
     if retval = 0 then
         return -3;
     end if;
 
-    insert into vt_leader_assignment(precinct_id, leader_id)
+    insert into vt_leader_precinct_assignment(precinct_id, leader_id)
         values(p_precinct_id, p_leader_id);
 
     return 1;
