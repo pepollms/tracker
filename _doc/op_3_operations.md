@@ -152,6 +152,8 @@ This command is the same if it was executed using the _data management script_ a
 $ ./import.sh --import current
 ~~~
 
+Note that this procedure automatically calls the script that generates the JSON files.
+
 
 
 ### Generate In-Favor Mock Data
@@ -211,7 +213,11 @@ See the [Source Data Import Table](#section-source-data-import-table) section fo
 
 ## Create JSON Files
 
-After updating the database, the data from the database must be exported to JSON files that Jekyll uses to (re)create the HTML files.
+After system initialization and/or after updating the database, the data from the database must be exported to JSON files.
+The purpose of the JSON files is to feed the data when generating the HTML files locally or remotely.
+
+This procedure is automatically called after in-favor data files have been imported.
+If somehow, there is any database update performed after the in-favor data files have been imported, then it is necessary to manually execute this command.
 
 The following command will create all JSON files.
 
@@ -221,22 +227,48 @@ $ ./create_json.sh
 
 The JSON files will be created in the _data directory_ `<project>/_data`.
 
+Note that this procedure automatically updates the local and remote repositories.
 
 
-## Upload Repository
 
-To publish all changes and be viewable online, the project files need to be uploaded to GitHub.
+## Publish Changes
 
-First, we need to send all file changes and put them in the local repository.
+To publish all changes and make them viewable locally and remotely, the local repository must be synchronized with the remote repository hosted by GitHub.
+In production, it is only necessary to synchronize the changes made in the JSON files given that there are no other modifications made to the system, like changes in the HTML page generation templates.
+If there are other changes to the system, then it is necessary to publish those changes locally and then synchronized with the remote repository.
+
+### Publish JSON Files Only
+
+The following command will add the JSON files to the staging area.
+It is necessary that this command is executed in the _scripts directory_ `<project>/_scripts`.
+
+This procedure is automatically called when the JSON files were created.
+
+~~~
+$ git add ../_data/*.json
+~~~
+
+Publish the changes to the local repository.
+
+~~~
+$ git commit -m "Update JSON files"
+~~~
+
+
+
+### Publish Other Changes
+
+All file changes must be commited to the local repository and then synchronized with the remote repository.
+
 The first command tells Git what files to add to the local repository.
 The second command tells git to put the files into the local repository.
 
 ~~~
-$ git add
-$ git commit
+$ git add ...
+$ git commit ...
 ~~~
 
-Then, the following command will send the local repository to the remote GitHub repository.
+The following command synchronizes the remote repository hosted by GitHub with the local repository.
 
 ~~~
 $ git push
@@ -246,7 +278,7 @@ $ git push
 
 ## View Poll Status
 
-The poll monitoring status can be viewed as HTML pages from the remote site using a web browser and going to the following URL:
+The poll monitoring status can be viewed as HTML pages from the remote site using a web browser in the following URL:
 
 ~~~
 https://pepollms.github.io/tracker/
