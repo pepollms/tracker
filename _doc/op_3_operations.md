@@ -9,22 +9,24 @@ This chapter discusses the operations in detail and the commands needed to execu
 It is necessary to update the local Git repository every time to acquire the latest system changes from the remote repository.
 
 1. Add the machine SSH private key to the ssh-agent.
+This step is only necessary every time the machine is restarted.
 See the section [Adding SSH Key to `ssh-agent`](#section-add-ssh-key-to-ssh-agent) in chapter 4 for details.
 
-The following command can be executed anywhere in the filesystem.
+    The following command can be executed anywhere in the filesystem.
 
-~~~
-$ ssh-add ~/.ssh/github_pepollms_rsa
-~~~
+    ~~~
+    $ ssh-add ~/.ssh/github_pepollms_rsa
+    ~~~
 
 2. Get project updates from the remote repository.
+This step is necessary every time there is an update in the remote repository.
 See the section [Commit Changes and Push Changes to Remote Repository](#section-get-project-updates-from-remote-repository) in chapter 4 for details.
 
-The following command must be executed in the project directory.
+    The following command must be executed in the project directory.
 
-~~~
-$ git pull
-~~~
+    ~~~
+    $ git pull
+    ~~~
 
 
 
