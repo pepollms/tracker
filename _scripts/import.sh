@@ -376,7 +376,19 @@ if [ ${op_import_current_data} -eq 1 ]; then
 
         echo "Processing imported current data."
         psql -d postgres -w -f ./sql/process_current.sql
-        echo "Current data has been imported."
+        echo "Current data processing done."
+
+        echo "Creating JSON files."
+        ./create_json.sh
+        echo "JSON files created."
+
+        echo "Store changes to Git repository."
+        git add ../_data/*.json
+        echo "Changes stored in local Git repository."
+
+        echo "Synchronize remote repository."
+        git commit -m "Update JSON files"
+        echo "Remote repository synchronized."
     else
         echo "No import files found."
     fi
