@@ -2,6 +2,8 @@
 
 The Pre-Election Poll Monitoring System keeps track of the number of voters who would prefer to vote for a candidate. The numbers are then compared to the voting population to determine the likelyhood of winning the election.
 
+To support keeping track of performance milestone or achievment, the system also monitors a target count of voters who would prefer to vote for a candidate. The voter and target counts are monitored per precinct, the smallest voting jurisdiction in the Philippines.
+
 
 
 ## System Overview {#chapter-software-system-overview}
