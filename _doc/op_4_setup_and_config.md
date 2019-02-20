@@ -5,7 +5,7 @@ This section describes the setup and configuration procedures of the system.
 The target software system shall use a GNU/Linux platform.
 All supporting software tools shall use open source software only.
 
-The system uses the following:
+The system uses the following major components:
 
 * GitHub - web site for hosting the static web pages for testing and possibly for production.
 * PostgreSQL - relational database to hold all system data.
@@ -298,13 +298,14 @@ $ git push
 
 
 
-### Getting Project Updates from Remote Repository
+### Get Project Updates from Remote Repository {#section-get-project-updates-from-remote-repository}
 
 Any changes in the remote site may be obtained by updating the local copy of the project.
 In the Git version control, this is called a `pull`.
 All changes can be pulled from the remote site and put on the local copy.
 
 The following command "pulls" all changes from the project remote repository and put on the local git repository.
+It must be executed inside the project directory.
 
 ~~~
 $ git pull

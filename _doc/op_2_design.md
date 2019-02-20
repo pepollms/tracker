@@ -1,7 +1,7 @@
 # Design {#chapter-design}
 
 This chapter describes the design of the components of the system.
-It shows how the user interaction is mapped to the softwares used, data storage structure and project files layout.
+It shows how user interactions are mapped to the softwares used, the data storage structure and the filesystem layout of project files.
 
 
 

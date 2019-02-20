@@ -32,17 +32,22 @@ rectangle "Pre-Election Poll Monitoring" {
 
 ## System Requirements
 
-The following lists the primary requirements of the system.
+The following is the list of primary requirements of the system.
 
-1. The system shall collate in-favor pre-election poll for the candidate.
-2. The system shall monitor pre-election poll from the provincial level down to the precinct level.
-3. The system shall drill down the pre-election poll from the provincial level down to the precinct level.
-4. The system shall set a user defined target value for each precinct.
-5. The system shall display the number and percentage of in-favor pre-election poll compared to the target value.
-6. The system shall display the number and percentage of target value compared to the actual number of voters.
-7. The system shall accept only registered or authorized personnel to provide updates on in-favor pre-election poll numbers for each precinct.
-8. The system shall be viewable online.
+1. The system shall keep track of the number of voters in favor of a candidate.
+2. The system shall maintain, per precinct, the target number of voters in favor of a candidate.
+3. The system shall keep track of people is in charge of each precinct in monitoring the number of voters in favor of a candidate;
+4. The system shall compute the percentages of voters in favor in relation to the target number of voeters in favor of a candidate.
+5. The system shall compute the percentage of target number of voters in relation to the total number of voters in every precinct.
+6. The system shall display the number of voters in favor, target number of voters, total number of voters and their correspdoning percentages.
+7. The system shall be able to display the current values from the provincial level down to the precinct level.
+8. The system shall display the monitoring status online.
 
+The following is the list of supporting requirements of the system.
 
+1. The system shall be able to change the precinct assignment of people in charge of monitoring the number of voters.
+2. The system shall be able to update the target number of voters per precinct.
+3. The system shall be able to update the information of people in charge of each precinct.
+4. The system shall be able to manually override the number of voters in favor of a candidate.
 
 \clearpage
