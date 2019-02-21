@@ -9,7 +9,7 @@ The following table shows the system operations categorized by when each is perf
 | 1. Update Project Repository   | Yes              | Optional |
 | 2. Start the Database Server   | Yes              | Yes      |
 | 3. System Initialization       | Yes              |          |
-| 4. Update In-Favor Values      |                  | Yes      |
+| 4. Update In Favor Values      |                  | Yes      |
 | 5. Create JSON Files           | Yes              | Yes      |
 | 6. Publish Changes             | Yes              | Yes      |
 
@@ -170,20 +170,20 @@ $ ./import.sh --create-markdown
 
 
 
-## Update In-Favor Values
+## Update In Favor Values
 
-There are 3 ways to update the in-favor value by precinct.
+There are 3 ways to update the in favor value by precinct.
 
-1. Import one or more _in-favor data files_ to be added to the current precinct in-favor values;
-2. Add a value to the current precinct in-favor value;
-3. Set the current precinct in-favor value
+1. Import one or more _in favor data files_ to be added to the current precinct in favor values;
+2. Add a value to the current precinct in favor value;
+3. Set the current precinct in favor value
 
 The _data management script_ is used to do all three ways.
 The _import script_ does only the first.
 
 
 
-### Importing In-Favor Data Files
+### Importing In Favor Data Files
 
 Importing _in favor data files_ requires that the CSV files exists in the _import directory_.
 
@@ -209,7 +209,7 @@ $ ./dm.sh add-precinct-current -f
 
 ### Add or Set the Precinct In Favor Value
 
-The system  is also allowed to manually add to or set the precinct in-favor value.
+The system  is also allowed to manually add to or set the precinct in favor value.
 
 __Adding an In Favor Value__
 
@@ -242,9 +242,9 @@ $ ./dm.sh set-precinct-current 100 4
 
 
 
-### Generate In-Favor Mock Data
+### Generate In Favor Mock Data
 
-In-Favor mock data is used during testing to verify computation routines.
+In Favor mock data is used during testing to verify computation routines.
 This procedure creates mock data in the _poll monitoring table_.
 
 This procedure is not called by the initialization script.
@@ -302,8 +302,8 @@ See the [Source Data Import Table](#section-source-data-import-table) section fo
 After system initialization and/or after updating the database, the data from the database must be exported to JSON files.
 The purpose of the JSON files is to feed the data when generating the HTML files locally or remotely.
 
-This procedure is automatically called after in-favor data files have been imported.
-However, if any database update was performed after the in-favor data files have been imported, then it is necessary to manually execute this command.
+This procedure is automatically called after in favor data files have been imported.
+However, if any database update was performed after the in favor data files have been imported, then it is necessary to manually execute this command.
 
 The following command will create all JSON files.
 
@@ -390,8 +390,8 @@ Insert and update operations:
 2. Set leader name
 3. Set leader contact
 4. Set leader-precinct assignment
-5. Add In-Favor count
-6. Set In-Favor count
+5. Add In Favor count
+6. Set In Favor count
 7. Set Target count
 
 To display the help text, execute the following command:
@@ -660,7 +660,7 @@ $ ./dm.sh set-leader-assignment 16 10
 
 ### Set Target Count
 
-Set the target In-Favor value.
+Set the target In Favor value.
 The precinct ID must exist.
 
 ~~~

@@ -45,18 +45,18 @@ The column does not expect a percentage (%) symbol.
 The actual value of the _target_ will be computed from this percentage and kept.
 
 All _source data import files_ are expected to be in UTF-8 encoding to accomodate special characters like the Spanish "enye", Ñ (lower case ñ).
-All _source data import files_ must be in the _source data import directory_ `_data/to_import/district`.
+All _source data import files_ must be in the _source data import directory_.
 
 
 
-### In-Favor Data Import Table
+### In Favor Data Import Table
 
-The _precinct monitor_ table in-favor column can be updated with values from a comma-separated value (CSV) file.
+The _precinct monitor_ table in favor column can be updated with values from a comma-separated value (CSV) file.
 The file is imported into the database and processed.
 
-The _in-favor data import table_ is structured as a standalone table whose structure is identical to the _in-favor data import file_ structure.
+The _in favor data import table_ is structured as a standalone table whose structure is identical to the _in favor data import file_ structure.
 
-The _in-favor data import file_ is a comma-separated value (CSV) file with a header line.
+The _in favor data import file_ is a comma-separated value (CSV) file with a header line.
 The following table shows the structure of the CSV file that is read by the system.
 
 | Column No. | Column Name       | Data Type | Length |
@@ -66,8 +66,8 @@ The following table shows the structure of the CSV file that is read by the syst
 |      3     | precinct          | text      |   10   |
 |      4     | current           | numeric   |        |
 
-The _in-favor data import file_ is expected to be in UTF-8 encoding.
-All _in-favor data import files_ must be in the _in-favor data import directory_ `_data/to_import/current`.
+The _in favor data import file_ is expected to be in UTF-8 encoding.
+All _in favor data import files_ must be in the _in favor data import directory_.
 
 
 
@@ -121,16 +121,16 @@ See the [Project Files section](#section-project-files) for more details on the 
 
 
 
-### Add In-Favor Message
+### Add In Favor Message
 
 Leader sends an SMS message to the Message Receiver.
-The message denotes an In-Favor information for the candidate.
+The message denotes an In Favor information for the candidate.
 The Messager Receiver is expected to receive many SMS messages and collects them until some event is reached.
 The event may be a certain cut-off time, a number of messages, or just manual intervention.
 
-!uml(images/pp-send-in-favor-message.svg {width=220})(Send In-Favor Message)
+!uml(images/pp-send-in-favor-message.svg {width=220})(Send In Favor Message)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Leader -> "Message\nReceiver" : send In-Favor message
+Leader -> "Message\nReceiver" : send In Favor message
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
