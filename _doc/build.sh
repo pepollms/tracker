@@ -8,9 +8,9 @@ function show_usage() {
     echo "Usage:"
     echo "  $(basename $0) [option ...]"
     echo "Options:"
-    echo "  -h             print help and exit"
-    echo "  -d             debug mode"
-    echo "  -s [a4 | us]   default is 'us'"
+    echo "  -h                  print help and exit"
+    echo "  -d                  debug mode"
+    echo "  -s [a4 | us | all]  default is 'all'"
 }
 
 # ==============================
@@ -30,6 +30,8 @@ while getopts :hds: OPTION; do
         d)      debug_mode=1
                 ;;
         s)      arg_size="$OPTARG"
+                [[ ! "${arg_size}" == @("a4"|"us"|"all") ]] && \
+                    { echo "Unsupported paper size '${arg_size}'"; exit 1; }
                 ;;
         \:)     printf "argument missing from -%s option\n" $OPTARG
                 show_usage
@@ -42,6 +44,10 @@ while getopts :hds: OPTION; do
     esac
 done
 shift $(($OPTIND - 1))
+
+if [ -z "${arg_size}" ]; then
+    arg_size="all"
+fi
 
 echo "Converting markdown files to PDF file."
 
@@ -82,27 +88,6 @@ for file in "${doc_files[@]}"; do
     fi
 done
 
-if [ -z "${arg_size}" ]; then
-    arg_size="us"
-fi
-
-template_file=""
-if [ "${arg_size}" == "us" ]; then
-    template_file="template_doc_us.tex"
-elif [ "${arg_size}" == "a4" ]; then
-    template_file="template_doc_a4.tex"
-else
-    echo "Unknown paper size: '${arg_size}'."
-    exit 1
-fi
-
-output_file+="operations-${arg_size}.pdf"
-
-if [ $debug_mode == 1 ]; then
-    echo "Template: $template_file"
-    echo "Output:   $output_file"
-fi
-
 if [ $# -gt 0 ]; then
     printf "Unknown arguments: %s\n" "$*"
     echo   "Aborting."
@@ -131,24 +116,53 @@ done
 
 # Use --pdf-engine=xelatex when markdown file contains Ñ character.
 
-echo "Converting to PDF..."
-pandoc                                  \
-        -s op_1_introduction_pp.md      \
-           op_2_design_pp.md            \
-           op_3_operations_pp.md        \
-           op_4_setup_and_config_pp.md  \
-           op_5_source_files_pp.md      \
-           op_6_output.md               \
-           op_0_links.md                \
-        --template=${template_file}     \
-        -f markdown+raw_tex+fenced_code_blocks+footnotes+link_attributes+implicit_figures   \
-        -t latex                        \
-        -o ${output_file}               \
-        `#--pdf-engine=pdflatex`        \
-        --pdf-engine=xelatex            \
-        --toc                           \
-        --top-level-division=chapter    \
-        --listing
+declare -a  paper_sizes=()
+
+if [ "${arg_size}" == "a4" ]; then
+    paper_sizes+=("a4")
+elif [ "${arg_size}" == "us" ]; then
+    paper_sizes+=("us")
+elif [ "${arg_size}" == "all" ]; then
+    paper_sizes+=("a4")
+    paper_sizes+=("us")
+fi
+
+for element in "${paper_sizes[@]}"; do
+    template_file=""
+    if [ "${element}" == "us" ]; then
+        template_file="template_doc_us.tex"
+    elif [ "${element}" == "a4" ]; then
+        template_file="template_doc_a4.tex"
+    fi
+
+    output_file="operations-${element}.pdf"
+
+    if [ $debug_mode == 1 ]; then
+        echo "Template: $template_file"
+        echo "Output:   $output_file"
+    fi
+
+    echo "Converting to PDF (${element})..."
+    pandoc                                  \
+            -s op_1_introduction_pp.md      \
+               op_2_design_pp.md            \
+               op_3_operations_pp.md        \
+               op_4_setup_and_config_pp.md  \
+               op_5_source_files_pp.md      \
+               op_6_output.md               \
+               op_0_links.md                \
+            --template=${template_file}     \
+            -f markdown+raw_tex+fenced_code_blocks+footnotes+link_attributes+implicit_figures   \
+            -t latex                        \
+            -o ${output_file}               \
+            `#--pdf-engine=pdflatex`        \
+            --pdf-engine=xelatex            \
+            --toc                           \
+            --top-level-division=chapter    \
+            --listing
+
+    echo "Output: ${output_file}"
+done
 
 if [ $debug_mode == 0 ]; then
     echo "Cleaning up."
@@ -157,5 +171,5 @@ if [ $debug_mode == 0 ]; then
     done
 fi
 
-echo "Output: ${output_file}"
+
 echo "Done."
