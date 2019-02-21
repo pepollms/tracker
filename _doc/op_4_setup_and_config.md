@@ -142,18 +142,21 @@ The following hierarchy shows the project directory structure:
     +-- index.md
 ~~~
 
-The project files are kept in a Git version control repository.
+The project files are version controlled using Git.
+See the [Project Repository](#section-project-repository) section below for more information.
 
 
 
-## Project Repository
+## Project Repository {#section-project-repository}
 
 The system uses the Git version control[^git_version_control].
-The system uses a GitHub account to host the project repository and to host the static web pages.
-
-Currently, the project repository name is `tracker` and hosted remotely on GitHub, `https://github.com/pepollms/tracker`.
+Git is a distributed version control system for tracking changes in source code.
 
 For Git reference, an online documentation available at [https://git-scm.com/docs](https://git-scm.com/docs) and a downloadable electronic book in `pdf`, `epub` and `mobi` formats at [https://git-scm.com/book/en/v2](https://git-scm.com/book/en/v2).
+
+The system uses a GitHub account to host the project repository and the static web pages.
+See the [GitHub](#section-github) section for more information.
+
 
 [^git_version_control]: https://en.wikipedia.org/wiki/Git
 
@@ -161,7 +164,9 @@ For Git reference, an online documentation available at [https://git-scm.com/doc
 
 ### Installing Git Version Control
 
-Note that the machine must be online to access the remote repository.
+Note that the machine must be online to access the Manjaro online packager repository.
+
+The following command will install the Git version control using the package manager `pacman`.
 
 ~~~
 $ sudo pacman -S git
@@ -169,7 +174,7 @@ $ sudo pacman -S git
 
 
 
-### Cloning Git Repository
+### Cloning a Git Repository
 
 A clone is a copy of a repository.
 The remote repository on GitHub must be cloned to have a local copy in the filesystem.
@@ -329,6 +334,12 @@ and the repository exists.
 
 The project uses GitHub, a web-based hosting service for version control using Git.
 
+The project repository name is `tracker` and hosted remotely on GitHub,
+
+~~~
+https://github.com/pepollms/tracker
+~~~
+
 
 
 ### Connecting to GitHub with SSH
@@ -337,7 +348,7 @@ The steps to enable connecting to GitHub via SSH is discussed in detail in [http
 
 
 
-### Generating SSH Key
+### Generating SSH Key {#section-generating-ssh-key}
 
 Enter the following command to create a new SSH key in the current directory using the RSA algorithm.
 
@@ -346,14 +357,14 @@ $ ssh-keygen -t rsa
 ~~~
 
 It will prompt for a filename wherein to save the key and a passphrase.
-The filename could be renamed if necessary.
-The passphrase asked whenever adding the SSH key to the ssh-agent.
+The user may opt to use the default filename or provide a custom filename.
+The passphrase will be asked whenever adding the SSH key to the ssh-agent.
 
 
 
-#### Adding SSH Key to `ssh-agent` {#section-add-ssh-key-to-ssh-agent}
+#### Adding SSH Key to SSH Agent {#section-add-ssh-key-to-ssh-agent}
 
-Add the SSH private key to the ssh-agent.
+Add the SSH private key to the SSH agent.
 
 The following command assumes that the SSH key is in the `~/.ssh` directory and the key name is `github_pepollms_rsa`.
 
@@ -368,7 +379,7 @@ Note that the command must be executed everytime the machine is restarted.
 #### Adding SSH Key to GitHub
 
 The `xclip` program may be necessary to install if it has not yet been installed.
-`xclip` is a commandline program used to copy text into.
+`xclip` is a commandline program used to copy text into the clipboard.
 
 Install `xclip`.
 
@@ -719,7 +730,7 @@ exclude:
 
 ### Generate Local Files
 
-To generate static HTML pages, change directory to the project directory then execute the command, `bundle exec jekyll serve`.
+To generate static HTML pages, execute the command, `bundle exec jekyll serve` in the _project root directory_.
 
 ~~~
 $ bundle exec jekyll serve

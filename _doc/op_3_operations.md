@@ -2,24 +2,45 @@
 
 This chapter discusses the operations in detail and the commands needed to execute the corresponding operations.
 
+The following table shows the system operations categorized by when each is performed.
+
+| Operation                      | Production Start | Routine  |
+|--------------------------------|:----------------:|:--------:|
+| 1. Update Project Repository   | Yes              | Optional |
+| 2. Start the Database Server   | Yes              | Yes      |
+| 3. System Initialization       | Yes              |          |
+| 4. Update In-Favor Values      |                  | Yes      |
+| 5. Create JSON Files           | Yes              | Yes      |
+| 6. Publish Changes             | Yes              | Yes      |
+
 
 
 ## Update Project Repository
 
-It is necessary to update the local Git repository every time to acquire the latest system changes from the remote repository.
+The project source files could change during production run in the event of bug fixes and enhancements published to the remote repository.
+To acquire any changes in the project source files in the remote repository, it is necessary to update or synchronize the local repository.
 
-1. Add the machine SSH private key to the ssh-agent.
-This step is only necessary every time the machine is restarted.
+The following table shows the procedures categorized by when each is performed.
+
+| Operation                            | Re-Boot  | Live    |
+|--------------------------------------|:--------:|:-------:|
+| 1. Add SSH private key to SSH agent  | Yes      |         |
+| 2. Synchronize local repository      | Yes      | Yes     |
+
+1. Add the machine SSH private key to SSH agent.
+This step is only necessary when the machine is rebooted because the system is not yet configured to automatically perform this during machine boot up.
 See the section [Adding SSH Key to `ssh-agent`](#section-add-ssh-key-to-ssh-agent) in chapter 4 for details.
 
     The following command can be executed anywhere in the filesystem.
+    The user will be asked for the passphrase that was used when the SSH key was created.
+    See the [Generating SSH Key](#section-generating-ssh-key) section in chapter 4 for details.
 
     ~~~
     $ ssh-add ~/.ssh/github_pepollms_rsa
     ~~~
 
-2. Get project updates from the remote repository.
-This step is necessary every time there is an update in the remote repository.
+2. Synchronize local repository.
+Synchronize the local repository with the changes in the remote repository by "pulling" the changes in.
 See the section [Commit Changes and Push Changes to Remote Repository](#section-get-project-updates-from-remote-repository) in chapter 4 for details.
 
     The following command must be executed in the project directory.
@@ -30,31 +51,48 @@ See the section [Commit Changes and Push Changes to Remote Repository](#section-
 
 
 
-## System Initialization
+## Start the Database Server
 
-At the start of operation, this procedure is all there is to perform.
-This procedure involves other procedures that are called automatically.
-
-__Start the Database Server__
-
-Make sure that the PostgreSQL database server is running before performing any of the following procedures.
+Make sure that the PostgreSQL database server is running before performing any operations involving the database.
+This step is only necessary when the machine is rebooted because the system is not yet configured to automatically perform this during machine boot up.
 See the [Starting and Stopping the Database Server](#section-starting-stopping-database-server) section.
 
-__Ensure Source Data Files are in UTF-8 Encoding__
+
+
+## Initialize the System
+
+This operation is performed only at the start of production run to initialize the system.
+This operation involves other procedures that are automatically performed.
+These procedures are discussed in the subsections below.
+
+
+
+### Ensure Source Data Files are in UTF-8 Encoding
 
 Prepare the _source data import files_.
-See the [Source Data Import Table section](#section-source-data-import-table) for more information on the _source data import files_.
+See the [Source Data Import Table section](#section-source-data-import-table) section in Chapter 2 for details.
 
-In case the files are not in UTF-8 encoding, convert them.
+The following command shows the text file encoding.
 
 ~~~
 $ iconv -i <file>
+~~~
+
+Convert the files if they are not yet in UTF-8 encoding.
+The following shows the syntax on how to use the `iconv` program to convert text files in ASCII encoding to UTF-8 encoding.
+
+~~~
 $ iconv -f us-ascii -t utf-8 <input> -o <output>
 ~~~
 
-__Initialization Script__
 
-The script calls other specific procedures to perform the system initialization:
+
+### Run the Initialization Script
+
+The initialization script calls other procedures to perform the system initialization.
+Although this procedure is only required at the start of the production run, the other procedures may be separately called and, usually, during testing or maintenance.
+The other procedures are discussed below for more details.
+
 
 * Database creation
 * Source data files importation
@@ -81,18 +119,18 @@ Do you want to initialize the system?
 #?
 ~~~
 
-The user is required to enter either `1` or `2` only.
+The user is required to reply either `1` or `2` only.
 
 
 
 ### Create Database
 
-All database tables, functions, views, procedures, triggers will be created.
-This procedure will delete database objects if they were previously created and recreate them, erasing  all existing data.
+This procedure will create all database tables, functions, views, procedures, and other objects.
+If the database objects currently exists in the database, as in the case when testing was performed, they will be deleted along with all data and will be recreated.
 
 The database creation script is automatically called by the initialization script, although it may be performed separately.
 
-The following command (re)creates the database objects:
+The following command (re)creates the database objects.
 
 ~~~
 $ ./import.sh --create-db
@@ -102,7 +140,7 @@ $ ./import.sh --create-db
 
 ### Import Source Data
 
-The database will be populated with the _source data files_.
+The database tables will be initially populated with data from the _source data files_.
 This procedure will read the CSV files from the _source data import directory_ and imported into the _source data import table_.
 See the [Source Data Import Table](#section-source-data-import-table) section for more details.
 
@@ -118,12 +156,13 @@ $ ./import.sh --import source
 
 ### Create Markdown Files
 
-Markdown files are template files rendered by Jekyll to produce HTML files.
-They are automatically created based on the data in the database.
+Markdown files are template files processed by Jekyll to produce HTML files.
+These template markdown files are created based on the data in the database.
 
 The markdown file creation is automatically called by the initialization script, although it may be performed separately.
 
-The following command creates all markdown files for the `district`, `municipality` and `barangay` directories under the project root directory. The number of created markdown files depends on the number districts, municipalities and barangays in the database.
+The following command creates all markdown files for the `district`, `municipality` and `barangay` directories under the _project root directory_.
+The number of created markdown files depends on the number districts, municipalities, barangays and precincts in the database.
 
 ~~~
 $ ./import.sh --create-markdown
@@ -131,35 +170,36 @@ $ ./import.sh --create-markdown
 
 
 
-## In-Favor Value
+## Update In-Favor Values
 
 There are 3 ways to update the in-favor value by precinct.
-A fourth exists only for testing.
 
-1. Add a value to the current precinct in-favor value;
-2. Set the current precinct in-favor value
-3. Import one or more _in-favor data files_ to be added to the current precinct in-favor values;
+1. Import one or more _in-favor data files_ to be added to the current precinct in-favor values;
+2. Add a value to the current precinct in-favor value;
+3. Set the current precinct in-favor value
 
 The _data management script_ is used to do all three ways.
-The _import script_ does only the third.
+The _import script_ does only the first.
 
 
 
-### Add or Setting the Precinct In-Favor Value
+### Importing In-Favor Data Files
 
-The following command will add the specified value `4` to the current in-favor value of the precinct whose id is `100` using the _data management script_.
+Importing _in favor data files_ requires that the CSV files exists in the _import directory_.
+
+Note that the two procedures will automatically call the operation that generates JSON files.
+
+__Using the Import Script__
+
+The _import script_ is one of the tools that can be used to import one or more _in favor data files_.
 
 ~~~
-$ ./dm.sh add-precinct-current 100 4
+$ ./import.sh --import current
 ~~~
 
-The following command will change the current in-favor value to `4` of the precinct whose id is `100` using the _data management script_.
+__Using the Data Management Script__
 
-~~~
-$ ./dm.sh set-precinct-current 100 4
-~~~
-
-The following command will import the precinct in-favor values to be added to the current in-favor values of the corresponding precincts using the _data management script_.
+The _data management script_ is another tool to import one or more _in favor data files_.
 
 ~~~
 $ ./dm.sh add-precinct-current -f
@@ -167,18 +207,38 @@ $ ./dm.sh add-precinct-current -f
 
 
 
-### Importing In-Favor Data Files
+### Add or Set the Precinct In Favor Value
 
-Importing the _in-favor data files_ requires that the CSV files be in the _import directory_ `<project>/_data/to_import/current`.
+The system  is also allowed to manually add to or set the precinct in-favor value.
 
-The _import script_ can also be used to update the precinct in-favor value by importing one or more CSV files.
-This command is the same if it was executed using the _data management script_ above.
+__Adding an In Favor Value__
+
+The following syntax shows how to add a precinct in favor value using the _data management script_.
 
 ~~~
-$ ./import.sh --import current
+$ ./dm.sh add-precinct-current <precinct> <number>
 ~~~
 
-Note that this procedure automatically calls the script that generates the JSON files.
+The following command will add the specified value `4` to the current in favor value of the precinct whose id is `100`.
+
+~~~
+$ ./dm.sh add-precinct-current 100 4
+~~~
+
+__Setting an In Favor Value__
+
+Setting a precinct in favor value uses the same syntax as adding an in favor value.
+The following syntax shows how to set a precinct in favor value using the _data management script_.
+
+~~~
+$ ./dm.sh set-precinct-current <precinct> <number>
+~~~
+
+The following command will change the current in favor value to `4` of the precinct whose id is `100`.
+
+~~~
+$ ./dm.sh set-precinct-current 100 4
+~~~
 
 
 
@@ -189,7 +249,7 @@ This procedure creates mock data in the _poll monitoring table_.
 
 This procedure is not called by the initialization script.
 
-The following command syntax shows how it can be used:
+The following command syntax shows how it can be used.
 
 ~~~
 $ ./import.sh --mock <-a n | -p x m> <-a n | -p x m>
@@ -243,7 +303,7 @@ After system initialization and/or after updating the database, the data from th
 The purpose of the JSON files is to feed the data when generating the HTML files locally or remotely.
 
 This procedure is automatically called after in-favor data files have been imported.
-If somehow, there is any database update performed after the in-favor data files have been imported, then it is necessary to manually execute this command.
+However, if any database update was performed after the in-favor data files have been imported, then it is necessary to manually execute this command.
 
 The following command will create all JSON files.
 
@@ -251,7 +311,7 @@ The following command will create all JSON files.
 $ ./create_json.sh
 ~~~
 
-The JSON files will be created in the _data directory_ `<project>/_data`.
+The JSON files will be created in the _data directory_.
 
 Note that this procedure automatically updates the local and remote repositories.
 
@@ -266,7 +326,7 @@ If there are other changes to the system, then it is necessary to publish those 
 ### Publish JSON Files Only
 
 The following command will add the JSON files to the staging area.
-It is necessary that this command is executed in the _scripts directory_ `<project>/_scripts`.
+It is necessary that this command is executed in the _scripts directory_.
 
 This procedure is automatically called when the JSON files were created.
 
@@ -316,7 +376,7 @@ https://pepollms.github.io/tracker/
 
 Data management handles database query, insert and update operations.
 
-The bash shell script, `dm.sh` in the _scripts directory_ `<project>/_scripts` is the driver for data management.
+The bash shell script, `dm.sh`, in the _scripts directory_ is the driver for data management.
 
 Query operations:
 
