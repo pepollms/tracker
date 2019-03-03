@@ -334,6 +334,18 @@ if [ ${op_import_source_data} -eq 1 ]; then
         echo "Processing imported data."
         psql -d postgres -w -f ./sql/process_import.sql
         echo "Source data has been imported"
+
+        echo "Creating JSON files."
+        ./create_json.sh
+        echo "JSON files created."
+
+        echo "Store changes to Git repository."
+        git add ../_data/*.json
+        echo "Changes stored in local Git repository."
+
+        echo "Synchronize remote repository."
+        git commit -m "Update JSON files"
+        echo "Remote repository synchronized."
     else
         echo "No import files found."
     fi
