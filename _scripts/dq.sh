@@ -4,6 +4,7 @@ declare -r PROGRAM_NAME="${0##*/}"
 declare -r CD="$(dirname "$0")"
 
 declare -r CMD_LIST="list"
+declare -r CMD_COUNT="count"
 
 function show_usage {
     echo "$PROGRAM_NAME - Data query script."
@@ -64,6 +65,17 @@ function list_province {
     echo "$(exec_sql "${SQL}")"
 }
 
+function count_district {
+    check_if_server_is_ready
+    local -r SQL_COUNT=""`
+        `" select"`
+        `"     count(district)"`
+        `" from"`
+        `"     (select distinct district from vt_import) as t;"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "Count: district $(echo ${result} | tr -d '[:space:]')"
+}
+
 function list_district {
     check_if_server_is_ready
     local -r SQL_COUNT=""`
@@ -71,7 +83,8 @@ function list_district {
         `"     count(district)"`
         `" from"`
         `"     (select distinct district from vt_import) as t;"
-    echo "List: district $(exec_sql "${SQL_COUNT}")"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "List: district $(echo ${result} | tr -d '[:space:]')"
     local -r SQL=""`
         `" select distinct"`
         `"     district"`
@@ -82,13 +95,14 @@ function list_district {
     echo "$(exec_sql "${SQL}")"
 }
 
-function list_municipality_count {
+function count_municipality {
     check_if_server_is_ready
     local -r SQL_COUNT=""`
         `" select count(municipality)"`
         `" from"`
         `"     (select distinct district, municipality from vt_import group by district, municipality) as t;"
-    echo "List: municipality $(exec_sql "${SQL_COUNT}")"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "Count: municipality $(echo ${result} | tr -d '[:space:]')"
     local -r SQL=""`
         `" select district, count(municipality)"`
         `" from"`
@@ -100,8 +114,12 @@ function list_municipality_count {
 
 function list_municipality {
     check_if_server_is_ready
-    #echo "List: ${arg_data}"
-    echo "--------------------"
+    local -r SQL_COUNT=""`
+        `" select count(municipality)"`
+        `" from"`
+        `"     (select distinct district, municipality from vt_import group by district, municipality) as t;"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "List: municipality $(echo ${result} | tr -d '[:space:]')"
     local -r SQL=""`
         `" select"`
         `"     row_number() over (order by district, municipality) as seqnum,"`
@@ -113,13 +131,14 @@ function list_municipality {
     echo "$(exec_sql "${SQL}")"
 }
 
-function list_barangay_count {
+function count_barangay {
     check_if_server_is_ready
     local -r SQL_COUNT=""`
         `" select count(barangay)"`
         `" from"`
         `"     (select distinct district, municipality, barangay from vt_import group by district, municipality, barangay) as t;"
-    echo "List: barangay $(exec_sql "${SQL_COUNT}")"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "Count: barangay $(echo ${result} | tr -d '[:space:]')"
     local -r SQL=""`
         `" select district, municipality, count(barangay)"`
         `" from"`
@@ -131,7 +150,12 @@ function list_barangay_count {
 
 function list_barangay {
     check_if_server_is_ready
-    echo "List: ${arg_data}"
+    local -r SQL_COUNT=""`
+        `" select count(barangay)"`
+        `" from"`
+        `"     (select distinct district, municipality, barangay from vt_import group by district, municipality, barangay) as t;"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "List: barangay $(echo ${result} | tr -d '[:space:]')"
     local -r SQL=""`
         `" select distinct"`
         `"     row_number() over (order by district, municipality, barangay) as seqnum,"`
@@ -147,13 +171,14 @@ function list_barangay {
     echo "$(exec_sql "${SQL}")"
 }
 
-function list_precinct_count {
+function count_precinct {
     check_if_server_is_ready
     local -r SQL_COUNT=""`
         `" select count(precinct)"`
         `" from"`
         `"     (select distinct district, municipality, barangay, precinct from vt_import group by district, municipality, barangay, precinct) as t;"
-    echo "List: precinct $(exec_sql "${SQL_COUNT}")"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "Count: precinct $(echo ${result} | tr -d '[:space:]')"
     local -r SQL=""`
         `" select district, municipality, barangay, count(precinct)"`
         `" from"`
@@ -165,7 +190,12 @@ function list_precinct_count {
 
 function list_precinct {
     check_if_server_is_ready
-    echo "List: ${arg_data}"
+    local -r SQL_COUNT=""`
+        `" select count(precinct)"`
+        `" from"`
+        `"     (select distinct district, municipality, barangay, precinct from vt_import group by district, municipality, barangay, precinct) as t;"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "List: precinct $(echo ${result} | tr -d '[:space:]')"
     local -r SQL=""`
         `" select distinct"`
         `"     row_number() over (order by district, municipality, barangay, precinct) as seqnum,"`
@@ -183,6 +213,16 @@ function list_precinct {
     echo "$(exec_sql "${SQL}")"
 }
 
+function count_leader {
+    check_if_server_is_ready
+    local -r SQL_COUNT=""`
+        `" select count(leader)"`
+        `" from"`
+        `"     (select distinct leader from vt_import) as t;"
+    local -r result=$(exec_sql "${SQL_COUNT}")
+    echo "Count: leader $(echo ${result} | tr -d '[:space:]')"
+}
+
 
 
 if [ $# -eq 0 ]; then
@@ -197,6 +237,7 @@ fi
 
 commands=(
     $CMD_LIST
+    $CMD_COUNT
 )
 
 if [[ ! "${commands[@]}" =~ "${1}" ]]; then
@@ -217,31 +258,24 @@ fi
 arg_data="${1}"
 shift
 
-case "${arg_data}" in
-    province)       list_province ;;
-    district)       list_district ;;
-    municipality)
-                    if [ $# -eq 0 ]; then
-                        list_municipality
-                    elif [ "${1}" == "-c" ]; then
-                        list_municipality_count
-                    fi
-                    ;;
-    barangay)
-                    if [ $# -eq 0 ]; then
-                        list_barangay
-                    elif [ "${1}" == "-c" ]; then
-                        list_barangay_count
-                    fi
-                    ;;
-    precinct)
-                    if [ $# -eq 0 ]; then
-                        list_precinct
-                    elif [ "${1}" == "-c" ]; then
-                        list_precinct_count
-                    fi
-                    ;;
-esac
+if [ "${arg_command}" == "list" ]; then
+    case "${arg_data}" in
+        province)       list_province ;;
+        district)       list_district ;;
+        municipality)   list_municipality ;;
+        barangay)       list_barangay ;;
+        precinct)       list_precinct ;;
+    esac
+elif [ "${arg_command}" == "count" ]; then
+    case "${arg_data}" in
+        district)       count_district ;;
+        municipality)   count_municipality ;;
+        barangay)       count_barangay ;;
+        precinct)       count_precinct ;;
+        leader)         count_leader ;;
+    esac
+fi
+
 
 
 

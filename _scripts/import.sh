@@ -40,8 +40,10 @@ function show_usage {
     echo ""
     echo "Options in sequential order:"
     echo "  ${CMD_HELP}                         Show usage help text"
-    echo "  ${CMD_INIT} [-y]                    Initialize the system"
-    echo "                                   -y option will skip the confirmation step"
+    echo "  ${CMD_INIT} [options]               Initialize the system"
+    echo "    [-no-json]                          Do not create JSON files"
+    echo "    [-no-git]                           Do not run git commands"
+    echo "    [-y]                                Skip confirmation step"
     echo "  ${CMD_CREATE_DB}                    Recreate database objects"
     echo "  ${CMD_IMPORT} [source | current]    Import data from CSV files"
     #echo "  ${CMD_MOCK} <file>                  Run <file> to generate mock data"
@@ -185,9 +187,21 @@ fi
 mock_data_ccolumn="vt_precinct_monitor.target"
 mock_data_lb="1"
 mock_data_ub="vt_precinct_monitor.target::integer"
+init_do_json=1
+init_do_git=1
 while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
     if [ "${1}" == "${CMD_INIT}" ]; then
-        shift 1
+        shift
+
+        if [ "${1}" == "-no-json" ]; then
+            shift
+            init_do_json=0
+        fi
+        if [ "${1}" == "-no-git" ]; then
+            shift
+            init_do_git=0
+        fi
+
         if [ "${1}" == "-y" ]; then
             shift 1
             op_create_db=1
@@ -273,11 +287,13 @@ if [ ${op_create_db} -eq 1 ]; then
         exit 1
     fi
     echo "Create database objects."
-    psql -d postgres -w -f ./sql/create_base_tables.sql
-    psql -d postgres -w -f ./sql/create_utility_functions.sql
-    psql -d postgres -w -f ./sql/create_monitor_views.sql
-    psql -d postgres -w -f ./sql/create_dm_functions.sql
+    echo "----------"
+    $(psql -X -q -v ON_ERROR_STOP=1 -d postgres -w -f ./sql/create_base_tables.sql)
+    $(psql -X -q -v ON_ERROR_STOP=1 -d postgres -w -f ./sql/create_utility_functions.sql)
+    $(psql -X -q -v ON_ERROR_STOP=1 -d postgres -w -f ./sql/create_monitor_views.sql)
+    $(psql -X -q -v ON_ERROR_STOP=1 -d postgres -w -f ./sql/create_dm_functions.sql)
     echo "Database objects has been created."
+    echo "----------"
 fi
 
 if [ ${op_import_source_data} -eq 1 ]; then
@@ -290,10 +306,9 @@ if [ ${op_import_source_data} -eq 1 ]; then
         echo "Source data import directory does not exist: '${IMPORT_SOURCE_DIR}'."
         exit 1
     fi
-    echo "Import from source data files"
 
-    psql -d postgres -w -f ./sql/import/region.sql
-    psql -d postgres -w -f ./sql/import/province.sql
+    $(psql -X -q -v ON_ERROR_STOP=1 -d postgres -w -f ./sql/import/region.sql)
+    $(psql -X -q -v ON_ERROR_STOP=1 -d postgres -w -f ./sql/import/province.sql)
 
     #
     # Create the SQL files for importing the district level data.
@@ -312,7 +327,7 @@ if [ ${op_import_source_data} -eq 1 ]; then
         for file in ${files[@]}; do
             filename=$(basename ${file})
             sql_file="${district_dest_dir}/${filename%.*}.sql"
-            echo "Creating ${sql_file}."
+            echo_debug "Creating ${sql_file}."
             sql_district_files+="${sql_file}"
             district_file_content=""`
                 `"\\COPY vt_import("`
@@ -327,25 +342,45 @@ if [ ${op_import_source_data} -eq 1 ]; then
                 `" contact,"`
                 `" target) FROM '${file}' DELIMITER ',' CSV HEADER ENCODING 'UTF8';"
             create_file ${sql_file} "${district_file_content}"
-            echo "Executing ${sql_file}."
-            psql -d postgres -w -f ${sql_file}
+            echo_debug "Executing ${sql_file}."
+            # Suppress messages
+            # https://stackoverflow.com/questions/3530767/disable-notices-in-psql-output
+            $(psql -X -q -v ON_ERROR_STOP=1 -d postgres -w -f ${sql_file})
+            echo "Import done."
         done
 
+        echo "----------"
+        ./dq.sh count district
+        ./dq.sh count municipality
+        ./dq.sh count barangay
+        #./dq.sh count precinct
+        ./dq.sh count leader
+        echo "----------"
+
+#        echo "Checking imported data."
+#        psql -d postgres -w -q -f ./sql/check_import.sql
+#        echo "Source data has been checked."
+
         echo "Processing imported data."
-        psql -d postgres -w -f ./sql/process_import.sql
-        echo "Source data has been imported"
+        #psql -d postgres -w -q -f ./sql/process_import.sql
+        $(psql -X -q -v ON_ERROR_STOP=1 -d postgres -w -f ./sql/process_import.sql)
+        echo "Source data has been imported."
 
-        echo "Creating JSON files."
-        ./create_json.sh
-        echo "JSON files created."
+        if [ ${init_do_json} -eq 1 ]; then
+            echo "Creating JSON files."
+            ./create_json.sh
+            echo "JSON files created."
+        fi
 
-        echo "Store changes to Git repository."
-        git add ../_data/*.json
-        echo "Changes stored in local Git repository."
+        if [ ${init_do_git} -eq 1 ]; then
+            echo "Store changes to Git repository."
+            git add ../_data/*.json
+            echo "Changes stored in local Git repository."
 
-        echo "Synchronize remote repository."
-        git commit -m "Update JSON files"
-        echo "Remote repository synchronized."
+            echo "Synchronize remote repository."
+            git commit -m "Update JSON files"
+            echo "Remote repository synchronized."
+        fi
     else
         echo "No import files found."
     fi
