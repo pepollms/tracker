@@ -350,11 +350,12 @@ if [ ${op_import_source_data} -eq 1 ]; then
         done
 
         echo "----------"
-        ./dq.sh count district
-        ./dq.sh count municipality
-        ./dq.sh count barangay
-        #./dq.sh count precinct
-        ./dq.sh count leader
+        ./dq.sh count-import district
+        ./dq.sh count-import municipality
+        ./dq.sh count-import barangay
+        #./dq.sh count-import precinct
+        ./dq.sh count-import leader
+        ./dq.sh voter-import
         echo "----------"
 
 #        echo "Checking imported data."
