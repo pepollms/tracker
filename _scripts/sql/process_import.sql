@@ -25,14 +25,6 @@ from vt_import
     inner join vt_municipality on (vt_import.municipality = vt_municipality.name)
 order by barangay asc;
 
--- Insert Leaders from the import table
-insert into vt_leader(name, contact)
-select distinct
-    leader,
-    contact
-from vt_import
-order by leader asc;
-
 -- Insert Precincts from the import table
 insert into vt_precinct(barangay_id, name)
 select
@@ -78,6 +70,16 @@ select
 from
     vt_import;
 
+-- Insert Leaders from the import table
+-- select distinct leader from vt_import
+insert into vt_leader(name, contact)
+select
+    distinct leader,
+    (select contact from vt_import as t where t.leader = vt_import.leader limit 1)
+from
+    vt_import
+order by
+    leader;
 
 -- Insert Leader-Precinct assignments
 insert into vt_leader_precinct_assignment(precinct_id, leader_id)
