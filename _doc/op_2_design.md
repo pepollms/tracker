@@ -61,8 +61,8 @@ The following table shows the structure of the CSV file that is read by the syst
 
 | Column No. | Column Name       | Data Type | Length |
 |:----------:+-------------------+-----------+--------|
-|      1     | contact           | text      |   50   |
-|      2     | municipality      | text      |   50   |
+|      1     | contact number    | text      |   50   |
+|      2     | municipal code    | text      |   10   |
 |      3     | precinct          | text      |   10   |
 |      4     | current           | numeric   |        |
 
