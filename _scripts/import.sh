@@ -94,11 +94,11 @@ function create_file {
         return 1
     fi
     local -r file="$1"
-    shift 1
+    shift
     local content=""
     if [ $# -eq 1 ]; then
         content="$1"
-        shift 1
+        shift
     fi
     echo -e "${content}" > "${file}"
 }
@@ -181,7 +181,7 @@ fi
 
 if [ "$1" == "${CMD_DEBUG}" ]; then
     debug=1
-    shift 1
+    shift
 fi
 
 mock_data_ccolumn="vt_precinct_monitor.target"
@@ -203,7 +203,7 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
         fi
 
         if [ "${1}" == "-y" ]; then
-            shift 1
+            shift
             op_create_db=1
             op_import_source_data=1
             op_create_markdown=1
@@ -231,9 +231,9 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
         fi
     elif [ "${1}" == "${CMD_CREATE_DB}" ]; then
         op_create_db=1
-        shift 1
+        shift
     elif [ "${1}" == "${CMD_IMPORT}" ]; then
-        shift 1
+        shift
         if [ $# -eq 0 ]; then
             echo "Missing --import parameter"
             exit 1
@@ -243,10 +243,10 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
             elif [ "${1}" == "current" ]; then
                 op_import_current_data=1
             fi
-            shift 1
+            shift
         fi
     elif [ "$1" == "${CMD_MOCK}" ]; then
-        shift 1
+        shift
         op_generate_mock_data=1
         if [ $# -eq 0 ]; then
             continue
@@ -270,7 +270,7 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
         fi
     elif [ "$1" == "${CMD_CREATE_MARKDOWN}" ]; then
         op_create_markdown=1
-        shift 1
+        shift
     fi
 done
 
