@@ -6,7 +6,6 @@ create or replace view view_import_current
         barangay,
         precinct_id,
         precinct,
-        leader_contact,
         current,
         imported_when)
 as
@@ -17,7 +16,6 @@ as
         vt_barangay.name,
         vt_precinct.id,
         vt_precinct.name,
-        vt_import_current.contact,
         vt_import_current.current,
         vt_import_current.imported_when
     from
