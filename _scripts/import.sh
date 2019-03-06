@@ -421,7 +421,6 @@ if [ ${op_import_current_data} -eq 1 ]; then
             sql_current_files+="${sql_file}"
             current_file_content=""`
                 `"\\COPY vt_import_current("`
-                `" contact,"`
                 `" municipality_code,"`
                 `" precinct,"`
                 `" current) FROM '${file}' DELIMITER ',' CSV HEADER ENCODING 'UTF8';"
