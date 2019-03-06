@@ -46,6 +46,7 @@ The actual value of the _target_ will be computed from this percentage and kept.
 
 All _source data import files_ are expected to be in UTF-8 encoding to accomodate special characters like the Spanish "enye", Ñ (lower case ñ).
 All _source data import files_ must be in the _source data import directory_.
+See the [Project Files section](#section-project-files) for more details on the project directory structure.
 
 
 
@@ -67,6 +68,7 @@ The following table shows the structure of the CSV file that is read by the syst
 
 The _in favor data import file_ is expected to be in UTF-8 encoding.
 All _in favor data import files_ must be in the _in favor data import directory_.
+See the [Project Files section](#section-project-files) for more details on the project directory structure.
 
 
 
