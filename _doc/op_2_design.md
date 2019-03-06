@@ -61,10 +61,9 @@ The following table shows the structure of the CSV file that is read by the syst
 
 | Column No. | Column Name       | Data Type | Length |
 |:----------:+-------------------+-----------+--------|
-|      1     | contact number    | text      |   50   |
-|      2     | municipal code    | text      |   10   |
-|      3     | precinct          | text      |   10   |
-|      4     | current           | numeric   |        |
+|      1     | municipal code    | numeric   |        |
+|      2     | precinct          | text      |   10   |
+|      3     | current           | numeric   |        |
 
 The _in favor data import file_ is expected to be in UTF-8 encoding.
 All _in favor data import files_ must be in the _in favor data import directory_.
@@ -176,15 +175,13 @@ Maintainer -> "Create JSON\nProgram" : call
 
 
 
-\clearpage
-
-
-
 ### Updating Local HTML Files
 
 Local HTML files are produced by Jekyll when processing markdown template files.
 When Jekyll is running, any changes to the markdown template files or related files will automatically process and convert them to HTML files.
 Also, the HTML files are automatically re-generated every time Jekyll is executed.
+
+\clearpage
 
 !uml(images/pp-update-local-html-pages.svg {width=150})(Update Local HTML Pages)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
