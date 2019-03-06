@@ -3,3 +3,4 @@
 \ir ./view/municipality.sql
 \ir ./view/district.sql
 \ir ./view/province.sql
+\ir ./view/import_current.sql
