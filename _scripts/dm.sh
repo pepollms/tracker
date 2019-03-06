@@ -600,17 +600,17 @@ function add_leader {
     fi
 
     # Check if contact number already exists
-    count=$(contact_exists "${contact}")
-    if [ ${count} -eq 1 ]; then
-        echo "An existing leader already uses that contact number."
-        # Show the leader who owns the existing contact number
-        display_leader_info "contact" "${contact}"
-        return -1
-    elif [ ${count} -gt 0 ]; then
-        echo "Multiple leaders having the same contact numbers."
-        echo "This should have been checked when adding new leaders."
-        return -1
-    fi
+    #count=$(contact_exists "${contact}")
+    #if [ ${count} -eq 1 ]; then
+    #    echo "An existing leader already uses that contact number."
+    #    # Show the leader who owns the existing contact number
+    #    display_leader_info "contact" "${contact}"
+    #    return -1
+    #elif [ ${count} -gt 0 ]; then
+    #    echo "Multiple leaders having the same contact numbers."
+    #    echo "This should have been checked when adding new leaders."
+    #    return -1
+    #fi
 
     local result=`psql -d postgres -w -q    \
         --no-align                          \
