@@ -244,6 +244,14 @@ while [ $# -gt 0 ] && [[ "${COMMANDS[@]}" =~ "${1}" ]]; do
                 op_import_current_data=1
             fi
             shift
+            if [ "${1}" == "-no-json" ]; then
+                shift
+                init_do_json=0
+            fi
+            if [ "${1}" == "-no-git" ]; then
+                shift
+                init_do_git=0
+            fi
         fi
     elif [ "$1" == "${CMD_MOCK}" ]; then
         shift
@@ -426,17 +434,21 @@ if [ ${op_import_current_data} -eq 1 ]; then
         psql -d postgres -w -f ./sql/process_current.sql
         echo "Current data processing done."
 
-        echo "Creating JSON files."
-        ./create_json.sh
-        echo "JSON files created."
+        if [ ${init_do_json} -eq 1 ]; then
+            echo "Creating JSON files."
+            ./create_json.sh
+            echo "JSON files created."
+        fi
 
-        echo "Store changes to Git repository."
-        git add ../_data/*.json
-        echo "Changes stored in local Git repository."
+        if [ ${init_do_git} -eq 1 ]; then
+            echo "Store changes to Git repository."
+            git add ../_data/*.json
+            echo "Changes stored in local Git repository."
 
-        echo "Synchronize remote repository."
-        git commit -m "Update JSON files"
-        echo "Remote repository synchronized."
+            echo "Synchronize remote repository."
+            git commit -m "Update JSON files"
+            echo "Remote repository synchronized."
+        fi
     else
         echo "No import files found."
     fi
