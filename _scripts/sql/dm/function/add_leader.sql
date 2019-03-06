@@ -16,10 +16,10 @@ BEGIN
         return -1;
     end if;
 
-    retval := count(*) from vt_leader where contact = p_contact;
-    if retval = 1 then
-        return -2;
-    end if;
+    --retval := count(*) from vt_leader where contact = p_contact;
+    --if retval = 1 then
+    --    return -2;
+    --end if;
 
     insert into vt_leader(name, contact) values (p_name, p_contact);
     return id from vt_leader where name = p_name;
