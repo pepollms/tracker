@@ -94,6 +94,10 @@ if [ $# -gt 0 ]; then
     exit 1
 fi
 
+if [ ! -d "./images" ]; then
+    mkdir images
+fi
+
 echo "Preprocessing..."
 pp_files=()
 for file in "${doc_files[@]}"; do
