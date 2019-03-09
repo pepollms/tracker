@@ -384,10 +384,11 @@ if [ ${op_import_source_data} -eq 1 ]; then
         if [ ${init_do_git} -eq 1 ]; then
             echo "Store changes to Git repository."
             git add ../_data/*.json
+            git commit -m "Update JSON files"
             echo "Changes stored in local Git repository."
 
             echo "Synchronize remote repository."
-            git commit -m "Update JSON files"
+            git push
             echo "Remote repository synchronized."
         fi
     else
@@ -442,10 +443,11 @@ if [ ${op_import_current_data} -eq 1 ]; then
         if [ ${init_do_git} -eq 1 ]; then
             echo "Store changes to Git repository."
             git add ../_data/*.json
+            git commit -m "Update JSON files"
             echo "Changes stored in local Git repository."
 
             echo "Synchronize remote repository."
-            git commit -m "Update JSON files"
+            git push
             echo "Remote repository synchronized."
         fi
     else
