@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 
 declare -r DESTINATION_DIR="../_data"
-declare -r PROVINCE_ROW=""`
-    `" select row_to_json(t)"`
-    `" from"`
-    `"     (select 'NORTH COTABATO' as name) t;"
 
 psql -d postgres -w -t                                      \
-    -c "${PROVINCE_ROW}"                                    \
+    -f ./sql/json/create_json_province_name.sql             \
     -o ${DESTINATION_DIR}/province.json
 
 psql -d postgres -w -t                                      \
