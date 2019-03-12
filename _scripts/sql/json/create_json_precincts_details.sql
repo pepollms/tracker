@@ -16,6 +16,6 @@ from (
         view_precinct
     order by
         current_percentage,
-        current_sum / target_sum,
+        divide(current_sum, target_sum),
         precinct
     ) t;
