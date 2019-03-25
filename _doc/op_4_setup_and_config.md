@@ -619,16 +619,27 @@ There are a number of ways to check the PostgreSQL version.
 The system shall use Jekyll 3.8.4 or higher.
 The following are the system requirements for Jekyll 3.8.4:
 
-* Ruby version 2.2.5 or above, including all development headers (ruby version can be checked by running ruby -v).
-* RubyGems is a package manager for Ruby modules, called _gems_ (which you can check by running gem -v).
+* Ruby version 2.2.5 or above, including all development headers (ruby version can be checked by running `ruby -v`).
+* RubyGems is a package manager for Ruby modules, called _gems_ (which you can check by running `gem -v`).
 * GCC and Make (in case your system doesn’t have them installed, which you can check by running `gcc -v`, `g++ -v` and `make -v` on the command line).
 
-The following references may be consulted on how to setup Jekyll with GitHub pages.
+The following references may be consulted on how to setup GitHub Pages with Jekyll:
 
-[Setting up your GitHub Pages site locally with Jekyll](https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/)
-[Setting up GitHub Pages with Jekyll](http://www.stephaniehicks.com/githubPages_tutorial/pages/githubpages-jekyll.html)
+* https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/
+* http://www.stephaniehicks.com/githubPages_tutorial/pages/githubpages-jekyll.html
+
+
 
 ### Install Ruby
+
+Jekyll is a Ruby application so we need to install Ruby first.
+Note that the machine must be online to access the operating system remote repositories.
+
+~~~
+$ sudo pacman -S ruby
+~~~
+
+
 
 ### Install Bundler
 
@@ -661,9 +672,8 @@ $ source ~/.bashrc
 
 ### Install Jekyll and Other Dependencies
 
-Jekyll is a Ruby program and therefore requires Ruby to be installed first.
-
 Create a `Gemfile` to tell `bundler` what to install.
+The `Gemfile` must be created in the project root directory.
 
 ~~~
 source 'https://rubygems.org'
@@ -696,7 +706,7 @@ $ bundle update github-pages
 
 
 
-### Configure Ignored Directory
+### Configure Git Ignore File
 
 Add the following to the Git ignore file `.gitignore` file:
 
